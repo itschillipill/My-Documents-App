@@ -67,10 +67,10 @@ class _SettingsPageState extends State<SettingsPage> {
     final newPin = await _showPinDialog("Enter new PIN");
     if (newPin?.isNotEmpty ?? false) {
       await authExecutor.createOrChangePin(newPin!);
-      if (mounted){
-      setState(() {});
-      MessageService.showSnackBar("PIN updated successfully");
-      } 
+      if (mounted) {
+        setState(() {});
+        MessageService.showSnackBar("PIN updated successfully");
+      }
     }
   }
 
@@ -96,9 +96,9 @@ class _SettingsPageState extends State<SettingsPage> {
 
     if (confirm == true && await _verifyOldPin(authExecutor)) {
       await authExecutor.clearPin();
-     setState(() {});
-      MessageService.showSnackBar("PIN deleted");}
-    
+      setState(() {});
+      MessageService.showSnackBar("PIN deleted");
+    }
   }
 
   @override
@@ -143,8 +143,12 @@ class _SettingsPageState extends State<SettingsPage> {
                                 onTap: () => _deletePin(authExecutor),
                               ),
                               SwitchListTile.adaptive(
-                                value: context
-                                        .read<SettingsCubit>().canUseBiometrics?state.useBiometrics : false,
+                                value:
+                                    context
+                                            .read<SettingsCubit>()
+                                            .canUseBiometrics
+                                        ? state.useBiometrics
+                                        : false,
                                 title: const Text("Biometric Authentication"),
                                 subtitle: const Text(
                                   "Use fingerprint or face ID",
@@ -152,17 +156,19 @@ class _SettingsPageState extends State<SettingsPage> {
                                 secondary: const Icon(
                                   Icons.fingerprint_rounded,
                                 ),
-                                onChanged:
-                                    (v) {
-                                      if(!context
-                                        .read<SettingsCubit>().canUseBiometrics){
-                                          MessageService.showErrorSnack("Biometric Authentication is not available on this device");
-                                          return;
-                                        }
-                                      context
-                                        .read<SettingsCubit>()
-                                        .changeBiometricAuthentication(v);
-                                    },
+                                onChanged: (v) {
+                                  if (!context
+                                      .read<SettingsCubit>()
+                                      .canUseBiometrics) {
+                                    MessageService.showErrorSnack(
+                                      "Biometric Authentication is not available on this device",
+                                    );
+                                    return;
+                                  }
+                                  context
+                                      .read<SettingsCubit>()
+                                      .changeBiometricAuthentication(v);
+                                },
                               ),
                             ]
                             : [

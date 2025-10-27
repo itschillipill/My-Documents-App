@@ -22,7 +22,8 @@ class BuildCard extends StatelessWidget {
   final IconData icon;
   final VoidCallback onTap;
 
-  const BuildCard({super.key, 
+  const BuildCard({
+    super.key,
     required this.text,
     required this.icon,
     required this.onTap,

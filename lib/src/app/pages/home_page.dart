@@ -28,22 +28,17 @@ class MyHomePage extends StatelessWidget {
                 ],
               ),
               IconButton(
-                onPressed:
-                    () => Navigator.push(context, SettingsPage.route()),
+                onPressed: () => Navigator.push(context, SettingsPage.route()),
                 icon: Icon(Icons.settings),
               ),
             ],
           ),
-           Expanded(
+          Expanded(
             child: CustomScrollView(
               slivers: [
-                SliverToBoxAdapter(
-                  child: DocumentsBlock(),
-                ),
+                SliverToBoxAdapter(child: DocumentsBlock()),
                 const WarningBlock(),
-                SliverToBoxAdapter(
-                  child: FoldersBlock(),
-                ),
+                SliverToBoxAdapter(child: FoldersBlock()),
               ],
             ),
           ),
@@ -52,4 +47,3 @@ class MyHomePage extends StatelessWidget {
     );
   }
 }
-

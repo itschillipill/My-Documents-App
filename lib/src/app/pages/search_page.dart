@@ -23,6 +23,7 @@ class _SearchPageState extends State<SearchPage> {
       _query = value.toLowerCase();
     });
   }
+
   @override
   void dispose() {
     _searchController.dispose();

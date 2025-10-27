@@ -38,7 +38,7 @@ class _AddNewDocumentVersionState extends State<AddNewDocumentVersion> {
     }
 
     final isValidSize = await FileService.validateFileSize(_originalPath!);
-    if (!isValidSize&&context.mounted) {
+    if (!isValidSize && context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("File is too large (max 50 MB)")),
       );
@@ -62,7 +62,7 @@ class _AddNewDocumentVersionState extends State<AddNewDocumentVersion> {
 
       await cubit.addNewVersion(widget.documentId, docVersion);
     } catch (e) {
-        MessageService.showSnackBar("Error saving file: $e");
+      MessageService.showSnackBar("Error saving file: $e");
     }
     if (context.mounted) {
       Navigator.pop(context);
@@ -95,9 +95,11 @@ class _AddNewDocumentVersionState extends State<AddNewDocumentVersion> {
             spacing: 20,
             children: [
               _originalPath == null
-                  ? FilePickerBlock(onSelected:(path) {
-                    setState(() => _originalPath = path);
-                  },)
+                  ? FilePickerBlock(
+                    onSelected: (path) {
+                      setState(() => _originalPath = path);
+                    },
+                  )
                   : BuildCard(
                     text: p.basename(_originalPath!),
                     icon: Icons.insert_drive_file,

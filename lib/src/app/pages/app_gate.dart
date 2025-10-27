@@ -24,9 +24,6 @@ class _AppGateState extends State<AppGate> {
     BottomNavigationBarItem(icon: Icon(Icons.search), label: "Search"),
   ];
 
-
-
-
   @override
   void dispose() {
     _controller.dispose();
@@ -37,18 +34,18 @@ class _AppGateState extends State<AppGate> {
   Widget build(BuildContext context) {
     return PopScope(
       canPop: _selectedIndex != 1,
-     onPopInvokedWithResult: (didPop, _) {
-    if (!didPop && _selectedIndex == 1) {
-      setState(() {
-        _selectedIndex = 0;
-        _controller.animateToPage(
-          0,
-          duration: const Duration(milliseconds: 200),
-          curve: Curves.ease,
-        );
-      });
-    }
-  },
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop && _selectedIndex == 1) {
+          setState(() {
+            _selectedIndex = 0;
+            _controller.animateToPage(
+              0,
+              duration: const Duration(milliseconds: 200),
+              curve: Curves.ease,
+            );
+          });
+        }
+      },
       child: BlocBuilder<SettingsCubit, SettingsState>(
         builder: (_, state) {
           return Scaffold(
@@ -85,26 +82,24 @@ class _AppGateState extends State<AppGate> {
   }
 
   Widget? _buildFAB() {
-  if (_selectedIndex != 0) return null;
+    if (_selectedIndex != 0) return null;
 
-  return SpeedDial(
-  icon: Icons.add,
-  activeIcon: Icons.close,
-  shape: RoundedRectangleBorder(
-    borderRadius: BorderRadius.circular(12),
-  ),
-  children: [
-    SpeedDialChild(
-      child: const Icon(Icons.upload_file_rounded),
-      label: 'Add Document',
-      onTap: () => Navigator.push(context, AddDocumentScreen.route()),
-    ),
-    SpeedDialChild(
-      child: const Icon(Icons.create_new_folder),
-      label: 'Add Folder',
-      onTap: () => Navigator.push(context, AddFolderPage.route()),
-    ),
-  ],
-);
-}
+    return SpeedDial(
+      icon: Icons.add,
+      activeIcon: Icons.close,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      children: [
+        SpeedDialChild(
+          child: const Icon(Icons.upload_file_rounded),
+          label: 'Add Document',
+          onTap: () => Navigator.push(context, AddDocumentScreen.route()),
+        ),
+        SpeedDialChild(
+          child: const Icon(Icons.create_new_folder),
+          label: 'Add Folder',
+          onTap: () => Navigator.push(context, AddFolderPage.route()),
+        ),
+      ],
+    );
+  }
 }

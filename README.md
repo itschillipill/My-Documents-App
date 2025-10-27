@@ -1,16 +1,15 @@
-# my_documents
+# My Documents
 
-A new Flutter project.
+**My Documents** is a modern Flutter application designed to help you organize, store, and manage your personal documents securely.
 
-## Getting Started
+## ✨ Features
+- 📂 Folder-based organization for easy document management  
+- 🧾 Document version control with upload history  
+- 🔐 Secure access using PIN and biometric authentication  
+- 🌓 Clean, adaptive UI supporting both light and dark themes  
+- ⚡ Local data storage with SQLite for offline access  
 
-This project is a starting point for a Flutter application.
+## 🚀 Overview
+The app provides a smooth user experience for managing documents efficiently. Users can create folders, upload files, track expiration dates, and manage multiple versions of the same document. With built-in authentication, your data stays private and secure.
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Perfect for individuals or professionals who need quick access to important documents anytime, anywhere.

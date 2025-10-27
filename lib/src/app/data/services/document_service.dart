@@ -6,8 +6,8 @@ class DocumentService {
   final Database? _db;
 
   DocumentService(this._db);
-  
- Future<List<Document>> getAllDocuments() async {
+
+  Future<List<Document>> getAllDocuments() async {
     final docs = await _db!.query('documents');
     final versions = await _db.query('document_versions');
 
@@ -81,6 +81,7 @@ class DocumentService {
               .toList(),
     );
   }
+
   Future<int> insertDocument(Document document) async {
     final documentId = await _db!.insert('documents', {
       'title': document.title,
@@ -158,7 +159,9 @@ class DocumentService {
     await _db.delete('documents', where: 'id = ?', whereArgs: [id]);
   }
 
-  Future<DocumentVersion?> getDocumentVersionByDocumentId(int documentId) async {
+  Future<DocumentVersion?> getDocumentVersionByDocumentId(
+    int documentId,
+  ) async {
     final versions = await _db?.query(
       'document_versions',
       where: 'documentId = ?',

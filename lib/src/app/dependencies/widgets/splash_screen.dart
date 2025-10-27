@@ -43,8 +43,9 @@ class InitializationSplashScreen extends StatelessWidget {
                         child: LinearProgressIndicator(
                           value: value.progress / 100,
                           minHeight: 10,
-                          backgroundColor: theme.colorScheme.primary
-                              .withValues(alpha: 0.2),
+                          backgroundColor: theme.colorScheme.primary.withValues(
+                            alpha: 0.2,
+                          ),
                           valueColor: AlwaysStoppedAnimation<Color>(
                             theme.colorScheme.primary,
                           ),
@@ -71,7 +72,9 @@ class InitializationSplashScreen extends StatelessWidget {
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: theme.textTheme.bodyMedium?.copyWith(
-                          color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                          color: theme.colorScheme.onSurface.withValues(
+                            alpha: 0.7,
+                          ),
                         ),
                       ),
                     ),

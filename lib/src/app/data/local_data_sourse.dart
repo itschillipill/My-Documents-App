@@ -16,7 +16,6 @@ class LocalDataSource implements DataSource {
   late DocumentService _documentService;
   late FolderService _folderService;
 
-
   @override
   Future<void> init() async {
     if (!Platform.isAndroid && !Platform.isIOS) {
@@ -72,41 +71,43 @@ class LocalDataSource implements DataSource {
     _db = null;
   }
 
+  @override
+  Future<List<Document>> getAllDocuments() =>
+      _documentService.getAllDocuments();
 
   @override
-  Future<List<Document>> getAllDocuments() => _documentService.getAllDocuments();
+  Future<Document?> getDocumentById(int id) =>
+      _documentService.getDocumentById(id);
 
   @override
-  Future<Document?> getDocumentById(int id) => _documentService.getDocumentById(id);
+  Future<int> insertDocument(Document document) =>
+      _documentService.insertDocument(document);
 
   @override
-  Future<int> insertDocument(Document document) => _documentService.insertDocument(document);
+  Future<int> addNewVersion(int documentId, DocumentVersion version) =>
+      _documentService.addNewVersion(documentId, version);
 
   @override
-  Future<int> addNewVersion(int documentId, DocumentVersion version) => _documentService.addNewVersion(documentId, version);
-
-  @override
-  Future<void> updateDocument(Document document) => _documentService.updateDocument(document);
-
+  Future<void> updateDocument(Document document) =>
+      _documentService.updateDocument(document);
 
   @override
   Future<void> deleteDocument(int id) => _documentService.deleteDocument(id);
 
   @override
-  Future<DocumentVersion?> getDocumentVersionByDocumentId(int documentId) => _documentService.getDocumentVersionByDocumentId(documentId);
-
+  Future<DocumentVersion?> getDocumentVersionByDocumentId(int documentId) =>
+      _documentService.getDocumentVersionByDocumentId(documentId);
 
   @override
   Future<List<Folder>> getAllFolders() => _folderService.getAllFolders();
 
+  @override
+  Future<int> insertFolder(Folder folder) =>
+      _folderService.insertFolder(folder);
 
   @override
-  Future<int> insertFolder(Folder folder) => _folderService.insertFolder(folder);
-
-
-  @override
-  Future<void> updateFolder(Folder folder) => _folderService.updateFolder(folder);
-
+  Future<void> updateFolder(Folder folder) =>
+      _folderService.updateFolder(folder);
 
   @override
   Future<void> deleteFolder(int id) => _folderService.deleteFolder(id);

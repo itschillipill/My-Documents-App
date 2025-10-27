@@ -37,7 +37,7 @@ class AuthScope extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context){
+  Widget build(BuildContext context) {
     return AnimatedBuilder(
       animation: authExecutor,
       builder: (context, _) {

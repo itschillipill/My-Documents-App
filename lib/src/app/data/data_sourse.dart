@@ -14,7 +14,6 @@ abstract class DataSource {
   Future<int> addNewVersion(int documentId, DocumentVersion version);
   Future<DocumentVersion?> getDocumentVersionByDocumentId(int documentId);
 
-
   // CRUD для папок
   Future<List<Folder>> getAllFolders();
   Future<int> insertFolder(Folder folder);

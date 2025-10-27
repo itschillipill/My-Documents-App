@@ -52,7 +52,6 @@ class _AddDocumentScreenState extends State<AddDocumentScreen> {
       return;
     }
 
-    
     final isValidSize = await FileService.validateFileSize(_originalPath!);
     if (!isValidSize) {
       MessageService.showSnackBar("File is too large (max 50 MB)");
@@ -91,8 +90,7 @@ class _AddDocumentScreenState extends State<AddDocumentScreen> {
         Navigator.pop(context);
       }
     } catch (e) {
-        MessageService.showSnackBar("Error saving file: $e");
-      
+      MessageService.showSnackBar("Error saving file: $e");
     }
   }
 
@@ -164,9 +162,11 @@ class _AddDocumentScreenState extends State<AddDocumentScreen> {
               ),
 
               _originalPath == null
-                  ? FilePickerBlock(onSelected:(path) {
-                    setState(() => _originalPath = path);
-                  },)
+                  ? FilePickerBlock(
+                    onSelected: (path) {
+                      setState(() => _originalPath = path);
+                    },
+                  )
                   : BuildSection(
                     children: [
                       BuildCard(
@@ -250,4 +250,3 @@ class _AddDocumentScreenState extends State<AddDocumentScreen> {
     );
   }
 }
-

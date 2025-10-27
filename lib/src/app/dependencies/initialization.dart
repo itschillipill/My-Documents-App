@@ -67,12 +67,12 @@ class InitializationExecutor
     try {
       PlatformDispatcher.instance.onError = (error, stackTrace) {
         debugPrint(error.toString());
-          debugPrint(stackTrace.toString());
+        debugPrint(stackTrace.toString());
         return true;
       };
     } on Object catch (error, stackTrace) {
-     debugPrint(error.toString());
-     debugPrint(stackTrace.toString());
+      debugPrint(error.toString());
+      debugPrint(stackTrace.toString());
     }
   }
 }

@@ -7,7 +7,9 @@ import 'package:my_documents/src/app/widgets/border_box.dart';
 
 class WarningBlock extends StatelessWidget {
   static const Folder _folder = Folder.warningFolder;
-  static const Widget _placeholder = SliverToBoxAdapter(child: SizedBox.shrink());
+  static const Widget _placeholder = SliverToBoxAdapter(
+    child: SizedBox.shrink(),
+  );
   const WarningBlock({super.key});
 
   @override
@@ -22,44 +24,48 @@ class WarningBlock extends StatelessWidget {
         return SliverPersistentHeader(
           pinned: true,
           delegate: _WarningHeaderDelegate(
-          child: BorderBox(
-            child: ListTile(
-              leading: Icon(Icons.warning),
-              title: Text(
-                "Tap to view",
-                style: Theme.of(context).textTheme.bodyLarge,
+            child: BorderBox(
+              child: ListTile(
+                leading: Icon(Icons.warning),
+                title: Text(
+                  "Tap to view",
+                  style: Theme.of(context).textTheme.bodyLarge,
+                ),
+                subtitle: Text(
+                  "${expiring.length} documents are expiring soon or expired",
+                ),
+                onTap:
+                    () => Navigator.push(
+                      context,
+                      FolderViewPage.route(folder: _folder),
+                    ),
               ),
-              subtitle: Text(
-                "${expiring.length} documents are expiring soon or expired",
-              ),
-              onTap:
-                  () => Navigator.push(
-                    context,
-                    FolderViewPage.route(folder: _folder),
-                  ),
             ),
-          ),)
+          ),
         );
       },
     );
   }
 }
+
 class _WarningHeaderDelegate extends SliverPersistentHeaderDelegate {
   final Widget child;
 
   _WarningHeaderDelegate({required this.child});
 
   @override
-  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
+  Widget build(
+    BuildContext context,
+    double shrinkOffset,
+    bool overlapsContent,
+  ) {
     return Material(
       color: Theme.of(context).scaffoldBackgroundColor,
       elevation: overlapsContent ? 4 : 0,
-      child: SizedBox(
-        height: maxExtent,
-        child: child,
-      ),
+      child: SizedBox(height: maxExtent, child: child),
     );
   }
+
   @override
   double get maxExtent => 80.0;
 

@@ -24,7 +24,8 @@ class DocumentsBlock extends StatelessWidget {
           final prioritizedDocs = [...favorites, ...nonFavorites];
 
           final docsToShow = prioritizedDocs.take(3).toList();
-          if (docsToShow.isEmpty) return Center(child: Text("No documents here, yet!"),);
+          if (docsToShow.isEmpty)
+            return Center(child: Text("No documents here, yet!"));
 
           final items = [...docsToShow, null];
 
@@ -51,7 +52,7 @@ class DocumentsBlock extends StatelessWidget {
     );
   }
 
-  Widget _buildCard( Widget icon,{VoidCallback? onTap,Widget? label}) {
+  Widget _buildCard(Widget icon, {VoidCallback? onTap, Widget? label}) {
     return GestureDetector(
       onTap: onTap,
       child: BorderBox(
@@ -61,32 +62,30 @@ class DocumentsBlock extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             spacing: 5,
-            children: [
-              icon,
-              if(label != null)label
-            ],
+            children: [icon, if (label != null) label],
           ),
         ),
       ),
     );
   }
+
   Widget _buildDocCard(Document? doc, BuildContext context) {
     final isAll = doc == null;
-    return _buildCard(onTap: () {
+    return _buildCard(
+      onTap: () {
         if (isAll) {
           Navigator.push(context, FolderViewPage.route(folder: _allFolder));
         } else {
           Navigator.push(context, DocumentViewPage.route(doc.id));
         }
-      }, Icon(isAll ? Icons.folder_open : Icons.description, size: 40),
+      },
+      Icon(isAll ? Icons.folder_open : Icons.description, size: 40),
       label: Text(
-                isAll ? "All" : doc.title,
-                style: const TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w600,
-                ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),);
+        isAll ? "All" : doc.title,
+        style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+      ),
+    );
   }
 }

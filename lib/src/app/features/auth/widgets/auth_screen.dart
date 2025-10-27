@@ -8,14 +8,13 @@ class VerefyPinScreen extends StatefulWidget {
     required bool useBiometrics,
     required Future<bool> Function(String) onAuthByPIN,
     required Future<bool> Function() onAuthByBiometrics,
-  }) =>
-      AppPageRoute.build(
-        page: VerefyPinScreen(
-          useBiometrics: useBiometrics,
-          onAuthByPIN: onAuthByPIN,
-          onAuthByBiometrics: onAuthByBiometrics,
-        ),
-      );
+  }) => AppPageRoute.build(
+    page: VerefyPinScreen(
+      useBiometrics: useBiometrics,
+      onAuthByPIN: onAuthByPIN,
+      onAuthByBiometrics: onAuthByBiometrics,
+    ),
+  );
 
   final bool useBiometrics;
   final Future<bool> Function(String) onAuthByPIN;
@@ -50,9 +49,9 @@ class _VerefyPinScreenState extends State<VerefyPinScreen> {
         MessageService.showSnackBar("Invalid PIN, try again.");
       }
     } catch (e) {
-       MessageService.showSnackBar("Error: $e");
+      MessageService.showSnackBar("Error: $e");
     } finally {
-       setState(() => _loading = false);
+      setState(() => _loading = false);
     }
   }
 
@@ -64,9 +63,9 @@ class _VerefyPinScreenState extends State<VerefyPinScreen> {
         MessageService.showSnackBar("Biometric authentication failed.");
       }
     } catch (e) {
-       MessageService.showSnackBar("Error: $e");
+      MessageService.showSnackBar("Error: $e");
     } finally {
-       setState(() => _loading = false);
+      setState(() => _loading = false);
     }
   }
 
@@ -83,12 +82,16 @@ class _VerefyPinScreenState extends State<VerefyPinScreen> {
               spacing: 20,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.lock_rounded,
-                    size: 80, color: theme.colorScheme.primary),
+                Icon(
+                  Icons.lock_rounded,
+                  size: 80,
+                  color: theme.colorScheme.primary,
+                ),
                 Text(
                   "My Documents",
-                  style: theme.textTheme.headlineMedium
-                      ?.copyWith(fontWeight: FontWeight.bold),
+                  style: theme.textTheme.headlineMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 Text(
                   "Enter your PIN to access your documents",
@@ -115,24 +118,31 @@ class _VerefyPinScreenState extends State<VerefyPinScreen> {
                         ),
                         hintText: "Enter your PIN",
                         suffixIcon: IconButton(
-                          onPressed: () => setState(
-                              () => _isObscureText = !_isObscureText),
-                          icon: Icon(_isObscureText
-                              ? Icons.visibility_rounded
-                              : Icons.visibility_off_rounded),
+                          onPressed:
+                              () => setState(
+                                () => _isObscureText = !_isObscureText,
+                              ),
+                          icon: Icon(
+                            _isObscureText
+                                ? Icons.visibility_rounded
+                                : Icons.visibility_off_rounded,
+                          ),
                         ),
                       ),
                       onSubmitted: (_) => _loading ? null : _handlePinAuth(),
                     ),
                     ElevatedButton.icon(
                       onPressed: _loading ? null : _handlePinAuth,
-                      icon: _loading
-                          ? const SizedBox(
-                              width: 16,
-                              height: 16,
-                              child: CircularProgressIndicator(strokeWidth: 2),
-                            )
-                          : const Icon(Icons.lock_open_rounded),
+                      icon:
+                          _loading
+                              ? const SizedBox(
+                                width: 16,
+                                height: 16,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                ),
+                              )
+                              : const Icon(Icons.lock_open_rounded),
                       label: Text(_loading ? "Verifying..." : "Unlock"),
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 14),
@@ -148,13 +158,16 @@ class _VerefyPinScreenState extends State<VerefyPinScreen> {
                 if (widget.useBiometrics)
                   GestureDetector(
                     onTap: _loading ? null : _handleBiometricAuth,
-                    child: BorderBox(  
+                    child: BorderBox(
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         spacing: 10,
                         children: [
-                          Icon(Icons.fingerprint_rounded,
-                              size: 28, color: theme.colorScheme.primary),
+                          Icon(
+                            Icons.fingerprint_rounded,
+                            size: 28,
+                            color: theme.colorScheme.primary,
+                          ),
                           Text(
                             "Use Biometrics",
                             style: theme.textTheme.titleMedium?.copyWith(

@@ -4,6 +4,7 @@ import 'package:my_documents/src/app/features/documents/cubit/documents_cubit.da
 import 'package:my_documents/src/app/features/folders/cubit/folders_cubit.dart';
 import 'package:my_documents/src/app/features/folders/pages/folder_view_page.dart';
 import 'border_box.dart';
+
 class FoldersBlock extends StatelessWidget {
   const FoldersBlock({super.key});
 
@@ -20,12 +21,12 @@ class FoldersBlock extends StatelessWidget {
         }
         if (state is FoldersLoaded) {
           if (state.folders.isEmpty) return const SizedBox.shrink();
-          
+
           return Padding(
             padding: const EdgeInsets.symmetric(vertical: 8.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min, 
+              mainAxisSize: MainAxisSize.min,
               spacing: 5,
               children: [
                 Text(
@@ -35,26 +36,27 @@ class FoldersBlock extends StatelessWidget {
                 if (state.folders.isNotEmpty)
                   ListView.builder(
                     itemCount: state.folders.length,
-                    physics: const NeverScrollableScrollPhysics(), 
-                    shrinkWrap: true, 
+                    physics: const NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
                     itemBuilder: (context, index) {
                       final folder = state.folders[index];
                       return BlocBuilder<DocumentsCubit, DocumentsState>(
-                        buildWhen: (previous, current) =>
-                            current is DocumentsLoaded,
+                        buildWhen:
+                            (previous, current) => current is DocumentsLoaded,
                         builder: (context, documentsState) {
-                          final documents = documentsState is DocumentsLoaded
-                              ? folder.getDocuments(documentsState.documents)
-                              : [];
+                          final documents =
+                              documentsState is DocumentsLoaded
+                                  ? folder.getDocuments(
+                                    documentsState.documents,
+                                  )
+                                  : [];
                           return Padding(
                             padding: const EdgeInsets.all(4.0),
                             child: BorderBox(
                               child: ListTile(
                                 leading: const Icon(Icons.folder),
                                 title: Text(folder.name),
-                                subtitle: Text(
-                                  "${documents.length} documents",
-                                ),
+                                subtitle: Text("${documents.length} documents"),
                                 trailing: const Icon(
                                   Icons.arrow_forward_ios_sharp,
                                 ),

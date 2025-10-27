@@ -26,11 +26,14 @@ class _FolderViewPageState extends State<FolderViewPage> {
   @override
   void initState() {
     _documentsCubit = context.read<DocumentsCubit>();
-    if(_documentsCubit.state is DocumentsLoaded) {
-      documents = widget.folder.getDocuments((_documentsCubit.state as DocumentsLoaded).documents);
+    if (_documentsCubit.state is DocumentsLoaded) {
+      documents = widget.folder.getDocuments(
+        (_documentsCubit.state as DocumentsLoaded).documents,
+      );
     }
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -44,23 +47,28 @@ class _FolderViewPageState extends State<FolderViewPage> {
                 ? null
                 : [
                   PopupMenuButton<FolderMenuActions>(
-                popUpAnimationStyle: AnimationStyle(curve: Curves.bounceInOut),
-                icon: Icon(Icons.more_vert_rounded),
-                position: PopupMenuPosition.under,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                onSelected: (action) => action.call(context, widget.folder),
-                itemBuilder: (context) {
-                  return [
-                    PopupMenuItem(
-                      value: FolderMenuActions.rename,
-                      child: Text("Rename"),
+                    popUpAnimationStyle: AnimationStyle(
+                      curve: Curves.bounceInOut,
                     ),
-                    PopupMenuItem(value: FolderMenuActions.delete, child: Text("Delete")),
-                  ];
-                },
-              ),
+                    icon: Icon(Icons.more_vert_rounded),
+                    position: PopupMenuPosition.under,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    onSelected: (action) => action.call(context, widget.folder),
+                    itemBuilder: (context) {
+                      return [
+                        PopupMenuItem(
+                          value: FolderMenuActions.rename,
+                          child: Text("Rename"),
+                        ),
+                        PopupMenuItem(
+                          value: FolderMenuActions.delete,
+                          child: Text("Delete"),
+                        ),
+                      ];
+                    },
+                  ),
                 ],
       ),
       body: Padding(

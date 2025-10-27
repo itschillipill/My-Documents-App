@@ -34,7 +34,7 @@ class SettingsCubit extends Cubit<SettingsState> {
     emit(
       SettingsState(
         themeMode: ThemeMode.values[themeIndex],
-        useBiometrics:biometrics,
+        useBiometrics: biometrics,
       ),
     );
   }

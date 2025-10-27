@@ -30,6 +30,7 @@ class FoldersCubit extends Cubit<FoldersState> {
       emit(FoldersError(e.toString()));
     }
   }
+
   Future<void> deleteFolder(int id) async {
     try {
       await dataSource.deleteFolder(id);
@@ -38,6 +39,7 @@ class FoldersCubit extends Cubit<FoldersState> {
       emit(FoldersError(e.toString()));
     }
   }
+
   Future<void> updateFolder(Folder folder) async {
     try {
       await dataSource.updateFolder(folder);

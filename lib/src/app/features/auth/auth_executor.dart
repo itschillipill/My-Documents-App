@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart' show ChangeNotifier, debugPrint;
 import 'package:flutter/services.dart';
 import 'package:local_auth/local_auth.dart';
@@ -8,7 +7,6 @@ class AuthenticationExecutor extends ChangeNotifier {
   final SharedPreferences prefs;
   bool get hasPassword => prefs.containsKey(_storageKey);
   AuthenticationExecutor(this.prefs);
-
 
   bool _authenticated = false;
   bool get authenticated => _authenticated;
@@ -21,7 +19,6 @@ class AuthenticationExecutor extends ChangeNotifier {
 
   final LocalAuthentication _auth = LocalAuthentication();
 
-
   Future<bool> get canCheckBiometrics async => await _auth.canCheckBiometrics;
 
   Future<bool> authenticateByBiometrics({
@@ -31,7 +28,10 @@ class AuthenticationExecutor extends ChangeNotifier {
     try {
       result = await _auth.authenticate(
         localizedReason: reason,
-        options: const AuthenticationOptions(biometricOnly: true, stickyAuth: true),
+        options: const AuthenticationOptions(
+          biometricOnly: true,
+          stickyAuth: true,
+        ),
       );
     } catch (e) {
       Clipboard.setData(ClipboardData(text: e.toString()));

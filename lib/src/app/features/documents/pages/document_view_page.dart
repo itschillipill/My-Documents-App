@@ -26,13 +26,18 @@ class DocumentViewPage extends StatelessWidget {
     return BlocBuilder<DocumentsCubit, DocumentsState>(
       buildWhen: (previous, current) => current is DocumentsLoaded,
       builder: (context, state) {
-        final cubit =context.read<DocumentsCubit>();
-        if (state is! DocumentsLoaded) return Center(child: CircularProgressIndicator(),);
+        final cubit = context.read<DocumentsCubit>();
+        if (state is! DocumentsLoaded)
+          return Center(child: CircularProgressIndicator());
         final document = cubit.getDocumentById(documentId);
-        if (document == null) return Center(child: Text("Document not found"),);
-        final documentVersion = cubit.getDocumentVersionByDocumentId(documentId: documentId, versionId: versionId);
-        if (documentVersion == null) return Center(child: Text("Document version not found"),);
-              
+        if (document == null) return Center(child: Text("Document not found"));
+        final documentVersion = cubit.getDocumentVersionByDocumentId(
+          documentId: documentId,
+          versionId: versionId,
+        );
+        if (documentVersion == null)
+          return Center(child: Text("Document version not found"));
+
         debugPrint(document.toMap().toString());
         debugPrint(document.versions.map((e) => e.toMap()).join("\n"));
         return Scaffold(
@@ -60,7 +65,10 @@ class DocumentViewPage extends StatelessWidget {
                             : "Change Folder",
                       ),
                     ),
-                    PopupMenuItem(value: DocumentMenuAction.rename, child: Text("Rename")),
+                    PopupMenuItem(
+                      value: DocumentMenuAction.rename,
+                      child: Text("Rename"),
+                    ),
                   ];
                 },
               ),
@@ -194,6 +202,3 @@ class DocumentRow extends StatelessWidget {
     );
   }
 }
-
-
-

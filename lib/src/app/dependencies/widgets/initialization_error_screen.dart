@@ -19,7 +19,9 @@ void _initializationErrorHandler(Object error, StackTrace stackTrace) {
       ),
       builder:
           (context, child) => MediaQuery(
-            data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(1.0),),
+            data: MediaQuery.of(
+              context,
+            ).copyWith(textScaler: TextScaler.linear(1.0)),
             child: WindowScope(
               title: AppData.appName,
               child: child ?? const SizedBox.shrink(),

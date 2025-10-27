@@ -58,23 +58,26 @@ class DocumentsCubit extends Cubit<DocumentsState> {
     }
   }
 
-  Document? getDocumentById(int documentId){
+  Document? getDocumentById(int documentId) {
     if (state is DocumentsLoaded) {
       return (state as DocumentsLoaded).documents
-    .where((e) => e.id == documentId)
-    .cast<Document?>()
-    .firstOrNull;
+          .where((e) => e.id == documentId)
+          .cast<Document?>()
+          .firstOrNull;
     }
     return null;
   }
 
-  DocumentVersion? getDocumentVersionByDocumentId({required int documentId, int? versionId}){
+  DocumentVersion? getDocumentVersionByDocumentId({
+    required int documentId,
+    int? versionId,
+  }) {
     final document = getDocumentById(documentId);
     if (document == null) throw Exception("Document not found");
     if (versionId == null) return document.versions.first;
-    return document.versions.where((e) => e.id == versionId).cast<DocumentVersion?>()
-    .firstOrNull;
+    return document.versions
+        .where((e) => e.id == versionId)
+        .cast<DocumentVersion?>()
+        .firstOrNull;
   }
-    
-  
 }

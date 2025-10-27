@@ -34,20 +34,17 @@ class DocumentVersionCard extends StatelessWidget {
             children: [
               Container(
                 decoration: BoxDecoration(
-                  color: isCurrent
-                      ? Colors.green.withValues(alpha: 0.1)
-                      : theme.colorScheme.primary.withValues(alpha: 0.08),
+                  color:
+                      isCurrent
+                          ? Colors.green.withValues(alpha: 0.1)
+                          : theme.colorScheme.primary.withValues(alpha: 0.08),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 padding: const EdgeInsets.all(12),
                 child: Icon(
-                  isCurrent
-                      ? Icons.verified_rounded
-                      : Icons.history_rounded,
+                  isCurrent ? Icons.verified_rounded : Icons.history_rounded,
                   size: 32,
-                  color: isCurrent
-                      ? Colors.green
-                      : theme.colorScheme.primary,
+                  color: isCurrent ? Colors.green : theme.colorScheme.primary,
                 ),
               ),
               const SizedBox(width: 12),
@@ -80,7 +77,9 @@ class DocumentVersionCard extends StatelessWidget {
                     Text(
                       "Uploaded: ${documentVersion.uploadedAt.formatted}",
                       style: theme.textTheme.bodySmall?.copyWith(
-                        color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                        color: theme.colorScheme.onSurface.withValues(
+                          alpha: 0.6,
+                        ),
                       ),
                     ),
                     if (documentVersion.comment != null &&

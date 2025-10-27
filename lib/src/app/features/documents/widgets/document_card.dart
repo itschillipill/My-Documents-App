@@ -7,11 +7,7 @@ import 'package:my_documents/src/app/widgets/label.dart';
 class DocumentCard extends StatelessWidget {
   final Document document;
   final VoidCallback onTap;
-  const DocumentCard({
-    super.key,
-    required this.document,
-    required this.onTap,
-  });
+  const DocumentCard({super.key, required this.document, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +52,9 @@ class DocumentCard extends StatelessWidget {
                       Text(
                         "Created: ${document.createdAt.formatted}",
                         style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                          color: theme.colorScheme.onSurface.withValues(
+                            alpha: 0.6,
+                          ),
                         ),
                       ),
                       const SizedBox(height: 8),
@@ -73,11 +71,7 @@ class DocumentCard extends StatelessWidget {
                   ),
                 ),
                 if (document.isFavorite)
-                  const Icon(
-                    Icons.star_rounded,
-                    color: Colors.amber,
-                    size: 20,
-                  ),
+                  const Icon(Icons.star_rounded, color: Colors.amber, size: 20),
               ],
             ),
           ),
