@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show debugPrint;
 import 'package:sqflite/sqflite.dart';
 
 import '../../features/folders/model/folder.dart';
@@ -28,12 +29,16 @@ class FolderService {
   }
 
   Future<void> deleteFolder(int id) async {
-    await _db!.update(
+   try {
+      await _db?.update(
       'documents',
       {'folderId': null},
       where: 'folderId = ?',
       whereArgs: [id],
     );
-    await _db.delete('folders', where: 'id = ?', whereArgs: [id]);
+    await _db?.delete('folders', where: 'id = ?', whereArgs: [id]);
+   } catch (e) {
+    debugPrint(e.toString());
+   }
   }
 }

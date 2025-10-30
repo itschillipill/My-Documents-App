@@ -3,6 +3,7 @@ import 'package:crypto/crypto.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:my_documents/src/utils/sevices/message_service.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 
@@ -54,11 +55,7 @@ class FileService {
     String? path;
     if (imageSource != null) {
       if (imageSource == ImageSource.camera && !isMobile) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text("This feature is not available on desktop"),
-          ),
-        );
+        MessageService.showToast("This feature is not available on desktop");
         return null;
       }
       final image = await ImagePicker().pickImage(source: imageSource);

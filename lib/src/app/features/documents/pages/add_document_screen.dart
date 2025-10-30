@@ -31,7 +31,7 @@ class _AddDocumentScreenState extends State<AddDocumentScreen> {
   Folder? _folder;
   DateTime? _expirationDate;
   bool isFavorite = false;
-  String? _originalPath; // путь к выбранному файлу
+  String? _originalPath; 
 
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _commentController = TextEditingController();

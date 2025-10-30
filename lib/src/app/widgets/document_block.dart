@@ -24,8 +24,9 @@ class DocumentsBlock extends StatelessWidget {
           final prioritizedDocs = [...favorites, ...nonFavorites];
 
           final docsToShow = prioritizedDocs.take(3).toList();
-          if (docsToShow.isEmpty)
+          if (docsToShow.isEmpty) {
             return Center(child: Text("No documents here, yet!"));
+          }
 
           final items = [...docsToShow, null];
 

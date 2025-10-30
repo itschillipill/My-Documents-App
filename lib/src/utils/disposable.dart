@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 mixin Disposable<T extends StatefulWidget> on State<T> {
   final List<Function> _disposeStack = [];
@@ -26,5 +27,34 @@ mixin Disposable<T extends StatefulWidget> on State<T> {
   void dispose() {
     unawaited(_runDisposeStack());
     super.dispose();
+  }
+}
+
+
+class ValidatableBlockBuilder<B extends StateStreamable<S>, S, T> extends StatelessWidget {
+  final BlocWidgetBuilder<S>? orElse;
+  final BlocWidgetBuilder<T> builder;
+  final B? bloc;
+
+  const ValidatableBlockBuilder({
+    super.key,
+    this.bloc,
+    required this.orElse,
+    required this.builder,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<B, S>(
+      bloc: bloc,
+      builder: (context, state) {
+        if (state is T) {
+          return builder(context, state);
+        } else if (orElse != null){
+          return orElse!(context, state);
+        }
+        return const SizedBox.shrink();
+      },
+    );
   }
 }

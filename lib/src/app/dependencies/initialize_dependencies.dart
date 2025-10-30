@@ -85,7 +85,7 @@ mixin InitializeDependencies {
             deps.documentsCubit = DocumentsCubit(dataSource: deps.dataSource);
             deps.foldersCubit = FoldersCubit(dataSource: deps.dataSource);
 
-            await Future.delayed(const Duration(seconds: 1));
+            await Future.delayed(const Duration(milliseconds: 500));
           },
         ),
       ];

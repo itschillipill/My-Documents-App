@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:my_documents/src/app/features/documents/cubit/documents_cubit.dart';
 import 'package:my_documents/src/app/features/folders/cubit/folders_cubit.dart';
 import 'package:my_documents/src/app/features/folders/model/folder.dart';
 
@@ -41,8 +42,10 @@ Future<void> _rename(BuildContext context, Folder folder) async {
 }
 
 Future<void> _delete(BuildContext context, Folder folder) async {
-  final cubit = context.read<FoldersCubit>();
-  if (await showDialog<bool>(
+  final foldersCubit = context.read<FoldersCubit>();
+  final documentsCubit = context.read<DocumentsCubit>();
+
+  final confirmed = await showDialog<bool>(
         context: context,
         builder: (context) {
           return AlertDialog(
@@ -61,8 +64,12 @@ Future<void> _delete(BuildContext context, Folder folder) async {
           );
         },
       ) ??
-      false) {
-    cubit.deleteFolder(folder.id);
-    Navigator.pop(context);
+      false;
+
+  if (confirmed) {
+    await foldersCubit.deleteFolder(folder.id).then((v)async{
+       await documentsCubit.loadData();
+    });
+    if (context.mounted) Navigator.pop(context);
   }
 }

@@ -53,6 +53,7 @@ class DocumentVersionHistory extends StatelessWidget {
                       itemCount: versions.length,
                       itemBuilder: (context, index) {
                         return DocumentVersionCard(
+                          index: document.versions.indexOf(versions[index]),
                           onDelete: () {},
                           onSetCurrent: () {},
                           documentVersion: versions[index],

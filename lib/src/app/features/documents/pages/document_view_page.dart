@@ -27,19 +27,21 @@ class DocumentViewPage extends StatelessWidget {
       buildWhen: (previous, current) => current is DocumentsLoaded,
       builder: (context, state) {
         final cubit = context.read<DocumentsCubit>();
-        if (state is! DocumentsLoaded)
+        if (state is! DocumentsLoaded) {
           return Center(child: CircularProgressIndicator());
+        }
         final document = cubit.getDocumentById(documentId);
         if (document == null) return Center(child: Text("Document not found"));
         final documentVersion = cubit.getDocumentVersionByDocumentId(
           documentId: documentId,
           versionId: versionId,
         );
-        if (documentVersion == null)
+        if (documentVersion == null) {
           return Center(child: Text("Document version not found"));
+        }
 
         debugPrint(document.toMap().toString());
-        debugPrint(document.versions.map((e) => e.toMap()).join("\n"));
+      //  debugPrint(document.versions.map((e) => e.toMap()).join("\n"));
         return Scaffold(
           appBar: AppBar(
             title: Text(
