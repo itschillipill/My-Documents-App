@@ -30,8 +30,8 @@ mixin Disposable<T extends StatefulWidget> on State<T> {
   }
 }
 
-
-class ValidatableBlockBuilder<B extends StateStreamable<S>, S, T> extends StatelessWidget {
+class ValidatableBlockBuilder<B extends StateStreamable<S>, S, T>
+    extends StatelessWidget {
   final BlocWidgetBuilder<S>? orElse;
   final BlocWidgetBuilder<T> builder;
   final B? bloc;
@@ -50,7 +50,7 @@ class ValidatableBlockBuilder<B extends StateStreamable<S>, S, T> extends Statel
       builder: (context, state) {
         if (state is T) {
           return builder(context, state);
-        } else if (orElse != null){
+        } else if (orElse != null) {
           return orElse!(context, state);
         }
         return const SizedBox.shrink();

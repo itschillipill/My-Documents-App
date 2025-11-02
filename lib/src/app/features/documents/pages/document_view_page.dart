@@ -41,7 +41,7 @@ class DocumentViewPage extends StatelessWidget {
         }
 
         debugPrint(document.toMap().toString());
-      //  debugPrint(document.versions.map((e) => e.toMap()).join("\n"));
+        //  debugPrint(document.versions.map((e) => e.toMap()).join("\n"));
         return Scaffold(
           appBar: AppBar(
             title: Text(

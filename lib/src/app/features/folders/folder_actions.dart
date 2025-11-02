@@ -45,7 +45,8 @@ Future<void> _delete(BuildContext context, Folder folder) async {
   final foldersCubit = context.read<FoldersCubit>();
   final documentsCubit = context.read<DocumentsCubit>();
 
-  final confirmed = await showDialog<bool>(
+  final confirmed =
+      await showDialog<bool>(
         context: context,
         builder: (context) {
           return AlertDialog(
@@ -67,8 +68,8 @@ Future<void> _delete(BuildContext context, Folder folder) async {
       false;
 
   if (confirmed) {
-    await foldersCubit.deleteFolder(folder.id).then((v)async{
-       await documentsCubit.loadData();
+    await foldersCubit.deleteFolder(folder.id).then((v) async {
+      await documentsCubit.loadData();
     });
     if (context.mounted) Navigator.pop(context);
   }

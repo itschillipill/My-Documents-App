@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:my_documents/src/app/extensions/extensions.dart';
 import 'package:my_documents/src/app/features/documents/model/document.dart';
+import 'package:my_documents/src/app/features/documents/widgets/date_picker.dart';
 import 'package:my_documents/src/app/features/documents/widgets/file_picker_block.dart';
 import 'package:my_documents/src/utils/page_transition/app_page_route.dart';
 import 'package:my_documents/src/utils/sevices/file_service.dart';
 import 'package:my_documents/src/utils/sevices/message_service.dart';
-import 'package:path/path.dart' as p;
 
 import '../cubit/documents_cubit.dart';
 import '../widgets/build_card.dart';
@@ -94,17 +93,12 @@ class _AddNewDocumentVersionState extends State<AddNewDocumentVersion> {
             crossAxisAlignment: CrossAxisAlignment.start,
             spacing: 20,
             children: [
-              _originalPath == null
-                  ? FilePickerBlock(
-                    onSelected: (path) {
-                      setState(() => _originalPath = path);
-                    },
-                  )
-                  : BuildCard(
-                    text: p.basename(_originalPath!),
-                    icon: Icons.insert_drive_file,
-                    onTap: () {},
-                  ),
+              FilePickerBlock(
+                path: _originalPath,
+                onSelected: (path) {
+                  setState(() => _originalPath = path);
+                },
+              ),
               BuildSection(
                 children: [
                   Text(
@@ -118,29 +112,11 @@ class _AddNewDocumentVersionState extends State<AddNewDocumentVersion> {
                     minLines: 3,
                     decoration: const InputDecoration(hintText: "Comment"),
                   ),
-                  TextField(
-                    readOnly: true,
-                    controller: TextEditingController(
-                      text:
-                          _expirationDate == null
-                              ? "No expiration"
-                              : _expirationDate!.formatted,
-                    ),
-                    decoration: const InputDecoration(
-                      hintText: "Expiration Date",
-                      suffixIcon: Icon(Icons.calendar_month_rounded),
-                    ),
-                    onTap: () async {
-                      final date = await showDatePicker(
-                        context: context,
-                        initialDate: DateTime.now(),
-                        firstDate: DateTime.now(),
-                        lastDate: DateTime.now().add(const Duration(days: 365)),
-                      );
-                      setState(() {
-                        _expirationDate = date;
-                      });
+                  DatePicker(
+                    onTap: (date) {
+                      setState(() => _expirationDate = date);
                     },
+                    expirationDate: _expirationDate,
                   ),
                 ],
               ),

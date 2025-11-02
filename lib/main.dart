@@ -6,8 +6,7 @@ import 'package:flutter/services.dart' show DeviceOrientation;
 import 'src/app/app.dart';
 import 'src/app/dependencies/initialization.dart';
 import 'src/app/dependencies/widgets/dependencies_scope.dart';
-import 'src/app/dependencies/widgets/splash_screen.dart'
-    show InitializationSplashScreen;
+import 'src/app/dependencies/widgets/splash_screen.dart';
 import 'src/app/widgets/windows_scope.dart';
 import 'src/utils/app_data.dart';
 import 'src/utils/theme/theme.dart';

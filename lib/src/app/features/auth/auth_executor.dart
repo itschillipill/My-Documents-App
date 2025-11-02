@@ -5,7 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthenticationExecutor extends ChangeNotifier {
   final SharedPreferences prefs;
- 
+
   AuthenticationExecutor(this.prefs);
 
   bool _authenticated = false;
@@ -45,7 +45,7 @@ class AuthenticationExecutor extends ChangeNotifier {
     notifyListeners();
     return authenticated;
   }
-//TODO: Change savig password method
+  //TODO: Change savig password method
 
   Future<bool> authenticateByPIN(String pin) async {
     authenticated = await verefyPin(pin);
@@ -69,5 +69,5 @@ class AuthenticationExecutor extends ChangeNotifier {
     notifyListeners();
   }
 
-   bool get hasPassword => prefs.containsKey(_storageKey);
+  bool get hasPassword => prefs.containsKey(_storageKey);
 }

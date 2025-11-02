@@ -29,16 +29,16 @@ class FolderService {
   }
 
   Future<void> deleteFolder(int id) async {
-   try {
+    try {
       await _db?.update(
-      'documents',
-      {'folderId': null},
-      where: 'folderId = ?',
-      whereArgs: [id],
-    );
-    await _db?.delete('folders', where: 'id = ?', whereArgs: [id]);
-   } catch (e) {
-    debugPrint(e.toString());
-   }
+        'documents',
+        {'folderId': null},
+        where: 'folderId = ?',
+        whereArgs: [id],
+      );
+      await _db?.delete('folders', where: 'id = ?', whereArgs: [id]);
+    } catch (e) {
+      debugPrint(e.toString());
+    }
   }
 }

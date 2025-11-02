@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:my_documents/src/app/extensions/extensions.dart';
+import 'package:my_documents/src/app/features/documents/widgets/date_picker.dart';
 import 'package:my_documents/src/app/features/documents/widgets/file_picker_block.dart';
 import 'package:my_documents/src/app/features/folders/model/folder.dart';
 import 'package:my_documents/src/utils/sevices/message_service.dart';
-import 'package:path/path.dart' as p;
 
 import 'package:my_documents/src/app/widgets/border_box.dart';
 import 'package:my_documents/src/utils/page_transition/app_page_route.dart';
@@ -31,7 +30,7 @@ class _AddDocumentScreenState extends State<AddDocumentScreen> {
   Folder? _folder;
   DateTime? _expirationDate;
   bool isFavorite = false;
-  String? _originalPath; 
+  String? _originalPath;
 
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _commentController = TextEditingController();
@@ -161,29 +160,12 @@ class _AddDocumentScreenState extends State<AddDocumentScreen> {
                 ],
               ),
 
-              _originalPath == null
-                  ? FilePickerBlock(
-                    onSelected: (path) {
-                      setState(() => _originalPath = path);
-                    },
-                  )
-                  : BuildSection(
-                    children: [
-                      BuildCard(
-                        text: p.basename(_originalPath!),
-                        icon: Icons.insert_drive_file,
-                        onTap: () {},
-                      ),
-                      ElevatedButton(
-                        onPressed: () {
-                          setState(() {
-                            _originalPath = null;
-                          });
-                        },
-                        child: Text("Remove File"),
-                      ),
-                    ],
-                  ),
+              FilePickerBlock(
+                path: _originalPath,
+                onSelected: (path) {
+                  setState(() => _originalPath = path);
+                },
+              ),
 
               BuildSection(
                 children: [
@@ -204,29 +186,12 @@ class _AddDocumentScreenState extends State<AddDocumentScreen> {
                     minLines: 3,
                     decoration: const InputDecoration(hintText: "Comment"),
                   ),
-                  TextField(
-                    readOnly: true,
-                    controller: TextEditingController(
-                      text:
-                          _expirationDate == null
-                              ? "No expiration"
-                              : _expirationDate!.formatted,
-                    ),
-                    decoration: const InputDecoration(
-                      hintText: "Expiration Date",
-                      suffixIcon: Icon(Icons.calendar_month_rounded),
-                    ),
-                    onTap: () async {
-                      final date = await showDatePicker(
-                        context: context,
-                        initialDate: DateTime.now(),
-                        firstDate: DateTime.now(),
-                        lastDate: DateTime.now().add(const Duration(days: 365)),
-                      );
-                      setState(() {
-                        _expirationDate = date;
-                      });
-                    },
+                  DatePicker(
+                    onTap:
+                        (date) => setState(() {
+                          _expirationDate = date;
+                        }),
+                    expirationDate: _expirationDate,
                   ),
                 ],
               ),

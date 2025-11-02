@@ -43,14 +43,19 @@ class DocumentVersionCard extends StatelessWidget {
                       color:
                           isCurrent
                               ? Colors.green.withValues(alpha: 0.1)
-                              : theme.colorScheme.primary.withValues(alpha: 0.08),
+                              : theme.colorScheme.primary.withValues(
+                                alpha: 0.08,
+                              ),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     padding: const EdgeInsets.all(12),
                     child: Icon(
-                      isCurrent ? Icons.verified_rounded : Icons.history_rounded,
+                      isCurrent
+                          ? Icons.verified_rounded
+                          : Icons.history_rounded,
                       size: 32,
-                      color: isCurrent ? Colors.green : theme.colorScheme.primary,
+                      color:
+                          isCurrent ? Colors.green : theme.colorScheme.primary,
                     ),
                   ),
                   Expanded(
@@ -111,41 +116,42 @@ class DocumentVersionCard extends StatelessWidget {
                   ),
                 ],
               ),
-              if (!isCurrent) Column(
-                         mainAxisSize: MainAxisSize.min,
-                         spacing: 5,
-                         children: [
-                           Row(
-                            spacing: 5,
-                              children: [
-                                Expanded(
-                                  child: OutlinedButton.icon(
-                                    onPressed: onOpen,
-                                    icon: const Icon(Icons.remove_red_eye_outlined),
-                                    label: const Text("Open"),
-                                  ),
-                                ),
-                                  
-                               IconButton(
-                                  onPressed: onDelete,
-                                  icon: const Icon(Icons.delete_outline),
-                                  color: Colors.redAccent,
-                                ),
-                              ],
-                            ),
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: ElevatedButton.icon(
-                                    onPressed: onSetCurrent,
-                                    icon: const Icon(Icons.check_circle_outline),
-                                    label: const Text("Set current"),
-                                  ),
-                                ),
-                              ],
-                            ),
-                         ],
-                       ),
+              if (!isCurrent)
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  spacing: 5,
+                  children: [
+                    Row(
+                      spacing: 5,
+                      children: [
+                        Expanded(
+                          child: OutlinedButton.icon(
+                            onPressed: onOpen,
+                            icon: const Icon(Icons.remove_red_eye_outlined),
+                            label: const Text("Open"),
+                          ),
+                        ),
+
+                        IconButton(
+                          onPressed: onDelete,
+                          icon: const Icon(Icons.delete_outline),
+                          color: Colors.redAccent,
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: ElevatedButton.icon(
+                            onPressed: onSetCurrent,
+                            icon: const Icon(Icons.check_circle_outline),
+                            label: const Text("Set current"),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
             ],
           ),
         ),
