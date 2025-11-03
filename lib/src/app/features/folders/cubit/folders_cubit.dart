@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:my_documents/src/utils/sevices/message_service.dart';
 import '../../../data/data_sourse.dart';
 
 import 'package:my_documents/src/app/features/folders/model/folder.dart';
@@ -10,6 +11,12 @@ class FoldersCubit extends Cubit<FoldersState> {
 
   FoldersCubit({required this.dataSource}) : super(FoldersInitial()) {
     loadData();
+  }
+
+  List<Folder> get foldersOrEmpty {
+    final s = state;
+    if (s is FoldersLoaded) return s.folders;
+    return [];
   }
 
   Future<void> loadData() async {
@@ -47,5 +54,18 @@ class FoldersCubit extends Cubit<FoldersState> {
     } catch (e) {
       emit(FoldersError(e.toString()));
     }
+  }
+
+  void saveFolder(Folder folder, {Function()? onSaved}) async {
+    if (folder.name.isEmpty) {
+      MessageService.showSnackBar("Please enter folder name");
+      return;
+    }
+    if (foldersOrEmpty.any((element) => element.name == folder.name)) {
+      MessageService.showSnackBar("This folder already exists");
+      return;
+    }
+    await addFolder(folder);
+    onSaved?.call();
   }
 }

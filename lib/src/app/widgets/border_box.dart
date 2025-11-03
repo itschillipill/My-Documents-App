@@ -6,12 +6,14 @@ class BorderBox extends StatelessWidget {
   final BoxConstraints? constraints;
   final double? height;
   final double? width;
+  final EdgeInsets? padding;
   const BorderBox({
     super.key,
     required this.child,
     this.constraints,
     this.height,
     this.width,
+    this.padding = const EdgeInsets.all(4),
   });
 
   @override
@@ -20,7 +22,7 @@ class BorderBox extends StatelessWidget {
       height: height,
       width: width,
       constraints: constraints,
-      padding: EdgeInsets.all(4),
+      padding: padding,
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.all(Radius.circular(8)),

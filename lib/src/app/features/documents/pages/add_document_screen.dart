@@ -1,16 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:my_documents/src/app/extensions/extensions.dart';
 import 'package:my_documents/src/app/features/documents/widgets/date_picker.dart';
 import 'package:my_documents/src/app/features/documents/widgets/file_picker_block.dart';
 import 'package:my_documents/src/app/features/folders/model/folder.dart';
-import 'package:my_documents/src/utils/sevices/message_service.dart';
 
 import 'package:my_documents/src/app/widgets/border_box.dart';
 import 'package:my_documents/src/utils/page_transition/app_page_route.dart';
-import 'package:my_documents/src/utils/sevices/file_service.dart';
 
-import '../cubit/documents_cubit.dart';
-import '../model/document.dart';
 import '../../folders/pages/select_folder_page.dart';
 import '../widgets/build_card.dart';
 
@@ -35,64 +31,6 @@ class _AddDocumentScreenState extends State<AddDocumentScreen> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _commentController = TextEditingController();
 
-  Future<void> _saveDocument(BuildContext context) async {
-    final title = _titleController.text.trim();
-    final cubit = context.read<DocumentsCubit>();
-
-    if (title.isEmpty || _originalPath == null) {
-      MessageService.showSnackBar("Please enter title and choose a file");
-      return;
-    }
-
-    if ((cubit.state as DocumentsLoaded).documents.any(
-      (element) => element.title == title,
-    )) {
-      MessageService.showSnackBar("Document with this title already exists");
-      return;
-    }
-
-    final isValidSize = await FileService.validateFileSize(_originalPath!);
-    if (!isValidSize) {
-      MessageService.showSnackBar("File is too large (max 50 MB)");
-      return;
-    }
-
-    try {
-      // копируем файл в папку приложения
-      final safePath = await FileService.saveFileToAppDir(_originalPath!);
-
-      final doc = Document(
-        id: 0,
-        title: title,
-        folderId: _folder?.id,
-        isFavorite: isFavorite,
-        createdAt: DateTime.now(),
-        currentVersionId: 1,
-        versions: [
-          DocumentVersion(
-            id: 0,
-            documentId: 0,
-            filePath: safePath,
-            uploadedAt: DateTime.now(),
-            comment:
-                _commentController.text.trim().isEmpty
-                    ? null
-                    : _commentController.text.trim(),
-            expirationDate: _expirationDate,
-          ),
-        ],
-      );
-
-      await cubit.addDocument(doc);
-
-      if (context.mounted) {
-        Navigator.pop(context);
-      }
-    } catch (e) {
-      MessageService.showSnackBar("Error saving file: $e");
-    }
-  }
-
   @override
   void dispose() {
     _titleController.dispose();
@@ -112,7 +50,16 @@ class _AddDocumentScreenState extends State<AddDocumentScreen> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: ElevatedButton(
-              onPressed: () => _saveDocument(context),
+              onPressed:
+                  () => context.deps.documentsCubit.saveDocument(
+                    title: _titleController.text.trim(),
+                    isFavorite: isFavorite,
+                    folderId: _folder?.id,
+                    originalPath: _originalPath,
+                    onSaved: () => Navigator.pop(context),
+                    comment: _commentController.text.trim(),
+                    expirationDate: _expirationDate,
+                  ),
               child: const Text("Save"),
             ),
           ),

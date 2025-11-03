@@ -23,24 +23,41 @@ class DocumentViewPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cubit = context.read<DocumentsCubit>();
+    final document = cubit.getDocumentById(documentId);
+
+    Widget tile({
+      required String label,
+      required IconData icon,
+      VoidCallback? onTap,
+      DocumentMenuAction? action,
+    }) {
+      return ListTile(
+        title: Text(label),
+        leading: Icon(icon),
+        onTap: onTap ?? () => action?.call(context, document!),
+        trailing: onTap != null ? Icon(Icons.arrow_forward_ios_rounded) : null,
+      ).withBorder();
+    }
+
     return BlocBuilder<DocumentsCubit, DocumentsState>(
       buildWhen: (previous, current) => current is DocumentsLoaded,
       builder: (context, state) {
-        final cubit = context.read<DocumentsCubit>();
         if (state is! DocumentsLoaded) {
           return Center(child: CircularProgressIndicator());
         }
-        final document = cubit.getDocumentById(documentId);
+
         if (document == null) return Center(child: Text("Document not found"));
         final documentVersion = cubit.getDocumentVersionByDocumentId(
           documentId: documentId,
-          versionId: versionId,
+          versionId: versionId ?? document.currentVersionId,
         );
         if (documentVersion == null) {
           return Center(child: Text("Document version not found"));
         }
 
         debugPrint(document.toMap().toString());
+
         //  debugPrint(document.versions.map((e) => e.toMap()).join("\n"));
         return Scaffold(
           appBar: AppBar(
@@ -114,7 +131,7 @@ class DocumentViewPage extends StatelessWidget {
                           color: Colors.red,
                         ),
                         child: Center(
-                          child: Text("Preview is not available yet"),
+                          child: Text("Preview is not availabel yet"),
                         ),
                       ),
                     ),
@@ -132,42 +149,33 @@ class DocumentViewPage extends StatelessWidget {
                       ),
                     ),
 
-                    BorderBox(
-                      child: ListTile(
-                        title: Text("Share Document"),
-                        leading: Icon(Icons.share_rounded),
-                        onTap: () {},
-                      ),
+                    tile(
+                      label: "Share Document",
+                      icon: Icons.share_rounded,
+                      action: DocumentMenuAction.share,
                     ),
-                    BorderBox(
-                      child: ListTile(
-                        title: Text("Upload New Version"),
-                        leading: Icon(Icons.file_download_outlined),
-                        onTap:
-                            () async => await Navigator.push(
-                              context,
-                              AddNewDocumentVersion.route(document.id),
-                            ),
-                      ),
+                    tile(
+                      label: "Upload New Version",
+                      icon: Icons.file_download_outlined,
+                      onTap:
+                          () async => await Navigator.push(
+                            context,
+                            AddNewDocumentVersion.route(document.id),
+                          ),
                     ),
-                    BorderBox(
-                      child: ListTile(
-                        title: Text("Manage Versions"),
-                        leading: Icon(Icons.history_rounded),
-                        trailing: Icon(Icons.arrow_forward_ios_rounded),
-                        onTap:
-                            () => Navigator.push(
-                              context,
-                              DocumentVersionHistory.route(document.id),
-                            ),
-                      ),
+                    tile(
+                      label: "Manage Versions",
+                      icon: Icons.history_rounded,
+                      onTap:
+                          () => Navigator.push(
+                            context,
+                            DocumentVersionHistory.route(document.id),
+                          ),
                     ),
-                    BorderBox(
-                      child: ListTile(
-                        title: Text("Delete Document"),
-                        leading: Icon(Icons.delete_rounded),
-                        onTap: () {},
-                      ),
+                    tile(
+                      label: "Delete Document",
+                      icon: Icons.delete_rounded,
+                      action: DocumentMenuAction.delete,
                     ),
                   ],
                 ),

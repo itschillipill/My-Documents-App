@@ -10,13 +10,21 @@ typedef DocumentActionHandler =
 
 enum DocumentMenuAction {
   changeFolder(_changeFolder),
-  rename(_rename);
+  rename(_rename),
+  share(_share),
+  delete(_delete);
 
   final DocumentActionHandler call;
   const DocumentMenuAction(this.call);
 }
 
 Future<void> _rename(BuildContext context, Document document) async {}
+Future<void> _share(BuildContext context, Document document) async {}
+Future<void> _delete(BuildContext context, Document document) async {
+  debugPrint("deleting document: ${document.toMap()}");
+  // await context.read<DocumentsCubit>().deleteDocument(document.id);
+}
+
 Future<void> _changeFolder(BuildContext context, Document document) async {
   final folder = await Navigator.push(context, SelectFolderPage.route());
   if (folder != null && context.mounted) {

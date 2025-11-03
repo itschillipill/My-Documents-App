@@ -21,38 +21,8 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-  Future<String?> _showPinDialog(String title) async {
-    final controller = TextEditingController();
-    return showDialog<String>(
-      context: context,
-      builder:
-          (ctx) => AlertDialog(
-            title: Text(title),
-            content: TextField(
-              controller: controller,
-              keyboardType: TextInputType.number,
-              obscureText: true,
-              decoration: const InputDecoration(
-                border: OutlineInputBorder(),
-                hintText: "Enter PIN",
-              ),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(ctx),
-                child: const Text("Cancel"),
-              ),
-              ElevatedButton(
-                onPressed: () => Navigator.pop(ctx, controller.text),
-                child: const Text("OK"),
-              ),
-            ],
-          ),
-    );
-  }
-
   Future<bool> _verifyOldPin(AuthenticationExecutor authExecutor) async {
-    final oldPin = await _showPinDialog("Enter current PIN");
+    final oldPin = await _showPinSheet("Enter current PIN");
     return oldPin != null &&
         oldPin.isNotEmpty &&
         await authExecutor.verefyPin(oldPin);
@@ -64,7 +34,7 @@ class _SettingsPageState extends State<SettingsPage> {
   }) async {
     if (verifyOld && !await _verifyOldPin(authExecutor)) return;
 
-    final newPin = await _showPinDialog("Enter new PIN");
+    final newPin = await _showPinSheet("Enter new PIN");
     if (newPin?.isNotEmpty ?? false) {
       await authExecutor.createOrChangePin(newPin!);
       if (mounted) {
@@ -99,6 +69,60 @@ class _SettingsPageState extends State<SettingsPage> {
       setState(() {});
       MessageService.showSnackBar("PIN deleted");
     }
+  }
+
+  Future<String?> _showPinSheet(String title) async {
+    final controller = TextEditingController();
+    return showModalBottomSheet<String>(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (ctx) {
+        return Padding(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(ctx).viewInsets.bottom,
+            left: 20,
+            right: 20,
+            top: 20,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            spacing: 16,
+            children: [
+              Text(title, style: Theme.of(ctx).textTheme.titleLarge),
+              TextField(
+                controller: controller,
+                keyboardType: TextInputType.number,
+                obscureText: true,
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  hintText: "Enter PIN",
+                ),
+              ),
+              Row(
+                spacing: 20,
+                children: [
+                  Expanded(
+                    child: OutlinedButton(
+                      onPressed: () => Navigator.pop(ctx),
+                      child: const Text("Cancel"),
+                    ),
+                  ),
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () => Navigator.pop(ctx, controller.text),
+                      child: const Text("OK"),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   @override
