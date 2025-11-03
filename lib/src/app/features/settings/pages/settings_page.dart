@@ -137,146 +137,148 @@ class _SettingsPageState extends State<SettingsPage> {
               style: Theme.of(context).textTheme.headlineMedium,
             ),
           ),
-          body: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: Column(
-                spacing: 20,
-                children: [
-                  SizedBox(height: 1),
-                  SectionBlock(
-                    title: "Security",
-                    children:
-                        authExecutor.hasPassword
-                            ? [
-                              _buildTile(
-                                icon: Icons.lock_rounded,
-                                title: "Change PIN",
-                                subtitle: "Update your security PIN",
-                                onTap:
-                                    () => _createOrChangePin(
-                                      authExecutor,
-                                      verifyOld: true,
-                                    ),
-                              ),
-                              _buildTile(
-                                icon: Icons.delete_forever,
-                                iconColor: Colors.red,
-                                title: "Delete PIN",
-                                subtitle: "Remove your PIN protection",
-                                onTap: () => _deletePin(authExecutor),
-                              ),
-                              SwitchListTile.adaptive(
-                                value:
+          body: SafeArea(
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: Column(
+                  spacing: 20,
+                  children: [
+                    SizedBox(height: 1),
+                    SectionBlock(
+                      title: "Security",
+                      children:
+                          authExecutor.hasPassword
+                              ? [
+                                _buildTile(
+                                  icon: Icons.lock_rounded,
+                                  title: "Change PIN",
+                                  subtitle: "Update your security PIN",
+                                  onTap:
+                                      () => _createOrChangePin(
+                                        authExecutor,
+                                        verifyOld: true,
+                                      ),
+                                ),
+                                _buildTile(
+                                  icon: Icons.delete_forever,
+                                  iconColor: Colors.red,
+                                  title: "Delete PIN",
+                                  subtitle: "Remove your PIN protection",
+                                  onTap: () => _deletePin(authExecutor),
+                                ),
+                                SwitchListTile.adaptive(
+                                  value:
+                                      context
+                                              .read<SettingsCubit>()
+                                              .canUseBiometrics
+                                          ? state.useBiometrics
+                                          : false,
+                                  title: const Text("Biometric Authentication"),
+                                  subtitle: const Text(
+                                    "Use fingerprint or face ID",
+                                  ),
+                                  secondary: const Icon(
+                                    Icons.fingerprint_rounded,
+                                  ),
+                                  onChanged: (v) {
+                                    if (!context
+                                        .read<SettingsCubit>()
+                                        .canUseBiometrics) {
+                                      MessageService.showErrorSnack(
+                                        "Biometric Authentication is not available on this device",
+                                      );
+                                      return;
+                                    }
                                     context
-                                            .read<SettingsCubit>()
-                                            .canUseBiometrics
-                                        ? state.useBiometrics
-                                        : false,
-                                title: const Text("Biometric Authentication"),
-                                subtitle: const Text(
-                                  "Use fingerprint or face ID",
+                                        .read<SettingsCubit>()
+                                        .changeBiometricAuthentication(v);
+                                  },
                                 ),
-                                secondary: const Icon(
-                                  Icons.fingerprint_rounded,
+                              ]
+                              : [
+                                _buildTile(
+                                  icon: Icons.lock_rounded,
+                                  title: "Create PIN",
+                                  onTap: () => _createOrChangePin(authExecutor),
                                 ),
-                                onChanged: (v) {
-                                  if (!context
-                                      .read<SettingsCubit>()
-                                      .canUseBiometrics) {
-                                    MessageService.showErrorSnack(
-                                      "Biometric Authentication is not available on this device",
-                                    );
-                                    return;
-                                  }
-                                  context
-                                      .read<SettingsCubit>()
-                                      .changeBiometricAuthentication(v);
-                                },
+                              ],
+                    ),
+
+                    SectionBlock(
+                      title: "Data Management",
+                      children: [
+                        _buildTile(
+                          icon: Icons.file_upload_outlined,
+                          title: "Export Data",
+                          subtitle: "Backup your documents",
+                        ),
+                        _buildTile(
+                          icon: Icons.file_download_outlined,
+                          title: "Import Data",
+                          subtitle: "Restore from backup",
+                        ),
+                      ],
+                    ),
+                    SectionBlock(
+                      title: "Appearance",
+                      children: [
+                        ListTile(
+                          title: Text("Theme"),
+                          leading: Icon(Icons.dark_mode),
+                          subtitle: Text("Choose app theme"),
+                          trailing: DropdownButton<ThemeMode>(
+                            borderRadius: BorderRadius.circular(8),
+                            underline: SizedBox.shrink(),
+                            icon: Icon(Icons.arrow_drop_down),
+                            onChanged: (value) {
+                              if (value != null) {
+                                context.read<SettingsCubit>().changeThemeMode(
+                                  value,
+                                );
+                              }
+                            },
+                            value: state.themeMode,
+                            items: [
+                              DropdownMenuItem(
+                                value: ThemeMode.light,
+                                child: Text("Light"),
                               ),
-                            ]
-                            : [
-                              _buildTile(
-                                icon: Icons.lock_rounded,
-                                title: "Create PIN",
-                                onTap: () => _createOrChangePin(authExecutor),
+                              DropdownMenuItem(
+                                value: ThemeMode.dark,
+                                child: Text("Dark"),
+                              ),
+                              DropdownMenuItem(
+                                value: ThemeMode.system,
+                                child: Text("System"),
                               ),
                             ],
-                  ),
-
-                  SectionBlock(
-                    title: "Data Management",
-                    children: [
-                      _buildTile(
-                        icon: Icons.file_upload_outlined,
-                        title: "Export Data",
-                        subtitle: "Backup your documents",
-                      ),
-                      _buildTile(
-                        icon: Icons.file_download_outlined,
-                        title: "Import Data",
-                        subtitle: "Restore from backup",
-                      ),
-                    ],
-                  ),
-                  SectionBlock(
-                    title: "Appearance",
-                    children: [
-                      ListTile(
-                        title: Text("Theme"),
-                        leading: Icon(Icons.dark_mode),
-                        subtitle: Text("Choose app theme"),
-                        trailing: DropdownButton<ThemeMode>(
-                          borderRadius: BorderRadius.circular(8),
-                          underline: SizedBox.shrink(),
-                          icon: Icon(Icons.arrow_drop_down),
-                          onChanged: (value) {
-                            if (value != null) {
-                              context.read<SettingsCubit>().changeThemeMode(
-                                value,
-                              );
-                            }
-                          },
-                          value: state.themeMode,
-                          items: [
-                            DropdownMenuItem(
-                              value: ThemeMode.light,
-                              child: Text("Light"),
-                            ),
-                            DropdownMenuItem(
-                              value: ThemeMode.dark,
-                              child: Text("Dark"),
-                            ),
-                            DropdownMenuItem(
-                              value: ThemeMode.system,
-                              child: Text("System"),
-                            ),
-                          ],
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                  SectionBlock(
-                    title: "About",
-                    children: [
-                      _buildTile(
-                        icon: Icons.info,
-                        title: "App Version",
-                        subtitle: AppData.appVersion,
-                      ),
-                      _buildTile(
-                        icon: Icons.star_rate_rounded,
-                        title: "Rate App",
-                        subtitle: "Rate this app",
-                      ),
-                      _buildTile(
-                        icon: Icons.grid_view_rounded,
-                        title: "Other projects",
-                        subtitle: "More projects from our team!",
-                      ),
-                    ],
-                  ),
-                ],
+                      ],
+                    ),
+                    SectionBlock(
+                      title: "About",
+                      children: [
+                        _buildTile(
+                          icon: Icons.info,
+                          title: "App Version",
+                          subtitle: AppData.appVersion,
+                        ),
+                        _buildTile(
+                          icon: Icons.star_rate_rounded,
+                          title: "Rate App",
+                          subtitle: "Rate this app",
+                        ),
+                        _buildTile(
+                          icon: Icons.grid_view_rounded,
+                          title: "Other projects",
+                          subtitle: "More projects from our team!",
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
           ),

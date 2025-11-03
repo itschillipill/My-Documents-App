@@ -47,6 +47,13 @@ class MessageService {
 
   static void showErrorToast(String message) =>
       showToast(message, background: Colors.red.shade600);
+
+  static Future<T?> showDialogGlobal<T>(Widget dialog) {
+    final context = navigatorKey.currentContext;
+    if (context == null) return Future.value(null);
+
+    return showDialog<T>(context: context, builder: (_) => dialog);
+  }
 }
 
 class _ToastWidget extends StatefulWidget {

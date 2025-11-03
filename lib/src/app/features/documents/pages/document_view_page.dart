@@ -4,7 +4,6 @@ import 'package:my_documents/src/app/features/documents/cubit/documents_cubit.da
 import 'package:my_documents/src/app/extensions/extensions.dart';
 import 'package:my_documents/src/app/features/documents/model/document.dart';
 import 'package:my_documents/src/app/features/documents/pages/add_new_document_version.dart';
-import 'package:my_documents/src/app/widgets/border_box.dart';
 import 'package:my_documents/src/utils/page_transition/app_page_route.dart';
 import 'package:open_filex/open_filex.dart';
 
@@ -25,20 +24,6 @@ class DocumentViewPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final cubit = context.read<DocumentsCubit>();
     final document = cubit.getDocumentById(documentId);
-
-    Widget tile({
-      required String label,
-      required IconData icon,
-      VoidCallback? onTap,
-      DocumentMenuAction? action,
-    }) {
-      return ListTile(
-        title: Text(label),
-        leading: Icon(icon),
-        onTap: onTap ?? () => action?.call(context, document!),
-        trailing: onTap != null ? Icon(Icons.arrow_forward_ios_rounded) : null,
-      ).withBorder();
-    }
 
     return BlocBuilder<DocumentsCubit, DocumentsState>(
       buildWhen: (previous, current) => current is DocumentsLoaded,
@@ -66,18 +51,21 @@ class DocumentViewPage extends StatelessWidget {
               style: Theme.of(context).textTheme.headlineMedium,
             ),
             actions: [
-              PopupMenuButton<DocumentMenuAction>(
+              PopupMenuButton<DocumentAction>(
                 popUpAnimationStyle: AnimationStyle(curve: Curves.bounceInOut),
                 icon: Icon(Icons.more_vert_rounded),
                 position: PopupMenuPosition.under,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
-                onSelected: (action) => action.call(context, document),
+                onSelected: (action) => action.call(),
                 itemBuilder: (context) {
                   return [
                     PopupMenuItem(
-                      value: DocumentMenuAction.changeFolder,
+                      value: ChangeFolder$DocumentAction(
+                        context: context,
+                        document: document,
+                      ),
                       child: Text(
                         document.folderId == null
                             ? "Add to Folder"
@@ -85,7 +73,10 @@ class DocumentViewPage extends StatelessWidget {
                       ),
                     ),
                     PopupMenuItem(
-                      value: DocumentMenuAction.rename,
+                      value: Rename$DocumentAction(
+                        context: context,
+                        document: document,
+                      ),
                       child: Text("Rename"),
                     ),
                   ];
@@ -100,29 +91,24 @@ class DocumentViewPage extends StatelessWidget {
                 child: Column(
                   spacing: 20,
                   children: [
-                    BorderBox(
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Column(
-                          spacing: 5,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            DocumentRow("Title", document.title),
-                            DocumentRow(
-                              "Upload Date",
-                              document.createdAt.formatted,
-                            ),
-                            DocumentRow(
-                              "Expiration Date",
-                              documentVersion.expirationDate != null
-                                  ? documentVersion.expirationDate!.formatted
-                                  : "No expiration",
-                            ),
-                            DocumentRow("Status", document.status.statusText),
-                          ],
+                    Column(
+                      spacing: 5,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        DocumentRow("Title", document.title),
+                        DocumentRow(
+                          "Upload Date",
+                          document.createdAt.formatted,
                         ),
-                      ),
-                    ),
+                        DocumentRow(
+                          "Expiration Date",
+                          documentVersion.expirationDate != null
+                              ? documentVersion.expirationDate!.formatted
+                              : "No expiration",
+                        ),
+                        DocumentRow("Status", document.status.statusText),
+                      ],
+                    ).withBorder(padding: EdgeInsets.all(8)),
                     AspectRatio(
                       aspectRatio: 4 / 2,
                       child: DecoratedBox(
@@ -152,7 +138,7 @@ class DocumentViewPage extends StatelessWidget {
                     tile(
                       label: "Share Document",
                       icon: Icons.share_rounded,
-                      action: DocumentMenuAction.share,
+                      action: Share$DocumentAction(document: document),
                     ),
                     tile(
                       label: "Upload New Version",
@@ -175,7 +161,10 @@ class DocumentViewPage extends StatelessWidget {
                     tile(
                       label: "Delete Document",
                       icon: Icons.delete_rounded,
-                      action: DocumentMenuAction.delete,
+                      action: Delete$DocumentAction(
+                        document: document,
+                        cubit: cubit,
+                      ),
                     ),
                   ],
                 ),
@@ -211,4 +200,18 @@ class DocumentRow extends StatelessWidget {
       ],
     );
   }
+}
+
+Widget tile({
+  required String label,
+  required IconData icon,
+  VoidCallback? onTap,
+  DocumentAction? action,
+}) {
+  return ListTile(
+    title: Text(label),
+    leading: Icon(icon),
+    onTap: onTap ?? () => action?.call(),
+    trailing: onTap != null ? Icon(Icons.arrow_forward_ios_rounded) : null,
+  ).withBorder();
 }
