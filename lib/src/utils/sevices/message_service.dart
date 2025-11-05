@@ -48,11 +48,44 @@ class MessageService {
   static void showErrorToast(String message) =>
       showToast(message, background: Colors.red.shade600);
 
-  static Future<T?> showDialogGlobal<T>(Widget dialog) {
+  static Future<T?> showDialogGlobal<T>(Function(BuildContext context) dialog) {
     final context = navigatorKey.currentContext;
-    if (context == null) return Future.value(null);
+    if (context == null) {
+      debugPrint("Context is null");
+      return Future.value(null);
+    }
 
-    return showDialog<T>(context: context, builder: (_) => dialog);
+    return showDialog<T>(context: context, builder: (ctx) => dialog(ctx));
+  }
+
+  static Future<bool> $confirmAction({String title = ""}) async {
+    final res = await showDialogGlobal(
+      (ctx) => AlertDialog(
+        title: RichText(
+          text: TextSpan(
+            children: [
+              TextSpan(text: "Confirm Action "),
+              TextSpan(
+                text: "'$title'",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
+        ),
+        content: Text("Are you sure you want to perform this action?"),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: Text("Cancel"),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: Text("Confirm"),
+          ),
+        ],
+      ),
+    );
+    return res ?? false;
   }
 }
 

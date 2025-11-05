@@ -37,13 +37,22 @@ class DocumentViewPage extends StatelessWidget {
           documentId: documentId,
           versionId: versionId ?? document.currentVersionId,
         );
+        debugPrint(document.toMap().toString());
+        debugPrint(document.versions.map((e) => e.toMap()).join("\n"));
         if (documentVersion == null) {
-          return Center(child: Text("Document version not found"));
+          return Center(
+            child: Column(
+              children: [
+                Text("Document version not found"),
+                ElevatedButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text("Go Back"),
+                ),
+              ],
+            ),
+          );
         }
 
-        debugPrint(document.toMap().toString());
-
-        //  debugPrint(document.versions.map((e) => e.toMap()).join("\n"));
         return Scaffold(
           appBar: AppBar(
             title: Text(
@@ -79,6 +88,17 @@ class DocumentViewPage extends StatelessWidget {
                       ),
                       child: Text("Rename"),
                     ),
+                    PopupMenuItem(
+                      value: ChangeFolder$DocumentAction(
+                        context: context,
+                        document: document,
+                      ),
+                      child: Text(
+                        document.folderId == null
+                            ? "Add to Folder"
+                            : "Change Folder",
+                      ),
+                    ),
                   ];
                 },
               ),
@@ -90,12 +110,26 @@ class DocumentViewPage extends StatelessWidget {
                 padding: EdgeInsets.all(12.0),
                 child: Column(
                   spacing: 20,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    if (documentVersion.comment != null)
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            "Comment:",
+                            style: Theme.of(context).textTheme.bodyLarge,
+                          ),
+                          Row(
+                            children: [Text(documentVersion.comment!)],
+                          ).withBorder(padding: EdgeInsets.all(8)),
+                        ],
+                      ),
                     Column(
                       spacing: 5,
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        DocumentRow("Title", document.title),
                         DocumentRow(
                           "Upload Date",
                           document.createdAt.formatted,
@@ -114,7 +148,7 @@ class DocumentViewPage extends StatelessWidget {
                       child: DecoratedBox(
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(8),
-                          color: Colors.red,
+                          color: Colors.blueGrey,
                         ),
                         child: Center(
                           child: Text("Preview is not availabel yet"),
@@ -138,34 +172,38 @@ class DocumentViewPage extends StatelessWidget {
                     tile(
                       label: "Share Document",
                       icon: Icons.share_rounded,
-                      action: Share$DocumentAction(document: document),
-                    ),
-                    tile(
-                      label: "Upload New Version",
-                      icon: Icons.file_download_outlined,
-                      onTap:
-                          () async => await Navigator.push(
-                            context,
-                            AddNewDocumentVersion.route(document.id),
-                          ),
-                    ),
-                    tile(
-                      label: "Manage Versions",
-                      icon: Icons.history_rounded,
-                      onTap:
-                          () => Navigator.push(
-                            context,
-                            DocumentVersionHistory.route(document.id),
-                          ),
-                    ),
-                    tile(
-                      label: "Delete Document",
-                      icon: Icons.delete_rounded,
-                      action: Delete$DocumentAction(
-                        document: document,
-                        cubit: cubit,
+                      action: Share$DocumentAction(
+                        path: documentVersion.filePath,
                       ),
                     ),
+                    if (versionId == null) ...[
+                      tile(
+                        label: "Upload New Version",
+                        icon: Icons.file_download_outlined,
+                        onTap:
+                            () async => await Navigator.push(
+                              context,
+                              AddNewDocumentVersion.route(document.id),
+                            ),
+                      ),
+                      tile(
+                        label: "Manage Versions",
+                        icon: Icons.history_rounded,
+                        onTap:
+                            () => Navigator.push(
+                              context,
+                              DocumentVersionHistory.route(document.id),
+                            ),
+                      ),
+                      tile(
+                        label: "Delete Document",
+                        icon: Icons.delete_rounded,
+                        action: Delete$DocumentAction(
+                          document: document,
+                          cubit: cubit,
+                        ),
+                      ),
+                    ],
                   ],
                 ),
               ),

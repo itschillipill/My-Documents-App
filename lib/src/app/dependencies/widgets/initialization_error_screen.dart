@@ -1,6 +1,6 @@
 part of 'package:my_documents/main.dart';
 
-void _initializationErrorHandler(Object error, StackTrace stackTrace) {
+void _$initializationErrorHandler(Object error, StackTrace stackTrace) {
   debugPrint("Initialization error: $error");
   debugPrintStack(stackTrace: stackTrace);
   runApp(
@@ -13,9 +13,7 @@ void _initializationErrorHandler(Object error, StackTrace stackTrace) {
       home: InitializationErrorScreen(
         error: error,
         stackTrace: stackTrace,
-        onRetry: () {
-          main();
-        },
+        onRetry: main,
       ),
       builder:
           (context, child) => MediaQuery(

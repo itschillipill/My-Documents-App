@@ -1,18 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:my_documents/src/utils/sevices/file_service.dart';
 import 'package:my_documents/src/utils/sevices/message_service.dart';
 
 import '../folders/pages/select_folder_page.dart';
 import 'cubit/documents_cubit.dart';
 import 'model/document.dart';
 
-/// Базовый класс для всех действий с документом
 abstract class DocumentAction {
   const DocumentAction();
   Future<void> call();
 }
 
-/// Действие: изменить папку документа
 class ChangeFolder$DocumentAction extends DocumentAction {
   final BuildContext context;
   final Document document;
@@ -30,7 +29,6 @@ class ChangeFolder$DocumentAction extends DocumentAction {
   }
 }
 
-/// Действие: переименовать документ
 class Rename$DocumentAction extends DocumentAction {
   final BuildContext context;
   final Document document;
@@ -41,7 +39,7 @@ class Rename$DocumentAction extends DocumentAction {
   Future<void> call() async {
     final controller = TextEditingController(text: document.title);
     final newName = await MessageService.showDialogGlobal<String>(
-      AlertDialog(
+      (ctx) => AlertDialog(
         title: Text("Rename Document"),
         content: TextField(
           controller: controller,
@@ -49,11 +47,11 @@ class Rename$DocumentAction extends DocumentAction {
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => Navigator.pop(ctx),
             child: Text("Cancel"),
           ),
           TextButton(
-            onPressed: () => Navigator.pop(context, controller.text),
+            onPressed: () => Navigator.pop(ctx, controller.text),
             child: Text("Save"),
           ),
         ],
@@ -61,12 +59,10 @@ class Rename$DocumentAction extends DocumentAction {
     );
     if (newName == null) return;
     debugPrint("Renaming ${document.title} to $newName");
-    // Тут можно вызвать cubit для изменения имени
     // await context.read<DocumentsCubit>().renameDocument(document.id, newName);
   }
 }
 
-/// Действие: удалить документ
 class Delete$DocumentAction extends DocumentAction {
   final Document document;
   final DocumentsCubit cubit;
@@ -75,20 +71,26 @@ class Delete$DocumentAction extends DocumentAction {
 
   @override
   Future<void> call() async {
-    debugPrint("Deleting ${document.title}");
-    await cubit.deleteDocument(document.id);
+    try {
+      final confirm = await MessageService.$confirmAction(title: "Delete");
+      if (!confirm) return;
+      debugPrint("Deleting ${document.title}");
+    } catch (e) {
+      MessageService.showErrorSnack(e.toString());
+    }
+
+    //   await cubit.deleteDocument(document.id);
   }
 }
 
-/// Действие: поделиться документом
 class Share$DocumentAction extends DocumentAction {
-  final Document document;
+  final String path;
 
-  Share$DocumentAction({required this.document});
+  Share$DocumentAction({required this.path});
 
   @override
   Future<void> call() async {
-    debugPrint("Sharing ${document.title}");
-    // Можно открыть share диалог
+    debugPrint("Sharing $path");
+    await FileService.shareFile(path);
   }
 }

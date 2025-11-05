@@ -39,14 +39,14 @@ class DocumentsCubit extends Cubit<DocumentsState> {
     }
   }
 
-  Future<void> deleteDocument(int documentId) async {
-    try {
-      await dataSource.deleteDocument(documentId);
-      await loadData();
-    } catch (e) {
-      emit(DocumentsError(e.toString()));
-    }
-  }
+  // Future<void> deleteDocument(int documentId) async {
+  //   try {
+  //     await dataSource.deleteDocument(documentId);
+  //     await loadData();
+  //   } catch (e) {
+  //     emit(DocumentsError(e.toString()));
+  //   }
+  // }
 
   Future<void> updateDocument(Document updatedDocument) async {
     try {
@@ -76,7 +76,8 @@ class DocumentsCubit extends Cubit<DocumentsState> {
     final document = getDocumentById(documentId);
     if (document == null) throw Exception("Document not found");
     if (versionId == null) return document.versions.first;
-    return document.versions.where((e) => e.id == versionId).firstOrNull;
+    return document.versions.where((e) => e.id == versionId).firstOrNull ??
+        document.versions.firstOrNull;
   }
 
   Future<void> saveDocument({

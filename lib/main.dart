@@ -19,7 +19,7 @@ void main() => runZonedGuarded(() {
     DependenciesScope(
       initialization: initialization(
         orientations: [DeviceOrientation.portraitUp],
-        onError: _initializationErrorHandler,
+        onError: _$initializationErrorHandler,
       ),
       splashScreen: InitializationSplashScreen(progress: initialization),
       child: const App(),

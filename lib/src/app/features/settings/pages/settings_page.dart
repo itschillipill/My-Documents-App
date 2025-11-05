@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:my_documents/src/app/extensions/extensions.dart';
 import 'package:my_documents/src/app/features/auth/auth_executor.dart';
 import 'package:my_documents/src/app/features/settings/cubit/settings_cubit.dart';
 import 'package:my_documents/src/app/features/folders/widgets/section_block.dart';
@@ -7,7 +8,6 @@ import 'package:my_documents/src/utils/app_data.dart';
 import 'package:my_documents/src/utils/sevices/message_service.dart';
 
 import '../../../../utils/page_transition/app_page_route.dart';
-import '../../../dependencies/widgets/dependencies_scope.dart';
 
 class SettingsPage extends StatefulWidget {
   static PageRoute route() => AppPageRoute.build(
@@ -82,7 +82,9 @@ class _SettingsPageState extends State<SettingsPage> {
       builder: (ctx) {
         return Padding(
           padding: EdgeInsets.only(
-            bottom: MediaQuery.of(ctx).viewInsets.bottom,
+            bottom:
+                MediaQuery.of(ctx).viewInsets.bottom +
+                MediaQuery.of(ctx).padding.bottom,
             left: 20,
             right: 20,
             top: 20,
@@ -129,7 +131,8 @@ class _SettingsPageState extends State<SettingsPage> {
   Widget build(BuildContext context) {
     return BlocBuilder<SettingsCubit, SettingsState>(
       builder: (context, state) {
-        final authExecutor = DependenciesScope.of(context).authExecutor;
+        final authExecutor = context.deps.authExecutor;
+        final settingCubit = context.deps.settingsCubit;
         return Scaffold(
           appBar: AppBar(
             title: Text(
@@ -144,7 +147,6 @@ class _SettingsPageState extends State<SettingsPage> {
                 child: Column(
                   spacing: 20,
                   children: [
-                    SizedBox(height: 1),
                     SectionBlock(
                       title: "Security",
                       children:
@@ -169,9 +171,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                 ),
                                 SwitchListTile.adaptive(
                                   value:
-                                      context
-                                              .read<SettingsCubit>()
-                                              .canUseBiometrics
+                                      settingCubit.canUseBiometrics
                                           ? state.useBiometrics
                                           : false,
                                   title: const Text("Biometric Authentication"),
@@ -182,17 +182,15 @@ class _SettingsPageState extends State<SettingsPage> {
                                     Icons.fingerprint_rounded,
                                   ),
                                   onChanged: (v) {
-                                    if (!context
-                                        .read<SettingsCubit>()
-                                        .canUseBiometrics) {
+                                    if (!settingCubit.canUseBiometrics) {
                                       MessageService.showErrorSnack(
                                         "Biometric Authentication is not available on this device",
                                       );
                                       return;
                                     }
-                                    context
-                                        .read<SettingsCubit>()
-                                        .changeBiometricAuthentication(v);
+                                    settingCubit.changeBiometricAuthentication(
+                                      v,
+                                    );
                                   },
                                 ),
                               ]
@@ -233,9 +231,7 @@ class _SettingsPageState extends State<SettingsPage> {
                             icon: Icon(Icons.arrow_drop_down),
                             onChanged: (value) {
                               if (value != null) {
-                                context.read<SettingsCubit>().changeThemeMode(
-                                  value,
-                                );
+                                settingCubit.changeThemeMode(value);
                               }
                             },
                             value: state.themeMode,

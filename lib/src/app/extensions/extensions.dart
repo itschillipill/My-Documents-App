@@ -16,7 +16,7 @@ extension DateExtension on DateTime {
   }
 }
 
-extension ListTileX on Widget {
+extension WidgetX on Widget {
   Widget withBorder({EdgeInsets? padding}) =>
       BorderBox(padding: padding, child: this);
 }

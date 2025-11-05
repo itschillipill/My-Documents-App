@@ -6,6 +6,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:my_documents/src/utils/sevices/message_service.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
+import 'package:share_plus/share_plus.dart';
 
 class FileService {
   static const int maxFileSize = 50 * 1024 * 1024; // 50 MB
@@ -111,5 +112,19 @@ class FileService {
     } while (await File(newPath).exists());
 
     return newPath;
+  }
+
+  static Future<void> shareFile(String path) async {
+    try {
+      final file = File(path);
+      if (await file.exists()) {
+        await SharePlus.instance.share(ShareParams(files: [XFile(path)]));
+      } else {
+        debugPrint("File not found: $path");
+        MessageService.showErrorSnack("File not found: $path");
+      }
+    } catch (e) {
+      MessageService.showErrorSnack(e.toString());
+    }
   }
 }
