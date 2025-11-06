@@ -18,8 +18,7 @@ class WarningBlock extends StatelessWidget {
       buildWhen: (previous, current) => current is DocumentsLoaded,
       builder: (context, state) {
         if (state is! DocumentsLoaded) return _placeholder;
-        final documents = state.documents;
-        final expiring = _folder.getDocuments(documents);
+        final expiring = _folder.getDocuments(state.documents);
         if (expiring.isEmpty) return _placeholder;
         return SliverPersistentHeader(
           pinned: true,
@@ -32,7 +31,8 @@ class WarningBlock extends StatelessWidget {
                   style: Theme.of(context).textTheme.bodyLarge,
                 ),
                 subtitle: Text(
-                  "${expiring.length} documents are expiring soon or expired",
+                  "${expiring.length} document(s) are expiring soon or expired",
+                  style: TextStyle(color: Colors.redAccent),
                 ),
                 onTap:
                     () => Navigator.push(

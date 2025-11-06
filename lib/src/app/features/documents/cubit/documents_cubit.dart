@@ -1,4 +1,7 @@
+import 'dart:io' show File;
+
 import 'package:equatable/equatable.dart';
+import 'package:flutter/foundation.dart' show kDebugMode, debugPrint;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_documents/src/utils/sevices/file_service.dart';
 import 'package:my_documents/src/utils/sevices/message_service.dart';
@@ -25,6 +28,8 @@ class DocumentsCubit extends Cubit<DocumentsState> {
     try {
       final documents = await dataSource.getAllDocuments();
       emit(DocumentsLoaded(documents: documents));
+      if (kDebugMode)
+        MessageService.showSuccessSnack("Documents loaded successfully");
     } catch (e) {
       emit(DocumentsError(e.toString()));
     }
@@ -39,14 +44,19 @@ class DocumentsCubit extends Cubit<DocumentsState> {
     }
   }
 
-  // Future<void> deleteDocument(int documentId) async {
-  //   try {
-  //     await dataSource.deleteDocument(documentId);
-  //     await loadData();
-  //   } catch (e) {
-  //     emit(DocumentsError(e.toString()));
-  //   }
-  // }
+  Future<bool> deleteDocument(Document document) async {
+    try {
+      final res = await dataSource.deleteDocument(document.id);
+      if (res) {
+        await loadData();
+        await FileService.deleteDocumentFiles(document, documentsOrEmpty);
+      }
+      return res;
+    } catch (e) {
+      emit(DocumentsError(e.toString()));
+      return false;
+    }
+  }
 
   Future<void> updateDocument(Document updatedDocument) async {
     try {
@@ -132,6 +142,44 @@ class DocumentsCubit extends Cubit<DocumentsState> {
       onSaved?.call();
     } catch (e) {
       MessageService.showSnackBar("Error saving file: $e");
+    }
+  }
+
+  Future<int> getAllDocumentsSize() async {
+    try {
+      final allVersions = documentsOrEmpty.expand((doc) => doc.versions);
+
+      int totalSize = 0;
+
+      for (final version in allVersions) {
+        final file = File(version.filePath);
+        if (await file.exists()) {
+          totalSize += await file.length();
+        }
+      }
+
+      return totalSize;
+    } catch (e) {
+      debugPrint("Error getting all documents size: $e");
+      return 0;
+    }
+  }
+
+  Future<void> debugAllFiles() async {
+    final allVersions = documentsOrEmpty.expand((doc) => doc.versions);
+    for (final v in allVersions) {
+      final file = File(v.filePath);
+      debugPrint(
+        "--------------------------------------------------------------------",
+      );
+      if (await file.exists()) {
+        debugPrint("${v.filePath}: ${await file.length() / (1024 * 1024)} MB");
+      } else {
+        debugPrint("${v.filePath}: not found");
+      }
+      debugPrint(
+        "--------------------------------------------------------------------",
+      );
     }
   }
 }

@@ -68,4 +68,7 @@ class FoldersCubit extends Cubit<FoldersState> {
     await addFolder(folder);
     onSaved?.call();
   }
+
+  Folder? getFolderById(int? id) =>
+      foldersOrEmpty.where((e) => e.id == id).firstOrNull;
 }

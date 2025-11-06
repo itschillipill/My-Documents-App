@@ -8,6 +8,8 @@ import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 
+import '../../app/features/documents/model/document.dart' show Document;
+
 class FileService {
   static const int maxFileSize = 50 * 1024 * 1024; // 50 MB
   static bool get isMobile => Platform.isAndroid || Platform.isIOS;
@@ -32,8 +34,8 @@ class FileService {
 
     // Если файл уже есть
     if (await newFile.exists()) {
-      final existingHash = await _calculateFileHash(newFile);
-      final incomingHash = await _calculateFileHash(File(originalPath));
+      final existingHash = await calculateFileHash(newFile);
+      final incomingHash = await calculateFileHash(File(originalPath));
 
       if (existingHash == incomingHash) {
         // Содержимое совпадает → используем существующий
@@ -73,11 +75,55 @@ class FileService {
     return null;
   }
 
+  static int getFileSize(String path) {
+    try {
+      return File(path).lengthSync();
+    } catch (e) {
+      debugPrint("Error getting file size: $e");
+      return 0;
+    }
+  }
+
   /// Удаляет файл
   static Future<void> deleteFile(String path) async {
     final file = File(path);
     if (await file.exists()) {
-      await file.delete();
+      try {
+        await file.delete();
+        debugPrint("Deleted file: $path");
+      } catch (e) {
+        debugPrint("Failed to delete $path, error: $e");
+      }
+    }
+  }
+
+  static Future<void> deleteFiles(List<String> paths) async {
+    await Future.wait(
+      paths.map((path) async {
+        await deleteFile(path);
+      }),
+    );
+  }
+
+  static Future<void> deleteDocumentFiles(
+    Document document,
+    List<Document> allDocuments,
+  ) async {
+    for (final version in document.versions) {
+      final filePath = version.filePath;
+
+      // Проверяем, используется ли этот файл в других документах
+      final isUsedElsewhere = allDocuments.any(
+        (doc) =>
+            doc.id != document.id &&
+            doc.versions.any((v) => v.filePath == filePath),
+      );
+
+      if (!isUsedElsewhere) {
+        await FileService.deleteFile(filePath);
+      } else {
+        debugPrint("File $filePath is used in another document, not deleting");
+      }
     }
   }
 
@@ -89,7 +135,7 @@ class FileService {
   }
 
   /// Считает SHA256 хэш файла
-  static Future<String> _calculateFileHash(File file) async {
+  static Future<String> calculateFileHash(File file) async {
     final bytes = await file.readAsBytes();
     return sha256.convert(bytes).toString();
   }

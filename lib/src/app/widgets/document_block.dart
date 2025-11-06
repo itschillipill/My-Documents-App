@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:my_documents/src/app/extensions/extensions.dart';
 import 'package:my_documents/src/app/features/documents/cubit/documents_cubit.dart';
 import 'package:my_documents/src/app/features/documents/model/document.dart';
 import 'package:my_documents/src/app/features/folders/model/folder.dart';
 import 'package:my_documents/src/app/features/documents/pages/document_view_page.dart';
 import 'package:my_documents/src/app/features/folders/pages/folder_view_page.dart';
-import 'package:my_documents/src/app/widgets/border_box.dart';
 
 class DocumentsBlock extends StatelessWidget {
   static const Folder _allFolder = Folder.allFolder;
@@ -56,17 +56,12 @@ class DocumentsBlock extends StatelessWidget {
   Widget _buildCard(Widget icon, {VoidCallback? onTap, Widget? label}) {
     return GestureDetector(
       onTap: onTap,
-      child: BorderBox(
-        child: Padding(
-          padding: const EdgeInsets.all(12.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            spacing: 5,
-            children: [icon, if (label != null) label],
-          ),
-        ),
-      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        spacing: 5,
+        children: [icon, if (label != null) label],
+      ).withBorder(padding: EdgeInsets.all(16)),
     );
   }
 

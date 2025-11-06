@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_documents/src/app/features/documents/cubit/documents_cubit.dart';
+import 'package:my_documents/src/app/features/documents/pages/document_view_page.dart';
 import 'package:my_documents/src/app/widgets/border_box.dart';
 import 'package:my_documents/src/app/features/documents/widgets/document_version_card.dart';
 import 'package:my_documents/src/utils/page_transition/app_page_route.dart';
@@ -59,7 +60,15 @@ class DocumentVersionHistory extends StatelessWidget {
                           documentVersion: versions[index],
                           isCurrent:
                               document.currentVersionId == versions[index].id,
-                          onOpen: () {},
+                          onOpen: () {
+                            Navigator.push(
+                              context,
+                              DocumentViewPage.route(
+                                documentId,
+                                versionId: versions[index].id,
+                              ),
+                            );
+                          },
                         );
                       },
                     ),

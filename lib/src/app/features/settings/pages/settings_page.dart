@@ -129,10 +129,10 @@ class _SettingsPageState extends State<SettingsPage> {
 
   @override
   Widget build(BuildContext context) {
+    final authExecutor = context.deps.authExecutor;
+    final settingCubit = context.deps.settingsCubit;
     return BlocBuilder<SettingsCubit, SettingsState>(
       builder: (context, state) {
-        final authExecutor = context.deps.authExecutor;
-        final settingCubit = context.deps.settingsCubit;
         return Scaffold(
           appBar: AppBar(
             title: Text(
@@ -272,6 +272,19 @@ class _SettingsPageState extends State<SettingsPage> {
                           subtitle: "More projects from our team!",
                         ),
                       ],
+                    ),
+                    ElevatedButton(
+                      onPressed: () async {
+                        final size =
+                            await context.deps.documentsCubit
+                                .getAllDocumentsSize();
+                        MessageService.showSnackBar(
+                          "All Documents Size: ${(size / 1024 / 1024).toStringAsFixed(2)} MB",
+                        );
+                        if (context.mounted)
+                          await context.deps.documentsCubit.debugAllFiles();
+                      },
+                      child: Text("Get All Documents Size"),
                     ),
                   ],
                 ),

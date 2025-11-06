@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:sqflite/sqflite.dart';
 
 import '../../features/documents/model/document.dart';
@@ -150,13 +151,30 @@ class DocumentService {
     );
   }
 
-  Future<void> deleteDocument(int id) async {
-    await _db!.delete(
-      'document_versions',
-      where: 'documentId = ?',
-      whereArgs: [id],
-    );
-    await _db.delete('documents', where: 'id = ?', whereArgs: [id]);
+  Future<bool> deleteDocument(int id) async {
+    if (_db == null) {
+      if (kDebugMode) {
+        throw Exception('Database not initialized');
+      } else {
+        return false;
+      }
+    }
+
+    return await _db.transaction((txn) async {
+      await txn.delete(
+        'document_versions',
+        where: 'documentId = ?',
+        whereArgs: [id],
+      );
+
+      final deletedCount = await txn.delete(
+        'documents',
+        where: 'id = ?',
+        whereArgs: [id],
+      );
+
+      return deletedCount > 0;
+    });
   }
 
   Future<DocumentVersion?> getDocumentVersionByDocumentId(

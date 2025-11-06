@@ -92,7 +92,7 @@ class LocalDataSource implements DataSource {
       _documentService.updateDocument(document);
 
   @override
-  Future<void> deleteDocument(int id) => _documentService.deleteDocument(id);
+  Future<bool> deleteDocument(int id) => _documentService.deleteDocument(id);
 
   @override
   Future<DocumentVersion?> getDocumentVersionByDocumentId(int documentId) =>

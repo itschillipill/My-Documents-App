@@ -18,6 +18,8 @@ class FoldersBlock extends StatelessWidget {
           return BlocBuilder<DocumentsCubit, DocumentsState>(
             builder: (context, documentsState) {
               return ListView.builder(
+                physics: const NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
                 itemCount: foldersState.folders.length,
                 itemBuilder: (context, index) {
                   final folder = foldersState.folders[index];
@@ -25,18 +27,22 @@ class FoldersBlock extends StatelessWidget {
                       documentsState is DocumentsLoaded
                           ? folder.getDocuments(documentsState.documents)
                           : [];
-                  return ListTile(
-                    leading: const Icon(Icons.folder),
-                    title: Text(folder.name),
-                    subtitle: Text("${documents.length} documents"),
-                    trailing: const Icon(Icons.arrow_forward_ios_sharp),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        FolderViewPage.route(folder: folder),
-                      );
-                    },
-                  ).withBorder(padding: EdgeInsets.all(8));
+                  return Padding(
+                    padding: const EdgeInsets.only(top: 8.0),
+                    child:
+                        ListTile(
+                          leading: const Icon(Icons.folder),
+                          title: Text(folder.name),
+                          subtitle: Text("${documents.length} documents"),
+                          trailing: const Icon(Icons.arrow_forward_ios_sharp),
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              FolderViewPage.route(folder: folder),
+                            );
+                          },
+                        ).withBorder(),
+                  );
                 },
               );
             },

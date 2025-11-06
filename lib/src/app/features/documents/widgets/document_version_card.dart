@@ -3,6 +3,7 @@ import 'package:my_documents/src/app/extensions/extensions.dart';
 import 'package:my_documents/src/app/features/documents/model/document.dart';
 import 'package:my_documents/src/app/widgets/border_box.dart';
 import 'package:my_documents/src/app/widgets/label.dart';
+import 'package:my_documents/src/utils/sevices/file_service.dart';
 
 class DocumentVersionCard extends StatelessWidget {
   final int index;
@@ -111,6 +112,15 @@ class DocumentVersionCard extends StatelessWidget {
                               ),
                             ),
                           ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 4),
+                          child: Text(
+                            "Size: ${(FileService.getFileSize(documentVersion.filePath) / 1024 / 1024).toStringAsFixed(2)} MB",
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: Colors.redAccent,
+                            ),
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -132,24 +142,24 @@ class DocumentVersionCard extends StatelessWidget {
                           ),
                         ),
 
-                        IconButton(
-                          onPressed: onDelete,
-                          icon: const Icon(Icons.delete_outline),
-                          color: Colors.redAccent,
-                        ),
+                        // IconButton(
+                        //   onPressed: onDelete,
+                        //   icon: const Icon(Icons.delete_outline),
+                        //   color: Colors.redAccent,
+                        // ),
                       ],
                     ),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: ElevatedButton.icon(
-                            onPressed: onSetCurrent,
-                            icon: const Icon(Icons.check_circle_outline),
-                            label: const Text("Set current"),
-                          ),
-                        ),
-                      ],
-                    ),
+                    // Row(
+                    //   children: [
+                    //     Expanded(
+                    //       child: ElevatedButton.icon(
+                    //         onPressed: onSetCurrent,
+                    //         icon: const Icon(Icons.check_circle_outline),
+                    //         label: const Text("Set current"),
+                    //       ),
+                    //     ),
+                    //   ],
+                    // ),
                   ],
                 ),
             ],

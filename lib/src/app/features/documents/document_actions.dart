@@ -1,31 +1,42 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:my_documents/src/app/extensions/extensions.dart';
 import 'package:my_documents/src/utils/sevices/file_service.dart';
 import 'package:my_documents/src/utils/sevices/message_service.dart';
 
-import '../folders/pages/select_folder_page.dart';
-import 'cubit/documents_cubit.dart';
 import 'model/document.dart';
+import 'widgets/change_document_details.dart';
 
 abstract class DocumentAction {
-  const DocumentAction();
   Future<void> call();
 }
 
-class ChangeFolder$DocumentAction extends DocumentAction {
+class ChangeDetails$DocumentAction extends DocumentAction {
   final BuildContext context;
   final Document document;
 
-  ChangeFolder$DocumentAction({required this.context, required this.document});
+  ChangeDetails$DocumentAction({required this.context, required this.document});
 
   @override
   Future<void> call() async {
-    final folder = await Navigator.push(context, SelectFolderPage.route());
-    if (folder != null && context.mounted) {
-      await context.read<DocumentsCubit>().updateDocument(
-        document.copyWith(folderId: folder.id),
-      );
-    }
+    await Navigator.push(
+      context,
+      ChangeDocumentDetails.route(
+        oldParams: (
+          title: document.title,
+          isFavorite: document.isFavorite,
+          folder: context.deps.foldersCubit.getFolderById(document.folderId),
+        ),
+        onUpdate: (p0) {
+          context.deps.documentsCubit.updateDocument(
+            document.copyWith(
+              title: p0.title ?? document.title,
+              isFavorite: p0.isFavorite ?? document.isFavorite,
+              folderId: p0.folder?.id ?? document.folderId,
+            ),
+          );
+        },
+      ),
+    );
   }
 }
 
@@ -65,21 +76,27 @@ class Rename$DocumentAction extends DocumentAction {
 
 class Delete$DocumentAction extends DocumentAction {
   final Document document;
-  final DocumentsCubit cubit;
+  final BuildContext context;
 
-  Delete$DocumentAction({required this.document, required this.cubit});
+  Delete$DocumentAction({required this.document, required this.context});
 
   @override
   Future<void> call() async {
     try {
-      final confirm = await MessageService.$confirmAction(title: "Delete");
+      final confirm = await MessageService.$confirmAction(
+        title: "Delete",
+        message:
+            "This will delete the document permanently. Including all versions.",
+      );
       if (!confirm) return;
       debugPrint("Deleting ${document.title}");
+      if (context.mounted) {
+        Navigator.pop(context);
+        await context.deps.documentsCubit.deleteDocument(document);
+      }
     } catch (e) {
       MessageService.showErrorSnack(e.toString());
     }
-
-    //   await cubit.deleteDocument(document.id);
   }
 }
 

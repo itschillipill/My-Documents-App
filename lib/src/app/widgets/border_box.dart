@@ -24,7 +24,6 @@ class BorderBox extends StatelessWidget {
       constraints: constraints,
       padding: padding,
       decoration: BoxDecoration(
-        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.all(Radius.circular(8)),
         border: Border.all(color: AppPalette.borderColor),
       ),

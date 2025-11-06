@@ -58,7 +58,10 @@ class MessageService {
     return showDialog<T>(context: context, builder: (ctx) => dialog(ctx));
   }
 
-  static Future<bool> $confirmAction({String title = ""}) async {
+  static Future<bool> $confirmAction({
+    String title = "",
+    String? message,
+  }) async {
     final res = await showDialogGlobal(
       (ctx) => AlertDialog(
         title: RichText(
@@ -72,7 +75,18 @@ class MessageService {
             ],
           ),
         ),
-        content: Text("Are you sure you want to perform this action?"),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text("Are you sure you want to perform this action?"),
+            if (message != null)
+              Padding(
+                padding: const EdgeInsets.only(top: 8),
+                child: Text(message),
+              ),
+          ],
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),

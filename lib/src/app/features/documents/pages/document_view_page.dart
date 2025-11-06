@@ -23,194 +23,188 @@ class DocumentViewPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cubit = context.read<DocumentsCubit>();
-    final document = cubit.getDocumentById(documentId);
+    return Material(
+      child: BlocBuilder<DocumentsCubit, DocumentsState>(
+        buildWhen: (previous, current) => current is DocumentsLoaded,
+        builder: (context, state) {
+          if (state is! DocumentsLoaded) {
+            return Center(child: CircularProgressIndicator());
+          }
+          final document = cubit.getDocumentById(documentId);
+          if (document == null) {
+            return Center(
+              child: Column(
+                children: [
+                  Text("Document not found"),
+                  ElevatedButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: Text("Go Back"),
+                  ),
+                ],
+              ),
+            );
+          }
+          final documentVersion = cubit.getDocumentVersionByDocumentId(
+            documentId: documentId,
+            versionId: versionId ?? document.currentVersionId,
+          );
+          debugPrint(document.toMap().toString());
+          debugPrint(document.versions.map((e) => e.toMap()).join("\n"));
+          if (documentVersion == null) {
+            return Center(
+              child: Column(
+                children: [
+                  Text("Document version not found"),
+                  ElevatedButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: Text("Go Back"),
+                  ),
+                ],
+              ),
+            );
+          }
 
-    return BlocBuilder<DocumentsCubit, DocumentsState>(
-      buildWhen: (previous, current) => current is DocumentsLoaded,
-      builder: (context, state) {
-        if (state is! DocumentsLoaded) {
-          return Center(child: CircularProgressIndicator());
-        }
-
-        if (document == null) return Center(child: Text("Document not found"));
-        final documentVersion = cubit.getDocumentVersionByDocumentId(
-          documentId: documentId,
-          versionId: versionId ?? document.currentVersionId,
-        );
-        debugPrint(document.toMap().toString());
-        debugPrint(document.versions.map((e) => e.toMap()).join("\n"));
-        if (documentVersion == null) {
-          return Center(
-            child: Column(
-              children: [
-                Text("Document version not found"),
-                ElevatedButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: Text("Go Back"),
-                ),
+          return Scaffold(
+            appBar: AppBar(
+              title: Text(
+                document.title,
+                style: Theme.of(context).textTheme.headlineMedium,
+              ),
+              actions: [
+                if (versionId == null)
+                  PopupMenuButton<DocumentAction>(
+                    popUpAnimationStyle: AnimationStyle(
+                      curve: Curves.bounceInOut,
+                    ),
+                    icon: Icon(Icons.more_vert_rounded),
+                    position: PopupMenuPosition.under,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    onSelected: (action) => action.call(),
+                    itemBuilder: (context) {
+                      return [
+                        PopupMenuItem(
+                          value: ChangeDetails$DocumentAction(
+                            context: context,
+                            document: document,
+                          ),
+                          child: Text("Change Details"),
+                        ),
+                      ];
+                    },
+                  ),
               ],
             ),
-          );
-        }
-
-        return Scaffold(
-          appBar: AppBar(
-            title: Text(
-              document.title,
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-            actions: [
-              PopupMenuButton<DocumentAction>(
-                popUpAnimationStyle: AnimationStyle(curve: Curves.bounceInOut),
-                icon: Icon(Icons.more_vert_rounded),
-                position: PopupMenuPosition.under,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                onSelected: (action) => action.call(),
-                itemBuilder: (context) {
-                  return [
-                    PopupMenuItem(
-                      value: ChangeFolder$DocumentAction(
-                        context: context,
-                        document: document,
-                      ),
-                      child: Text(
-                        document.folderId == null
-                            ? "Add to Folder"
-                            : "Change Folder",
-                      ),
-                    ),
-                    PopupMenuItem(
-                      value: Rename$DocumentAction(
-                        context: context,
-                        document: document,
-                      ),
-                      child: Text("Rename"),
-                    ),
-                    PopupMenuItem(
-                      value: ChangeFolder$DocumentAction(
-                        context: context,
-                        document: document,
-                      ),
-                      child: Text(
-                        document.folderId == null
-                            ? "Add to Folder"
-                            : "Change Folder",
-                      ),
-                    ),
-                  ];
-                },
-              ),
-            ],
-          ),
-          body: SafeArea(
-            child: SingleChildScrollView(
-              child: Padding(
-                padding: EdgeInsets.all(12.0),
-                child: Column(
-                  spacing: 20,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    if (documentVersion.comment != null)
+            body: SafeArea(
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: EdgeInsets.all(12.0),
+                  child: Column(
+                    spacing: 20,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      if (documentVersion.comment != null &&
+                          documentVersion.comment!.isNotEmpty)
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              "Comment:",
+                              style: Theme.of(context).textTheme.bodyLarge,
+                            ),
+                            Row(
+                              children: [Text(documentVersion.comment!)],
+                            ).withBorder(padding: EdgeInsets.all(8)),
+                          ],
+                        ),
                       Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                        spacing: 5,
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Text(
-                            "Comment:",
-                            style: Theme.of(context).textTheme.bodyLarge,
+                          DocumentRow(
+                            "Upload Date",
+                            document.createdAt.formatted,
                           ),
-                          Row(
-                            children: [Text(documentVersion.comment!)],
-                          ).withBorder(padding: EdgeInsets.all(8)),
+                          DocumentRow(
+                            "Expiration Date",
+                            documentVersion.expirationDate != null
+                                ? documentVersion.expirationDate!.formatted
+                                : "No expiration",
+                          ),
+                          DocumentRow("Status", document.status.statusText),
                         ],
-                      ),
-                    Column(
-                      spacing: 5,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        DocumentRow(
-                          "Upload Date",
-                          document.createdAt.formatted,
-                        ),
-                        DocumentRow(
-                          "Expiration Date",
-                          documentVersion.expirationDate != null
-                              ? documentVersion.expirationDate!.formatted
-                              : "No expiration",
-                        ),
-                        DocumentRow("Status", document.status.statusText),
-                      ],
-                    ).withBorder(padding: EdgeInsets.all(8)),
-                    AspectRatio(
-                      aspectRatio: 4 / 2,
-                      child: DecoratedBox(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
-                          color: Colors.blueGrey,
-                        ),
-                        child: Center(
-                          child: Text("Preview is not availabel yet"),
+                      ).withBorder(padding: EdgeInsets.all(8)),
+                      AspectRatio(
+                        aspectRatio: 4 / 2,
+                        child: DecoratedBox(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8),
+                            color: Colors.blueGrey,
+                          ),
+                          child: Center(
+                            child: Text("Preview is not availabel yet"),
+                          ),
                         ),
                       ),
-                    ),
-                    ElevatedButton(
-                      onPressed:
-                          () async =>
-                              await OpenFilex.open(documentVersion.filePath),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        spacing: 5,
-                        children: [
-                          Icon(Icons.remove_red_eye_rounded),
-                          Text("Open In External App"),
-                        ],
+                      ElevatedButton(
+                        onPressed:
+                            () async =>
+                                await OpenFilex.open(documentVersion.filePath),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          spacing: 5,
+                          children: [
+                            Icon(Icons.remove_red_eye_rounded),
+                            Text("Open In External App"),
+                          ],
+                        ),
                       ),
-                    ),
 
-                    tile(
-                      label: "Share Document",
-                      icon: Icons.share_rounded,
-                      action: Share$DocumentAction(
-                        path: documentVersion.filePath,
-                      ),
-                    ),
-                    if (versionId == null) ...[
                       tile(
-                        label: "Upload New Version",
-                        icon: Icons.file_download_outlined,
-                        onTap:
-                            () async => await Navigator.push(
-                              context,
-                              AddNewDocumentVersion.route(document.id),
-                            ),
-                      ),
-                      tile(
-                        label: "Manage Versions",
-                        icon: Icons.history_rounded,
-                        onTap:
-                            () => Navigator.push(
-                              context,
-                              DocumentVersionHistory.route(document.id),
-                            ),
-                      ),
-                      tile(
-                        label: "Delete Document",
-                        icon: Icons.delete_rounded,
-                        action: Delete$DocumentAction(
-                          document: document,
-                          cubit: cubit,
+                        label: "Share Document",
+                        icon: Icons.share_rounded,
+                        action: Share$DocumentAction(
+                          path: documentVersion.filePath,
                         ),
                       ),
+                      if (versionId == null) ...[
+                        tile(
+                          label: "Upload New Version",
+                          icon: Icons.file_download_outlined,
+                          onTap:
+                              () async => await Navigator.push(
+                                context,
+                                AddNewDocumentVersion.route(document.id),
+                              ),
+                        ),
+                        tile(
+                          label: "Manage Versions",
+                          icon: Icons.history_rounded,
+                          onTap:
+                              () => Navigator.push(
+                                context,
+                                DocumentVersionHistory.route(document.id),
+                              ),
+                        ),
+                        tile(
+                          label: "Delete Document",
+                          icon: Icons.delete_rounded,
+                          action: Delete$DocumentAction(
+                            document: document,
+                            context: context,
+                          ),
+                        ),
+                      ],
                     ],
-                  ],
+                  ),
                 ),
               ),
             ),
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 }
