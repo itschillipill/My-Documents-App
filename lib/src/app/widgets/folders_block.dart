@@ -17,33 +17,45 @@ class FoldersBlock extends StatelessWidget {
           if (foldersState.folders.isEmpty) return const SizedBox.shrink();
           return BlocBuilder<DocumentsCubit, DocumentsState>(
             builder: (context, documentsState) {
-              return ListView.builder(
-                physics: const NeverScrollableScrollPhysics(),
-                shrinkWrap: true,
-                itemCount: foldersState.folders.length,
-                itemBuilder: (context, index) {
-                  final folder = foldersState.folders[index];
-                  final documents =
-                      documentsState is DocumentsLoaded
-                          ? folder.getDocuments(documentsState.documents)
-                          : [];
-                  return Padding(
-                    padding: const EdgeInsets.only(top: 8.0),
-                    child:
-                        ListTile(
-                          leading: const Icon(Icons.folder),
-                          title: Text(folder.name),
-                          subtitle: Text("${documents.length} documents"),
-                          trailing: const Icon(Icons.arrow_forward_ios_sharp),
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              FolderViewPage.route(folder: folder),
-                            );
-                          },
-                        ).withBorder(),
-                  );
-                },
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: Text(
+                      "Folders",
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
+                  ),
+                  ListView.builder(
+                    physics: const NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
+                    itemCount: foldersState.folders.length,
+                    itemBuilder: (context, index) {
+                      final folder = foldersState.folders[index];
+                      final documents =
+                          documentsState is DocumentsLoaded
+                              ? folder.getDocuments(documentsState.documents)
+                              : [];
+                      return Padding(
+                        padding: const EdgeInsets.only(top: 8.0),
+                        child:
+                            ListTile(
+                              leading: const Icon(Icons.folder),
+                              title: Text(folder.name),
+                              subtitle: Text("${documents.length} documents"),
+                              trailing: const Icon(Icons.arrow_forward_ios_sharp),
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  FolderViewPage.route(folder: folder),
+                                );
+                              },
+                            ).withBorder(),
+                      );
+                    },
+                  ),
+                ],
               );
             },
           );
