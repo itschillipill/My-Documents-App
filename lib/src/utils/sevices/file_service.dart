@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:archive/archive_io.dart';
 import 'package:crypto/crypto.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -18,7 +19,7 @@ class FileService {
   /// Если файл с таким содержимым уже есть — возвращает его путь.
   /// Если файл с таким именем, но другим содержимым — сохраняет с новым именем.
   static Future<String> saveFileToAppDir(String originalPath) async {
-    final appDir = await getApplicationDocumentsDirectory();
+    final appDir = await getApplicationSupportDirectory();
     final fileName = p.basename(originalPath);
     String newPath = p.join(appDir.path, fileName);
 
@@ -172,5 +173,53 @@ class FileService {
     } catch (e) {
       MessageService.showErrorSnack(e.toString());
     }
+  }
+
+  static Future<void> importData() async {
+    //TODO: Import Data
+    MessageService.showErrorToast("Not implemented yet");
+  }
+
+  static Future<void> exportData(List<Document> documents) async {
+    if (documents.isEmpty) {
+      MessageService.showErrorSnack("No documents to export");
+      return;
+    }
+    final tmpDir = await getTemporaryDirectory();
+    final backupPath = p.join(tmpDir.path, "backup.zip");
+    final encoder = ZipFileEncoder();
+    encoder.create(backupPath);
+
+    final dbFile = File(
+      '${(await getApplicationDocumentsDirectory()).path}/my_database.db',
+    );
+    if (await dbFile.exists()) {
+      encoder.addFile(dbFile);
+    }
+
+    final addedPaths = <String>{};
+
+    for (final doc in documents) {
+      for (final version in doc.versions) {
+        final path = version.filePath;
+        if (path.isEmpty || addedPaths.contains(path)) continue;
+
+        final file = File(path);
+        if (await file.exists()) {
+          try {
+            encoder.addFile(file);
+            addedPaths.add(path);
+          } catch (e) {
+            debugPrint("Failed to add file $path: $e");
+          }
+        } else {
+          debugPrint("Missing file: $path");
+        }
+      }
+    }
+
+    encoder.close();
+    debugPrint("saved to $backupPath");
+    await Share.shareXFiles([XFile(backupPath)], text: "My Documents Backup");
   }
 }

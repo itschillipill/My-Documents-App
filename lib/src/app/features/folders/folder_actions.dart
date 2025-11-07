@@ -16,10 +16,10 @@ enum FolderMenuActions {
 }
 
 Future<void> _rename(BuildContext context, Folder folder) async {
+  final controller = TextEditingController(text: folder.name);
   final name = await showDialog<String>(
     context: context,
     builder: (context) {
-      final controller = TextEditingController(text: folder.name);
       return AlertDialog(
         title: Text("Rename Folder"),
         content: TextField(controller: controller, autofocus: true),
@@ -36,6 +36,7 @@ Future<void> _rename(BuildContext context, Folder folder) async {
       );
     },
   );
+  controller.dispose();
   if (name != null && context.mounted) {
     context.read<FoldersCubit>().updateFolder(folder.copyWith(name: name));
   }

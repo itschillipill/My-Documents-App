@@ -73,7 +73,7 @@ class _SettingsPageState extends State<SettingsPage> {
 
   Future<String?> _showPinSheet(String title) async {
     final controller = TextEditingController();
-    return showModalBottomSheet<String>(
+    final pin = await showModalBottomSheet<String>(
       context: context,
       isScrollControlled: true,
       shape: const RoundedRectangleBorder(
@@ -125,6 +125,8 @@ class _SettingsPageState extends State<SettingsPage> {
         );
       },
     );
+    controller.dispose();
+    return pin;
   }
 
   @override
@@ -210,11 +212,25 @@ class _SettingsPageState extends State<SettingsPage> {
                           icon: Icons.file_upload_outlined,
                           title: "Export Data",
                           subtitle: "Backup your documents",
+                          // onTap: () async {
+                          //  await FileService.exportData(context.deps.documentsCubit.documentsOrEmpty);
+                          // },
                         ),
                         _buildTile(
                           icon: Icons.file_download_outlined,
                           title: "Import Data",
                           subtitle: "Restore from backup",
+                          // onTap: () async {
+                          //   try {
+                          //     await MessageService.showLoading(
+                          //     fn:()async=>await Future.delayed(Duration(minutes: 2)),
+                          //     message: "Importing data...",
+                          //     timeout: Duration(seconds: 5));
+                          //   } catch (e) {
+                          //     MessageService.showErrorSnack("Error importing data");
+                          //     debugPrint(e.toString());
+                          //   }
+                          // },
                         ),
                       ],
                     ),

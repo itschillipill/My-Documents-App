@@ -70,6 +70,12 @@ class _VerefyPinScreenState extends State<VerefyPinScreen> {
   }
 
   @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 class MessageService {
@@ -6,6 +8,80 @@ class MessageService {
 
   static final GlobalKey<NavigatorState> navigatorKey =
       GlobalKey<NavigatorState>();
+
+  static OverlayEntry? _loadingOverlay;
+
+  static void _showLoading({String? message}) {
+    if (_loadingOverlay != null) return;
+
+    final context = navigatorKey.currentContext;
+    if (context == null) return;
+
+    final overlayState = navigatorKey.currentState?.overlay;
+    if (overlayState == null) return;
+
+    _loadingOverlay = OverlayEntry(
+      builder:
+          (context) => Stack(
+            children: [
+              ModalBarrier(
+                color: Colors.black.withOpacity(0.4),
+                dismissible: false,
+              ),
+
+              Material(
+                color: Colors.transparent,
+                child: Center(
+                  child: Container(
+                    padding: const EdgeInsets.all(24),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Column(
+                      spacing: 12,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const CircularProgressIndicator(),
+                        if (message != null)
+                          Text(message, style: const TextStyle(fontSize: 16)),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+    );
+
+    overlayState.insert(_loadingOverlay!);
+  }
+
+  static void _hideLoading() {
+    if (_loadingOverlay == null) return;
+    _loadingOverlay?.remove();
+    _loadingOverlay = null;
+  }
+
+  static Future<T> showLoading<T>({
+    String? message,
+    required Future<T> Function() fn,
+    Duration timeout = const Duration(minutes: 2),
+  }) async {
+    _showLoading(message: message);
+    final timer = Timer(timeout, () {
+      _hideLoading();
+      debugPrint("Loading timeout");
+    });
+    try {
+      final result = await fn();
+      return result;
+    } catch (e) {
+      rethrow;
+    } finally {
+      _hideLoading();
+      timer.cancel();
+    }
+  }
 
   static void showSnackBar(String message, {Color? color}) {
     messengerKey.currentState?.showSnackBar(

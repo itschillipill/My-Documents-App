@@ -26,6 +26,13 @@ class _AddNewDocumentVersionState extends State<AddNewDocumentVersion> {
   DateTime? _expirationDate;
   String? _originalPath;
   final TextEditingController _commentController = TextEditingController();
+
+  @override
+  void dispose() {
+    _commentController.dispose();
+    super.dispose();
+  }
+
   void _saveDocument(BuildContext context) async {
     final cubit = context.read<DocumentsCubit>();
 

@@ -28,8 +28,9 @@ class DocumentsCubit extends Cubit<DocumentsState> {
     try {
       final documents = await dataSource.getAllDocuments();
       emit(DocumentsLoaded(documents: documents));
-      if (kDebugMode)
+      if (kDebugMode) {
         MessageService.showSuccessSnack("Documents loaded successfully");
+      }
     } catch (e) {
       emit(DocumentsError(e.toString()));
     }
@@ -147,16 +148,22 @@ class DocumentsCubit extends Cubit<DocumentsState> {
 
   Future<int> getAllDocumentsSize() async {
     try {
-      final allVersions = documentsOrEmpty.expand((doc) => doc.versions);
+      final uniquePaths =
+          documentsOrEmpty
+              .expand((doc) => doc.versions.map((v) => v.filePath))
+              .toSet();
 
-      int totalSize = 0;
+      final sizes = await Future.wait(
+        uniquePaths.map((path) async {
+          final file = File(path);
+          if (await file.exists()) {
+            return await file.length();
+          }
+          return 0;
+        }),
+      );
 
-      for (final version in allVersions) {
-        final file = File(version.filePath);
-        if (await file.exists()) {
-          totalSize += await file.length();
-        }
-      }
+      final totalSize = sizes.fold<int>(0, (sum, size) => sum + size);
 
       return totalSize;
     } catch (e) {
@@ -177,9 +184,6 @@ class DocumentsCubit extends Cubit<DocumentsState> {
       } else {
         debugPrint("${v.filePath}: not found");
       }
-      debugPrint(
-        "--------------------------------------------------------------------",
-      );
     }
   }
 }
