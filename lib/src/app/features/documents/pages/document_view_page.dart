@@ -4,6 +4,7 @@ import 'package:my_documents/src/app/features/documents/cubit/documents_cubit.da
 import 'package:my_documents/src/app/extensions/extensions.dart';
 import 'package:my_documents/src/app/features/documents/model/document.dart';
 import 'package:my_documents/src/app/features/documents/pages/add_new_document_version.dart';
+import 'package:my_documents/src/app/features/documents/widgets/document_previewer.dart';
 import 'package:my_documents/src/utils/page_transition/app_page_route.dart';
 import 'package:open_filex/open_filex.dart';
 
@@ -115,7 +116,7 @@ class DocumentViewPage extends StatelessWidget {
                               style: Theme.of(context).textTheme.bodyLarge,
                             ),
                             Row(
-                              children: [Text(documentVersion.comment!)],
+                              children: [SelectableText(documentVersion.comment!)],
                             ).withBorder(padding: EdgeInsets.all(8)),
                           ],
                         ),
@@ -136,18 +137,7 @@ class DocumentViewPage extends StatelessWidget {
                           DocumentRow("Status", document.status.statusText),
                         ],
                       ).withBorder(padding: EdgeInsets.all(8)),
-                      AspectRatio(
-                        aspectRatio: 4 / 2,
-                        child: DecoratedBox(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8),
-                            color: Colors.blueGrey,
-                          ),
-                          child: Center(
-                            child: Text("Preview is not availabel yet"),
-                          ),
-                        ),
-                      ),
+                      DocumentPreviewer(path: documentVersion.filePath, isImage: documentVersion.isImage,),
                       ElevatedButton(
                         onPressed:
                             () async =>

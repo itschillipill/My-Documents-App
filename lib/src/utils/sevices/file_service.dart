@@ -73,7 +73,7 @@ class FileService {
       }
     }
     onSelected?.call(path);
-    return null;
+    return path;
   }
 
   static int getFileSize(String path) {

@@ -71,6 +71,16 @@ class _SettingsPageState extends State<SettingsPage> {
     }
   }
 
+  Future<void> fn() async {
+    final size = await context.deps.documentsCubit.getAllDocumentsSize();
+    MessageService.showSnackBar(
+      "All Documents Size: ${(size / 1024 / 1024).toStringAsFixed(2)} MB",
+    );
+    if (mounted) {
+      await context.deps.documentsCubit.debugAllFiles();
+    }
+  }
+
   Future<String?> _showPinSheet(String title) async {
     final controller = TextEditingController();
     final pin = await showModalBottomSheet<String>(
@@ -220,17 +230,25 @@ class _SettingsPageState extends State<SettingsPage> {
                           icon: Icons.file_download_outlined,
                           title: "Import Data",
                           subtitle: "Restore from backup",
-                          // onTap: () async {
-                          //   try {
-                          //     await MessageService.showLoading(
-                          //     fn:()async=>await Future.delayed(Duration(minutes: 2)),
-                          //     message: "Importing data...",
-                          //     timeout: Duration(seconds: 5));
-                          //   } catch (e) {
-                          //     MessageService.showErrorSnack("Error importing data");
-                          //     debugPrint(e.toString());
-                          //   }
-                          // },
+                          onTap: () async {
+                            try {
+                              final res = await MessageService.showLoading(
+                                fn: () async {
+                                  await Future.delayed(Duration(seconds: 10));
+                                  //не должно сработать
+                                  return "done";
+                                },
+                                timeout: Duration(seconds: 15),
+                                message: "Cooking somthing...",
+                              );
+                              debugPrint(res);
+                            } catch (e) {
+                              MessageService.showErrorSnack(
+                                "Error importing data",
+                              );
+                              debugPrint(e.toString());
+                            }
+                          },
                         ),
                       ],
                     ),
@@ -297,8 +315,9 @@ class _SettingsPageState extends State<SettingsPage> {
                         MessageService.showSnackBar(
                           "All Documents Size: ${(size / 1024 / 1024).toStringAsFixed(2)} MB",
                         );
-                        if (context.mounted)
+                        if (context.mounted) {
                           await context.deps.documentsCubit.debugAllFiles();
+                        }
                       },
                       child: Text("Get All Documents Size"),
                     ),

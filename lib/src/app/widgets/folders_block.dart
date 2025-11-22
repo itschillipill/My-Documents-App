@@ -44,7 +44,9 @@ class FoldersBlock extends StatelessWidget {
                               leading: const Icon(Icons.folder),
                               title: Text(folder.name),
                               subtitle: Text("${documents.length} documents"),
-                              trailing: const Icon(Icons.arrow_forward_ios_sharp),
+                              trailing: const Icon(
+                                Icons.arrow_forward_ios_sharp,
+                              ),
                               onTap: () {
                                 Navigator.push(
                                   context,

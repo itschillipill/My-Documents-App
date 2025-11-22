@@ -25,7 +25,7 @@ class MessageService {
           (context) => Stack(
             children: [
               ModalBarrier(
-                color: Colors.black.withOpacity(0.4),
+                color: Colors.black.withValues(alpha: 0.4),
                 dismissible: false,
               ),
 
@@ -65,21 +65,28 @@ class MessageService {
   static Future<T> showLoading<T>({
     String? message,
     required Future<T> Function() fn,
-    Duration timeout = const Duration(minutes: 2),
+    Duration delay = const Duration(milliseconds: 500),
+    Duration? timeout,
   }) async {
     _showLoading(message: message);
-    final timer = Timer(timeout, () {
-      _hideLoading();
-      debugPrint("Loading timeout");
-    });
+
     try {
-      final result = await fn();
+      final result =
+          await (timeout != null
+              ? Future.any([
+                fn(),
+                Future.delayed(timeout, () {
+                  throw TimeoutException("Operation timed out");
+                }),
+              ])
+              : fn());
+
+        await Future.delayed(delay);
       return result;
     } catch (e) {
       rethrow;
     } finally {
       _hideLoading();
-      timer.cancel();
     }
   }
 

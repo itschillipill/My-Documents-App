@@ -42,4 +42,6 @@ class DocumentVersion {
               : null,
     );
   }
+
+  bool get isImage => filePath.endsWith(".jpg") || filePath.endsWith(".jpeg") || filePath.endsWith(".png");
 }

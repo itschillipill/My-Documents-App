@@ -142,6 +142,7 @@ class DocumentsCubit extends Cubit<DocumentsState> {
 
       onSaved?.call();
     } catch (e) {
+      debugPrint("Error saving file: $e");
       MessageService.showSnackBar("Error saving file: $e");
     }
   }
