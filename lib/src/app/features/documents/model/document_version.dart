@@ -43,5 +43,8 @@ class DocumentVersion {
     );
   }
 
-  bool get isImage => filePath.endsWith(".jpg") || filePath.endsWith(".jpeg") || filePath.endsWith(".png");
+  bool get isImage =>
+      filePath.endsWith(".jpg") ||
+      filePath.endsWith(".jpeg") ||
+      filePath.endsWith(".png");
 }

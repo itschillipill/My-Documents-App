@@ -27,4 +27,7 @@ class DocumentsError extends DocumentsState {
 
   @override
   List<Object?> get props => [message];
+
+  @override
+  String toString() => "DocumentsError with message: $message";
 }

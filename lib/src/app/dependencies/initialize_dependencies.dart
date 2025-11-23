@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart' show debugPrint;
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:my_documents/src/app/features/auth/auth_executor.dart';
 import 'package:my_documents/src/app/features/documents/cubit/documents_cubit.dart';
 import 'package:my_documents/src/app/features/folders/cubit/folders_cubit.dart';
@@ -77,7 +78,8 @@ mixin InitializeDependencies {
           "Initialization",
           (deps) async {
             final prefs = await SharedPreferences.getInstance();
-            deps.authExecutor = AuthenticationExecutor(prefs);
+            final passwordStorage = FlutterSecureStorage();
+            deps.authExecutor = AuthenticationExecutor(passwordStorage);
             deps.settingsCubit = SettingsCubit(
               prefs: prefs,
               canUseBiometrics: await deps.authExecutor.canCheckBiometrics,

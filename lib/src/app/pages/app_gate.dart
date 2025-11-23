@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart' show BlocBuilder;
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:my_documents/src/app/features/folders/pages/add_folder_page.dart';
-import 'package:my_documents/src/app/features/settings/cubit/settings_cubit.dart';
-import 'package:my_documents/src/app/pages/home_page.dart';
 
 import '../features/documents/pages/add_document_screen.dart';
 import 'search_page.dart';
+import 'home_page.dart';
 
 class AppGate extends StatefulWidget {
   const AppGate({super.key});
@@ -46,37 +44,32 @@ class _AppGateState extends State<AppGate> {
           });
         }
       },
-      child: BlocBuilder<SettingsCubit, SettingsState>(
-        builder: (_, state) {
-          return Scaffold(
-            body: PageView(
-              controller: _controller,
-              onPageChanged: (value) {
-                setState(() {
-                  _selectedIndex = value;
-                });
-              },
-              children: pages,
-            ),
-            bottomNavigationBar: BottomNavigationBar(
-              currentIndex: _selectedIndex,
-              onTap: (value) {
-                setState(() {
-                  _selectedIndex = value;
-                  _controller.animateToPage(
-                    value,
-                    duration: Duration(milliseconds: 200),
-                    curve: Curves.ease,
-                  );
-                });
-              },
-              items: navItems,
-            ),
-            floatingActionButton: _buildFAB(),
-            floatingActionButtonLocation:
-                FloatingActionButtonLocation.centerDocked,
-          );
-        },
+      child: Scaffold(
+        body: PageView(
+          controller: _controller,
+          onPageChanged: (value) {
+            setState(() {
+              _selectedIndex = value;
+            });
+          },
+          children: pages,
+        ),
+        bottomNavigationBar: BottomNavigationBar(
+          currentIndex: _selectedIndex,
+          onTap: (value) {
+            setState(() {
+              _selectedIndex = value;
+              _controller.animateToPage(
+                value,
+                duration: Duration(milliseconds: 200),
+                curve: Curves.ease,
+              );
+            });
+          },
+          items: navItems,
+        ),
+        floatingActionButton: _buildFAB(),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       ),
     );
   }

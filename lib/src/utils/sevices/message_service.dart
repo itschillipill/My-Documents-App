@@ -81,7 +81,7 @@ class MessageService {
               ])
               : fn());
 
-        await Future.delayed(delay);
+      await Future.delayed(delay);
       return result;
     } catch (e) {
       rethrow;
@@ -152,23 +152,14 @@ class MessageService {
             children: [
               TextSpan(text: "Confirm Action "),
               TextSpan(
-                text: "'$title'",
+                text: title,
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
             ],
           ),
         ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text("Are you sure you want to perform this action?"),
-            if (message != null)
-              Padding(
-                padding: const EdgeInsets.only(top: 8),
-                child: Text(message),
-              ),
-          ],
+        content: Text(
+          message ?? "Are you sure you want to perform this action?",
         ),
         actions: [
           TextButton(

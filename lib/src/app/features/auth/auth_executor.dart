@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart' show ChangeNotifier, debugPrint;
 import 'package:flutter/services.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:local_auth/local_auth.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthenticationExecutor extends ChangeNotifier {
-  final SharedPreferences prefs;
+  final FlutterSecureStorage prefs;
 
-  AuthenticationExecutor(this.prefs);
+  AuthenticationExecutor(this.prefs) {
+    _checkPassword();
+  }
 
   bool _authenticated = false;
+  bool hasPassword = false;
   bool get authenticated => _authenticated;
   set authenticated(bool value) {
     _authenticated = value;
@@ -53,21 +56,26 @@ class AuthenticationExecutor extends ChangeNotifier {
   }
 
   Future<bool> verefyPin(String pin) async {
-    return prefs.getString(_storageKey) == pin;
+    return await prefs.read(key: _storageKey) == pin;
   }
 
   Future<void> savePin(String pin) async {
-    await prefs.setString(_storageKey, pin);
+    await prefs.write(key: _storageKey, value: pin);
+    _checkPassword();
   }
 
   Future<void> clearPin() async {
-    await prefs.remove(_storageKey);
+    await prefs.delete(key: _storageKey);
+    _checkPassword();
   }
 
   Future<void> createOrChangePin(String pin) async {
-    await prefs.setString(_storageKey, pin);
-    notifyListeners();
+    await prefs.write(key: _storageKey, value: pin);
+    _checkPassword();
   }
 
-  bool get hasPassword => prefs.containsKey(_storageKey);
+  Future<void> _checkPassword() async {
+    hasPassword = await prefs.containsKey(key: _storageKey);
+    notifyListeners();
+  }
 }

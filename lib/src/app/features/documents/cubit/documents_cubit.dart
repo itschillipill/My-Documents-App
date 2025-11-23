@@ -18,8 +18,7 @@ class DocumentsCubit extends Cubit<DocumentsState> {
   }
 
   List<Document> get documentsOrEmpty {
-    final s = state;
-    if (s is DocumentsLoaded) return s.documents;
+    if (state case DocumentsLoaded s) return s.documents;
     return const [];
   }
 
@@ -187,4 +186,6 @@ class DocumentsCubit extends Cubit<DocumentsState> {
       }
     }
   }
+
+  void throwError(String message) => emit(DocumentsError(message));
 }
