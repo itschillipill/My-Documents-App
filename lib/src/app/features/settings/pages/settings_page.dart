@@ -228,8 +228,11 @@ class _SettingsPageState extends State<SettingsPage> {
                           // },
                           onTap: () {
                             NotificationService().scheduleNotification(
-                              id: 1, title: "Hello", body: "body", 
-                              date: DateTime.now().add(Duration(seconds: 5)));
+                              id: 1,
+                              title: "Hello",
+                              body: "body",
+                              date: DateTime.now().add(Duration(seconds: 5)),
+                            );
                           },
                         ),
                         _buildTile(

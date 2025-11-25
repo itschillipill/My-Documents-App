@@ -59,7 +59,7 @@ class Document {
     isFavorite: $isFavorite,
     createdAt: $createdAt,
     currentVersionId: $currentVersionId,
-    versions: ${versions.map((e)=>e.id).toList()},
+    versions: ${versions.map((e) => e.id).toList()},
   )
 """;
 

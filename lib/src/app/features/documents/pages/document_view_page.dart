@@ -51,7 +51,9 @@ class DocumentViewPage extends StatelessWidget {
                       onPressed: () {
                         debugPrint("state: $state");
                         debugPrint("Document: $document");
-                        debugPrint("Current Document Version: $documentVersion");
+                        debugPrint(
+                          "Current Document Version: $documentVersion",
+                        );
                       },
                       child: Text("Get info"),
                     ),
@@ -60,13 +62,16 @@ class DocumentViewPage extends StatelessWidget {
             ),
           );
         }
+        bool isCurrent = document.currentVersionId == documentVersion.id;
         debugPrint("Document: $document");
-        debugPrint("Current Document Version: ${documentVersion.id}, serched for: $versionId");
+        debugPrint(
+          "Current Document Version: ${documentVersion.id}, serched for: $versionId",
+        );
         return Scaffold(
           appBar: AppBar(
             title: Text(document.title),
             actions: [
-              if (versionId != null)
+              if (isCurrent)
                 PopupMenuButton<DocumentAction>(
                   popUpAnimationStyle: AnimationStyle(
                     curve: Curves.bounceInOut,
@@ -157,7 +162,7 @@ class DocumentViewPage extends StatelessWidget {
                         path: documentVersion.filePath,
                       ),
                     ),
-                    if (versionId != null) ...[
+                    if (isCurrent) ...[
                       tile(
                         label: "Upload New Version",
                         icon: Icons.file_download_outlined,

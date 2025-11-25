@@ -74,7 +74,7 @@ class FolderViewPage extends StatelessWidget {
                             onTap:
                                 () => Navigator.push(
                                   context,
-                                  DocumentViewPage.route(documents[index].id, versionId: documents[index].currentVersionId),
+                                  DocumentViewPage.route(documents[index].id),
                                 ),
                           );
                         },

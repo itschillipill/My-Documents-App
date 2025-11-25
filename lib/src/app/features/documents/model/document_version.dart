@@ -43,13 +43,11 @@ class DocumentVersion {
         filePath: filePath,
         uploadedAt: DateTime.parse(uploadedAt),
         comment: comment,
-        expirationDate: expirationDate == null
-            ? null
-            : DateTime.tryParse(expirationDate),
+        expirationDate:
+            expirationDate == null ? null : DateTime.tryParse(expirationDate),
       ),
     _ => throw ArgumentError('Invalid map format'),
   };
-
 
   bool get isImage =>
       filePath.endsWith(".jpg") ||

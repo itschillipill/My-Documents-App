@@ -8,6 +8,7 @@ class NotificationService {
   Future<void> initMobile() async {
     debugPrint("|Mobile| notification service initialion");
   }
+
   Future<void> scheduleNotification({
     required int id,
     required String title,
@@ -24,4 +25,4 @@ class NotificationService {
   Future<void> cancelAll() async {
     debugPrint("|Mobile| all notifications canceled");
   }
-} 
+}

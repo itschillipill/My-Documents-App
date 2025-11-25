@@ -53,9 +53,7 @@ class DocumentPreviewer extends StatelessWidget {
       MaterialPageRoute(
         builder:
             (context) => Scaffold(
-              appBar: AppBar(
-                title: Text('Image Viewer'),
-              ),
+              appBar: AppBar(title: Text('Image Viewer')),
               body: Container(
                 color: Colors.black,
                 child: InteractiveViewer(
