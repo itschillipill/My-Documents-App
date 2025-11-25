@@ -6,6 +6,7 @@ import 'package:my_documents/src/app/features/settings/cubit/settings_cubit.dart
 import 'package:my_documents/src/app/features/folders/widgets/section_block.dart';
 import 'package:my_documents/src/utils/app_data.dart';
 import 'package:my_documents/src/utils/sevices/message_service.dart';
+import 'package:my_documents/src/utils/sevices/notification/mobile_notification_service.dart';
 
 import '../../../../utils/page_transition/app_page_route.dart';
 
@@ -225,6 +226,11 @@ class _SettingsPageState extends State<SettingsPage> {
                           // onTap: () async {
                           //  await FileService.exportData(context.deps.documentsCubit.documentsOrEmpty);
                           // },
+                          onTap: () {
+                            NotificationService().scheduleNotification(
+                              id: 1, title: "Hello", body: "body", 
+                              date: DateTime.now().add(Duration(seconds: 5)));
+                          },
                         ),
                         _buildTile(
                           icon: Icons.file_download_outlined,

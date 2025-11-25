@@ -50,6 +50,18 @@ class Document {
       versions: versions,
     );
   }
+  @override
+  String toString() => """
+  Document(
+    id: $id,
+    title: $title,
+    folderId: $folderId,
+    isFavorite: $isFavorite,
+    createdAt: $createdAt,
+    currentVersionId: $currentVersionId,
+    versions: ${versions.map((e)=>e.id).toList()},
+  )
+""";
 
   Document copyWith({
     int? id,

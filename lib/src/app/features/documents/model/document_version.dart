@@ -17,7 +17,6 @@ class DocumentVersion {
     this.expirationDate,
   });
 
-  // Для SQLite
   Map<String, dynamic> toMap() {
     return {
       'id': id,
@@ -29,19 +28,28 @@ class DocumentVersion {
     };
   }
 
-  factory DocumentVersion.fromMap(Map<String, dynamic> map) {
-    return DocumentVersion(
-      id: map['id'] as int,
-      documentId: map['documentId'] as int,
-      filePath: map['filePath'] as String,
-      uploadedAt: DateTime.parse(map['uploadedAt'] as String),
-      comment: map['comment'] as String?,
-      expirationDate:
-          map['expirationDate'] != null
-              ? DateTime.tryParse(map['expirationDate'] as String)
-              : null,
-    );
-  }
+  factory DocumentVersion.fromMap(Map<String, dynamic> map) => switch (map) {
+    {
+      'id': int id,
+      'documentId': int documentId,
+      'filePath': String filePath,
+      'uploadedAt': String uploadedAt,
+      'comment': String? comment,
+      'expirationDate': String? expirationDate,
+    } =>
+      DocumentVersion(
+        id: id,
+        documentId: documentId,
+        filePath: filePath,
+        uploadedAt: DateTime.parse(uploadedAt),
+        comment: comment,
+        expirationDate: expirationDate == null
+            ? null
+            : DateTime.tryParse(expirationDate),
+      ),
+    _ => throw ArgumentError('Invalid map format'),
+  };
+
 
   bool get isImage =>
       filePath.endsWith(".jpg") ||

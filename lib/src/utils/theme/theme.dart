@@ -87,7 +87,7 @@ class AppTheme {
     useMaterial3: true,
     colorScheme: ColorScheme.dark(
       primary: Colors.white,
-      secondary: AppPalette.secondaryColor,
+      secondary: AppPalette.secondaryDarkColor,
       surface: Color(0xFF1E1E1E),
       error: AppPalette.errorColor,
     ),
@@ -121,7 +121,7 @@ class AppTheme {
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
-        backgroundColor: AppPalette.secondaryColor,
+        backgroundColor: AppPalette.secondaryDarkColor,
         foregroundColor: Colors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 24),

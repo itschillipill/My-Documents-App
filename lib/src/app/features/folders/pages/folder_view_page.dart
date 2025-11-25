@@ -59,6 +59,7 @@ class FolderViewPage extends StatelessWidget {
             return Center(child: CircularProgressIndicator());
           }
           final documents = folder.getDocuments(state.documents);
+          debugPrint("Documents: $documents in folder: ${folder.name}");
           return Padding(
             padding: EdgeInsets.all(12.0),
             child: Column(
@@ -73,7 +74,7 @@ class FolderViewPage extends StatelessWidget {
                             onTap:
                                 () => Navigator.push(
                                   context,
-                                  DocumentViewPage.route(documents[index].id),
+                                  DocumentViewPage.route(documents[index].id, versionId: documents[index].currentVersionId),
                                 ),
                           );
                         },

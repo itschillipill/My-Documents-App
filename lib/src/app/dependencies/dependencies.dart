@@ -5,7 +5,6 @@ import 'package:my_documents/src/app/features/settings/cubit/settings_cubit.dart
 import 'package:my_documents/src/app/data/data_sourse.dart';
 
 abstract interface class Dependencies {
-  // Datasourse
   late DataSource dataSource;
 
   late DocumentsCubit documentsCubit;

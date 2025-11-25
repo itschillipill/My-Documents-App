@@ -29,7 +29,6 @@ class MutableDependencies implements Dependencies {
   late FoldersCubit foldersCubit;
   @override
   late SettingsCubit settingsCubit;
-
   @override
   late AuthenticationExecutor authExecutor;
 }

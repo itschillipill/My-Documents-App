@@ -55,7 +55,6 @@ class DocumentPreviewer extends StatelessWidget {
             (context) => Scaffold(
               appBar: AppBar(
                 title: Text('Image Viewer'),
-                backgroundColor: Colors.black,
               ),
               body: Container(
                 color: Colors.black,
