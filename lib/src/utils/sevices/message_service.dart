@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 
 class MessageService {
   static final GlobalKey<ScaffoldMessengerState> messengerKey =
-      GlobalKey<ScaffoldMessengerState>();
+      GlobalKey<ScaffoldMessengerState>(debugLabel: "MessageService");
 
   static final GlobalKey<NavigatorState> navigatorKey =
-      GlobalKey<NavigatorState>();
+      GlobalKey<NavigatorState>(debugLabel: "MessageService");
 
   static OverlayEntry? _loadingOverlay;
 
@@ -90,21 +90,27 @@ class MessageService {
     }
   }
 
-  static void showSnackBar(String message, {Color? color}) {
+  static void showSnackBar(String message, {Color? color, Color? textColor}) {
     messengerKey.currentState?.showSnackBar(
       SnackBar(
-        content: Text(message),
+        content: Text(message, style: TextStyle(color: textColor)),
         backgroundColor: color,
         behavior: SnackBarBehavior.floating,
       ),
     );
   }
 
-  static void showSuccessSnack(String message) =>
-      showSnackBar(message, color: Colors.green.shade600);
+  static void showSuccessSnack(String message) => showSnackBar(
+    message,
+    color: Colors.green.shade600,
+    textColor: Colors.white,
+  );
 
-  static void showErrorSnack(String message) =>
-      showSnackBar(message, color: Colors.red.shade600);
+  static void showErrorSnack(String message) => showSnackBar(
+    message,
+    color: Colors.red.shade600,
+    textColor: Colors.white,
+  );
 
   static void showToast(String message, {Color background = Colors.black87}) {
     final context = navigatorKey.currentContext;

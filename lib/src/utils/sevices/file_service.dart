@@ -176,11 +176,10 @@ class FileService {
   }
 
   static Future<void> importData() async {
-    //TODO: Import Data
     MessageService.showErrorToast("Not implemented yet");
   }
 
-  static Future<void> exportData(List<Document> documents) async {
+  static Future<void> exportData({List<Document> documents = const []}) async {
     if (documents.isEmpty) {
       MessageService.showErrorSnack("No documents to export");
       return;
@@ -220,6 +219,8 @@ class FileService {
 
     encoder.close();
     debugPrint("saved to $backupPath");
-    await Share.shareXFiles([XFile(backupPath)], text: "My Documents Backup");
+    await SharePlus.instance.share(
+      ShareParams(files: [XFile(backupPath)], text: "My Documents Backup"),
+    );
   }
 }

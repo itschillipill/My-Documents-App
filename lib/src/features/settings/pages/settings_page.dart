@@ -6,9 +6,9 @@ import 'package:my_documents/src/features/auth/auth_executor.dart';
 import 'package:my_documents/src/features/settings/cubit/settings_cubit.dart';
 import 'package:my_documents/src/features/folders/widgets/section_block.dart';
 import 'package:my_documents/src/utils/sevices/message_service.dart';
-import 'package:my_documents/src/utils/sevices/notification/mobile_notification_service.dart';
 
 import '../../../utils/page_transition/app_page_route.dart';
+import '../../../utils/sevices/file_service.dart';
 
 class SettingsPage extends StatefulWidget {
   static PageRoute route() => AppPageRoute.build(
@@ -223,41 +223,32 @@ class _SettingsPageState extends State<SettingsPage> {
                           icon: Icons.file_upload_outlined,
                           title: "Export Data",
                           subtitle: "Backup your documents",
-                          // onTap: () async {
-                          //  await FileService.exportData(context.deps.documentsCubit.documentsOrEmpty);
-                          // },
-                          onTap: () {
-                            NotificationService().scheduleNotification(
-                              id: 1,
-                              title: "Hello",
-                              body: "body",
-                              date: DateTime.now().add(Duration(seconds: 5)),
-                            );
-                          },
+                          onTap: () async => await FileService.exportData(),
                         ),
                         _buildTile(
                           icon: Icons.file_download_outlined,
                           title: "Import Data",
                           subtitle: "Restore from backup",
-                          onTap: () async {
-                            try {
-                              final res = await MessageService.showLoading(
-                                fn: () async {
-                                  await Future.delayed(Duration(seconds: 10));
-                                  //не должно сработать
-                                  return "done";
-                                },
-                                timeout: Duration(seconds: 15),
-                                message: "Cooking somthing...",
-                              );
-                              debugPrint(res);
-                            } catch (e) {
-                              MessageService.showErrorSnack(
-                                "Error importing data",
-                              );
-                              debugPrint(e.toString());
-                            }
-                          },
+                          onTap: () async => await FileService.importData(),
+                          // onTap: () async {
+                          //   try {
+                          //     final res = await MessageService.showLoading(
+                          //       fn: () async {
+                          //         await Future.delayed(Duration(seconds: 10));
+                          //         //не должно сработать
+                          //         return "done";
+                          //       },
+                          //       timeout: Duration(seconds: 15),
+                          //       message: "Cooking somthing...",
+                          //     );
+                          //     debugPrint(res);
+                          //   } catch (e) {
+                          //     MessageService.showErrorSnack(
+                          //       "Error importing data",
+                          //     );
+                          //     debugPrint(e.toString());
+                          //   }
+                          // },
                         ),
                       ],
                     ),

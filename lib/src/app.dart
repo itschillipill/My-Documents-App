@@ -36,13 +36,14 @@ class App extends StatelessWidget {
             themeMode: themeMode,
             home: AuthScope(
               authExecutor: deps.authExecutor,
-              authScreen: VerefyPinScreen(
-                useBiometrics:
-                    deps.settingsCubit.state.useBiometrics &&
-                    deps.settingsCubit.canUseBiometrics,
-                onAuthByPIN: deps.authExecutor.authenticateByPIN,
-                onAuthByBiometrics: deps.authExecutor.authenticateByBiometrics,
-              ),
+              authScreenBuilder:
+                  (executor) => VerefyPinScreen(
+                    useBiometrics:
+                        deps.settingsCubit.state.useBiometrics &&
+                        deps.settingsCubit.canUseBiometrics,
+                    onAuthByPIN: executor.authenticateByPIN,
+                    onAuthByBiometrics: executor.authenticateByBiometrics,
+                  ),
               child: const AppGate(),
             ),
             builder:

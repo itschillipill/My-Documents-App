@@ -7,7 +7,6 @@ import 'package:window_manager/window_manager.dart';
 
 import '../../core/constants.dart';
 
-
 Future<void> $platformInitialization() =>
     io.Platform.isAndroid || io.Platform.isIOS
         ? _mobileInitialization()

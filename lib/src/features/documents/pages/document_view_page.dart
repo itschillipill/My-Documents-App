@@ -31,7 +31,7 @@ class DocumentViewPage extends StatelessWidget {
         final List<Document> documents = cubit.documentsOrEmpty;
         final document = cubit.getDocumentById(documentId);
         final documentVersion = document?.versions.firstWhere(
-          (v) => v.id == (versionId??(document.currentVersionId)),
+          (v) => v.id == (versionId ?? (document.currentVersionId)),
           orElse: () => document.versions.first,
         );
         if (documents.isEmpty || document == null || documentVersion == null) {
@@ -65,7 +65,7 @@ class DocumentViewPage extends StatelessWidget {
         bool isCurrent = document.currentVersionId == documentVersion.id;
         debugPrint("Document: $document");
         debugPrint(
-          "Current Document Version: ${documentVersion.id}, serched for: ${versionId??document.currentVersionId}",
+          "Current Document Version: ${documentVersion.id}, serched for: ${versionId ?? document.currentVersionId}",
         );
         return Scaffold(
           appBar: AppBar(

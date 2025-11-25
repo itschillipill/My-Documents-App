@@ -48,7 +48,6 @@ class AuthenticationExecutor extends ChangeNotifier {
     notifyListeners();
     return authenticated;
   }
-  //TODO: Change savig password method
 
   Future<bool> authenticateByPIN(String pin) async {
     authenticated = await verefyPin(pin);

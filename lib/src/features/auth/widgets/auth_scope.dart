@@ -26,13 +26,13 @@ import '../auth_executor.dart';
 
 class AuthScope extends StatelessWidget {
   final Widget child;
-  final Widget authScreen;
+  final Widget Function(AuthenticationExecutor executor) authScreenBuilder;
   final AuthenticationExecutor authExecutor;
 
   const AuthScope({
     super.key,
     required this.child,
-    required this.authScreen,
+    required this.authScreenBuilder,
     required this.authExecutor,
   });
 
@@ -45,7 +45,9 @@ class AuthScope extends StatelessWidget {
           authExecutor.authenticated = true;
           return child;
         }
-        return authExecutor.authenticated ? child : authScreen;
+        return authExecutor.authenticated
+            ? child
+            : authScreenBuilder(authExecutor);
       },
     );
   }
