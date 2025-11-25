@@ -3,15 +3,15 @@ import 'dart:async' show runZonedGuarded;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show DeviceOrientation;
 
-import 'src/app/app.dart';
-import 'src/app/dependencies/initialization.dart';
-import 'src/app/dependencies/widgets/dependencies_scope.dart';
-import 'src/app/dependencies/widgets/splash_screen.dart';
-import 'src/app/widgets/windows_scope.dart';
-import 'src/utils/app_data.dart';
+import 'src/app.dart';
+import 'src/core/constants.dart';
+import 'src/dependencies/initialization.dart';
+import 'src/dependencies/widgets/dependencies_scope.dart';
+import 'src/dependencies/widgets/splash_screen.dart';
+import 'src/widgets/windows_scope.dart';
 import 'src/utils/theme/theme.dart';
 
-part 'src/app/dependencies/widgets/initialization_error_screen.dart';
+part 'src/dependencies/widgets/initialization_error_screen.dart';
 
 void main() => runZonedGuarded(() {
   final initialization = InitializationExecutor();

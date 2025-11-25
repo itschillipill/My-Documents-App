@@ -9,7 +9,7 @@ import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 
-import '../../app/features/documents/model/document.dart' show Document;
+import '../../features/documents/model/document.dart' show Document;
 
 class FileService {
   static const int maxFileSize = 50 * 1024 * 1024; // 50 MB
