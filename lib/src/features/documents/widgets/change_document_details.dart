@@ -68,12 +68,7 @@ class _ChangeDocumentDetailsState extends State<ChangeDocumentDetails> {
 
         if (res && context.mounted) {
           Navigator.pop(context);
-        } else {
-          MessageService.showSnackBar(
-            "Press back again to quit",
-            color: Colors.orangeAccent,
-          );
-        }
+        } 
       },
       child: Scaffold(
         appBar: AppBar(

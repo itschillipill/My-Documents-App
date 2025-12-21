@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_documents/src/features/documents/cubit/documents_cubit.dart';
 import 'package:my_documents/src/features/folders/cubit/folders_cubit.dart';
-import 'package:my_documents/src/features/documents/pages/document_view_page.dart';
 import 'package:my_documents/src/features/documents/widgets/document_card.dart';
 import '../features/documents/model/document.dart';
 import '../features/folders/model/folder.dart';
@@ -131,16 +130,8 @@ class _SearchPageState extends State<SearchPage> {
                                               ),
                                             ),
                                           ...entry.value.map(
-                                            (doc) => DocumentCard(
-                                              document: doc,
-                                              onTap:
-                                                  () => Navigator.push(
-                                                    context,
-                                                    DocumentViewPage.route(
-                                                      doc.id,
-                                                    ),
-                                                  ),
-                                            ),
+                                            (doc) =>
+                                                DocumentCard(document: doc),
                                           ),
                                         ],
                                       );

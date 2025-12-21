@@ -58,6 +58,28 @@ class DocumentsCubit extends Cubit<DocumentsState> {
     }
   }
 
+  Future<void> deleteDocuments(List<int> documentIds) async {
+    try {
+      await FileService.deleteDocumentsFiles();
+    } catch (e) {
+      emit(DocumentsError(e.toString()));
+    }
+  }
+
+  Future<void> shareDocuments(List<int> documentIds) async {
+    try {
+      List<String> paths = [];
+      for (final document in documentsOrEmpty) {
+        for (final version in document.versions) {
+          paths.add(version.filePath);
+        }
+      }
+      await FileService.shareFiles(paths);
+    } catch (e) {
+      emit(DocumentsError(e.toString()));
+    }
+  }
+
   Future<void> updateDocument(Document updatedDocument) async {
     try {
       await dataSource.updateDocument(updatedDocument);

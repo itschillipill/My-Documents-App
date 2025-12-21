@@ -105,6 +105,10 @@ class FileService {
     );
   }
 
+  static Future<void> deleteDocumentsFiles() async {
+    MessageService.showErrorSnack("Not implemented yet");
+  }
+
   static Future<void> deleteDocumentFiles(
     Document document,
     List<Document> allDocuments,
@@ -174,53 +178,37 @@ class FileService {
     }
   }
 
+  static Future<void> shareFiles(List<String> paths) async {
+    if (paths.isEmpty) {
+      MessageService.showErrorSnack("No files to share");
+      return;
+    }
+
+    try {
+      final files =
+          paths
+              .map((path) => File(path))
+              .where((file) => file.existsSync())
+              .map((file) => XFile(file.path))
+              .toList();
+
+      if (files.isEmpty) {
+        MessageService.showErrorSnack("Selected files not found");
+        return;
+      }
+
+      await SharePlus.instance.share(ShareParams(files: files));
+    } catch (e) {
+      debugPrint("Share files error: $e");
+      MessageService.showErrorSnack("Failed to share files");
+    }
+  }
+
   static Future<void> importData() async {
     MessageService.showErrorToast("Not implemented yet");
   }
 
   static Future<void> exportData({List<Document> documents = const []}) async {
     MessageService.showErrorToast("Not implemented yet");
-    //   if (documents.isEmpty) {
-    //     MessageService.showErrorSnack("No documents to export");
-    //     return;
-    //   }
-    //   final tmpDir = await getTemporaryDirectory();
-    //   final backupPath = p.join(tmpDir.path, "backup.zip");
-    //   final encoder = ZipFileEncoder();
-    //   encoder.create(backupPath);
-
-    //   final dbFile = File(
-    //     '${(await getApplicationDocumentsDirectory()).path}/my_database.db',
-    //   );
-    //   if (await dbFile.exists()) {
-    //     encoder.addFile(dbFile);
-    //   }
-
-    //   final addedPaths = <String>{};
-
-    //   for (final doc in documents) {
-    //     for (final version in doc.versions) {
-    //       final path = version.filePath;
-    //       if (path.isEmpty || addedPaths.contains(path)) continue;
-
-    //       final file = File(path);
-    //       if (await file.exists()) {
-    //         try {
-    //           encoder.addFile(file);
-    //           addedPaths.add(path);
-    //         } catch (e) {
-    //           debugPrint("Failed to add file $path: $e");
-    //         }
-    //       } else {
-    //         debugPrint("Missing file: $path");
-    //       }
-    //     }
-    //   }
-
-    //   encoder.close();
-    //   debugPrint("saved to $backupPath");
-    //   await SharePlus.instance.share(
-    //     ShareParams(files: [XFile(backupPath)], text: "My Documents Backup"),
-    //   );
   }
 }

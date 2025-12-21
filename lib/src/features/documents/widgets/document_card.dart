@@ -4,10 +4,18 @@ import 'package:my_documents/src/features/documents/model/document.dart';
 import 'package:my_documents/src/widgets/border_box.dart';
 import 'package:my_documents/src/widgets/label.dart';
 
+import '../pages/document_view_page.dart';
+
 class DocumentCard extends StatelessWidget {
   final Document document;
-  final VoidCallback onTap;
-  const DocumentCard({super.key, required this.document, required this.onTap});
+  final bool isSelected;
+  final VoidCallback? onTap;
+  const DocumentCard({
+    super.key,
+    required this.document,
+    this.isSelected = false,
+    this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +25,9 @@ class DocumentCard extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 6),
       child: InkWell(
         borderRadius: BorderRadius.circular(16),
-        onTap: onTap,
+        onTap:
+            onTap ??
+            () => Navigator.push(context, DocumentViewPage.route(document.id)),
         child: BorderBox(
           child: Padding(
             padding: const EdgeInsets.all(8),
@@ -70,8 +80,23 @@ class DocumentCard extends StatelessWidget {
                     ],
                   ),
                 ),
-                if (document.isFavorite)
-                  const Icon(Icons.star_rounded, color: Colors.amber, size: 20),
+                AnimatedSwitcher(
+                  duration: Durations.medium2,
+                  child:
+                      isSelected
+                          ? Icon(
+                            Icons.check_rounded,
+                            color: theme.colorScheme.secondary,
+                            size: 20,
+                          )
+                          : document.isFavorite
+                          ? Icon(
+                            Icons.star_rounded,
+                            color: theme.colorScheme.secondary,
+                            size: 20,
+                          )
+                          : SizedBox.shrink(),
+                ),
               ],
             ),
           ),

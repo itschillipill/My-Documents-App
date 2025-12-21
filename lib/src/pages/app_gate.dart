@@ -56,6 +56,7 @@ class _AppGateState extends State<AppGate> {
         ),
         bottomNavigationBar: BottomNavigationBar(
           currentIndex: _selectedIndex,
+          selectedItemColor: Theme.of(context).colorScheme.secondary,
           onTap: (value) {
             setState(() {
               _selectedIndex = value;
