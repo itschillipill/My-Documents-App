@@ -5,6 +5,7 @@ import 'package:my_documents/src/core/extensions/extensions.dart';
 import 'package:my_documents/src/features/auth/auth_executor.dart';
 import 'package:my_documents/src/features/settings/cubit/settings_cubit.dart';
 import 'package:my_documents/src/features/folders/widgets/section_block.dart';
+import 'package:my_documents/src/features/settings/widgets/action_tile.dart';
 import 'package:my_documents/src/utils/sevices/message_service.dart';
 
 import '../../../utils/page_transition/app_page_route.dart';
@@ -165,7 +166,7 @@ class _SettingsPageState extends State<SettingsPage> {
                       children:
                           authExecutor.hasPassword
                               ? [
-                                _buildTile(
+                                settingsTile(
                                   icon: Icons.lock_rounded,
                                   title: "Change PIN",
                                   subtitle: "Update your security PIN",
@@ -175,7 +176,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                         verifyOld: true,
                                       ),
                                 ),
-                                _buildTile(
+                                settingsTile(
                                   icon: Icons.delete_forever,
                                   iconColor: Colors.red,
                                   title: "Delete PIN",
@@ -208,7 +209,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                 ),
                               ]
                               : [
-                                _buildTile(
+                                settingsTile(
                                   icon: Icons.lock_rounded,
                                   title: "Create PIN",
                                   onTap: () => _createOrChangePin(authExecutor),
@@ -219,36 +220,17 @@ class _SettingsPageState extends State<SettingsPage> {
                     SectionBlock(
                       title: "Data Management",
                       children: [
-                        _buildTile(
+                        settingsTile(
                           icon: Icons.file_upload_outlined,
                           title: "Export Data",
                           subtitle: "Backup your documents",
                           onTap: () async => await FileService.exportData(),
                         ),
-                        _buildTile(
+                        settingsTile(
                           icon: Icons.file_download_outlined,
                           title: "Import Data",
                           subtitle: "Restore from backup",
                           onTap: () async => await FileService.importData(),
-                          // onTap: () async {
-                          //   try {
-                          //     final res = await MessageService.showLoading(
-                          //       fn: () async {
-                          //         await Future.delayed(Duration(seconds: 10));
-                          //         //не должно сработать
-                          //         return "done";
-                          //       },
-                          //       timeout: Duration(seconds: 15),
-                          //       message: "Cooking somthing...",
-                          //     );
-                          //     debugPrint(res);
-                          //   } catch (e) {
-                          //     MessageService.showErrorSnack(
-                          //       "Error importing data",
-                          //     );
-                          //     debugPrint(e.toString());
-                          //   }
-                          // },
                         ),
                       ],
                     ),
@@ -290,17 +272,17 @@ class _SettingsPageState extends State<SettingsPage> {
                     SectionBlock(
                       title: "About",
                       children: [
-                        _buildTile(
+                        settingsTile(
                           icon: Icons.info,
                           title: "App Version",
                           subtitle: Constants.appVersion,
                         ),
-                        _buildTile(
+                        settingsTile(
                           icon: Icons.star_rate_rounded,
                           title: "Rate App",
                           subtitle: "Rate this app",
                         ),
-                        _buildTile(
+                        settingsTile(
                           icon: Icons.grid_view_rounded,
                           title: "Other projects",
                           subtitle: "More projects from our team!",
@@ -330,20 +312,4 @@ class _SettingsPageState extends State<SettingsPage> {
       },
     );
   }
-}
-
-ListTile _buildTile({
-  required IconData icon,
-  required String title,
-  String? subtitle,
-  Color? iconColor,
-  VoidCallback? onTap,
-}) {
-  return ListTile(
-    leading: Icon(icon, color: iconColor),
-    title: Text(title),
-    subtitle: subtitle != null ? Text(subtitle) : null,
-    trailing: const Icon(Icons.arrow_forward_ios_rounded),
-    onTap: onTap,
-  );
 }

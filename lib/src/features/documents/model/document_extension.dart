@@ -6,22 +6,21 @@ extension DocumentExtensions on Document {
     orElse: () => versions.first,
   );
 
+  DocumentStatus get status {
+    if (currentVersion.isExpired) return DocumentStatus.expired;
+    if (currentVersion.isExpiringSoon) return DocumentStatus.expairing;
+    return DocumentStatus.functionating;
+  }
+}
+
+extension DocumentVersionExtensions on DocumentVersion {
   bool get isExpired =>
-      currentVersion.expirationDate != null &&
-      currentVersion.expirationDate!.isBefore(DateTime.now());
+      expirationDate != null && expirationDate!.isBefore(DateTime.now());
 
   bool get isExpiringSoon {
-    if (currentVersion.expirationDate == null) return false;
+    if (expirationDate == null) return false;
     final now = DateTime.now();
-    return currentVersion.expirationDate!.isAfter(now) &&
-        currentVersion.expirationDate!.isBefore(
-          now.add(const Duration(days: 15)),
-        );
-  }
-
-  DocumentStatus get status {
-    if (isExpired) return DocumentStatus.expaired;
-    if (isExpiringSoon) return DocumentStatus.expairing;
-    return DocumentStatus.functionating;
+    return expirationDate!.isAfter(now) &&
+        expirationDate!.isBefore(now.add(const Duration(days: 15)));
   }
 }

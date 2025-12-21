@@ -5,6 +5,7 @@ import 'package:my_documents/src/features/documents/cubit/documents_cubit.dart';
 import 'package:my_documents/src/core/extensions/extensions.dart';
 import 'package:my_documents/src/features/documents/model/document.dart';
 import 'package:my_documents/src/features/documents/pages/add_new_document_version.dart';
+import 'package:my_documents/src/features/documents/widgets/document_error_page.dart';
 import 'package:my_documents/src/features/documents/widgets/document_previewer.dart';
 import 'package:my_documents/src/utils/page_transition/app_page_route.dart';
 import 'package:open_filex/open_filex.dart';
@@ -28,38 +29,17 @@ class DocumentViewPage extends StatelessWidget {
     return BlocBuilder<DocumentsCubit, DocumentsState>(
       buildWhen: (previous, current) => current is DocumentsLoaded,
       builder: (context, state) {
-        final List<Document> documents = cubit.documentsOrEmpty;
         final document = cubit.getDocumentById(documentId);
         final documentVersion = document?.versions.firstWhere(
           (v) => v.id == (versionId ?? (document.currentVersionId)),
           orElse: () => document.versions.first,
         );
-        if (documents.isEmpty || document == null || documentVersion == null) {
-          return Material(
-            child: Center(
-              child: Column(
-                spacing: 12,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text("Something went wrong!"),
-                  ElevatedButton(
-                    onPressed: () => Navigator.pop(context),
-                    child: Text("Go Back"),
-                  ),
-                  if (kDebugMode)
-                    ElevatedButton(
-                      onPressed: () {
-                        debugPrint("state: $state");
-                        debugPrint("Document: $document");
-                        debugPrint(
-                          "Current Document Version: $documentVersion",
-                        );
-                      },
-                      child: Text("Get info"),
-                    ),
-                ],
-              ),
-            ),
+        if (document == null || documentVersion == null) {
+          return DocumentErrorPage(
+            getErrorInfo:
+                () => debugPrint(
+                  "state: $state, document: $document,documentVersion: $documentVersion",
+                ),
           );
         }
         bool isCurrent = document.currentVersionId == documentVersion.id;
@@ -113,13 +93,12 @@ class DocumentViewPage extends StatelessWidget {
                             "Comment:",
                             style: Theme.of(context).textTheme.bodyLarge,
                           ),
-                          Row(
-                            children: [
-                              SelectableText(documentVersion.comment!),
-                            ],
-                          ).withBorder(padding: EdgeInsets.all(8)),
+                          SelectableText(
+                            documentVersion.comment!,
+                          ).withBorder(padding: const EdgeInsets.all(8)),
                         ],
                       ),
+
                     Column(
                       spacing: 5,
                       mainAxisSize: MainAxisSize.min,

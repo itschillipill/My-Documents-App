@@ -21,7 +21,13 @@ class Folder {
       case -1:
         return documents; // Все
       case -2:
-        return documents.where((e) => e.isExpiringSoon || e.isExpired).toList();
+        return documents
+            .where(
+              (e) =>
+                  e.status == DocumentStatus.expired ||
+                  e.status == DocumentStatus.expairing,
+            )
+            .toList();
       default:
         return documents.where((e) => e.folderId == id).toList();
     }

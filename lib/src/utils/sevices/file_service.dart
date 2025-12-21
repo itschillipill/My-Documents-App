@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:archive/archive_io.dart';
 import 'package:crypto/crypto.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -180,47 +179,48 @@ class FileService {
   }
 
   static Future<void> exportData({List<Document> documents = const []}) async {
-    if (documents.isEmpty) {
-      MessageService.showErrorSnack("No documents to export");
-      return;
-    }
-    final tmpDir = await getTemporaryDirectory();
-    final backupPath = p.join(tmpDir.path, "backup.zip");
-    final encoder = ZipFileEncoder();
-    encoder.create(backupPath);
+    MessageService.showErrorToast("Not implemented yet");
+    //   if (documents.isEmpty) {
+    //     MessageService.showErrorSnack("No documents to export");
+    //     return;
+    //   }
+    //   final tmpDir = await getTemporaryDirectory();
+    //   final backupPath = p.join(tmpDir.path, "backup.zip");
+    //   final encoder = ZipFileEncoder();
+    //   encoder.create(backupPath);
 
-    final dbFile = File(
-      '${(await getApplicationDocumentsDirectory()).path}/my_database.db',
-    );
-    if (await dbFile.exists()) {
-      encoder.addFile(dbFile);
-    }
+    //   final dbFile = File(
+    //     '${(await getApplicationDocumentsDirectory()).path}/my_database.db',
+    //   );
+    //   if (await dbFile.exists()) {
+    //     encoder.addFile(dbFile);
+    //   }
 
-    final addedPaths = <String>{};
+    //   final addedPaths = <String>{};
 
-    for (final doc in documents) {
-      for (final version in doc.versions) {
-        final path = version.filePath;
-        if (path.isEmpty || addedPaths.contains(path)) continue;
+    //   for (final doc in documents) {
+    //     for (final version in doc.versions) {
+    //       final path = version.filePath;
+    //       if (path.isEmpty || addedPaths.contains(path)) continue;
 
-        final file = File(path);
-        if (await file.exists()) {
-          try {
-            encoder.addFile(file);
-            addedPaths.add(path);
-          } catch (e) {
-            debugPrint("Failed to add file $path: $e");
-          }
-        } else {
-          debugPrint("Missing file: $path");
-        }
-      }
-    }
+    //       final file = File(path);
+    //       if (await file.exists()) {
+    //         try {
+    //           encoder.addFile(file);
+    //           addedPaths.add(path);
+    //         } catch (e) {
+    //           debugPrint("Failed to add file $path: $e");
+    //         }
+    //       } else {
+    //         debugPrint("Missing file: $path");
+    //       }
+    //     }
+    //   }
 
-    encoder.close();
-    debugPrint("saved to $backupPath");
-    await SharePlus.instance.share(
-      ShareParams(files: [XFile(backupPath)], text: "My Documents Backup"),
-    );
+    //   encoder.close();
+    //   debugPrint("saved to $backupPath");
+    //   await SharePlus.instance.share(
+    //     ShareParams(files: [XFile(backupPath)], text: "My Documents Backup"),
+    //   );
   }
 }

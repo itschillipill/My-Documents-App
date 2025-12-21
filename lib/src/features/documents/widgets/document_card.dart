@@ -59,7 +59,7 @@ class DocumentCard extends StatelessWidget {
                       ),
                       const SizedBox(height: 8),
                       Label(
-                        color: _statusColor(document.status, theme),
+                        color: document.status.color,
                         label: Text(
                           document.status.statusText,
                           style: theme.textTheme.bodySmall?.copyWith(
@@ -78,16 +78,5 @@ class DocumentCard extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  Color _statusColor(DocumentStatus status, ThemeData theme) {
-    switch (status) {
-      case DocumentStatus.functionating:
-        return Colors.green;
-      case DocumentStatus.expairing:
-        return Colors.grey;
-      case DocumentStatus.expaired:
-        return Colors.redAccent;
-    }
   }
 }

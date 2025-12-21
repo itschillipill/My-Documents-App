@@ -1,6 +1,9 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:my_documents/src/widgets/loading_overlay.dart';
+
+import '../../widgets/toast_wiget.dart';
 
 class MessageService {
   static final GlobalKey<ScaffoldMessengerState> messengerKey =
@@ -21,36 +24,7 @@ class MessageService {
     if (overlayState == null) return;
 
     _loadingOverlay = OverlayEntry(
-      builder:
-          (context) => Stack(
-            children: [
-              ModalBarrier(
-                color: Colors.black.withValues(alpha: 0.4),
-                dismissible: false,
-              ),
-
-              Material(
-                color: Colors.transparent,
-                child: Center(
-                  child: Container(
-                    padding: const EdgeInsets.all(24),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: Column(
-                      spacing: 12,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const CircularProgressIndicator(),
-                        if (message != null)
-                          Text(message, style: const TextStyle(fontSize: 16)),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
+      builder: (_) => LoadingOverlay(message: message),
     );
 
     overlayState.insert(_loadingOverlay!);
@@ -121,7 +95,7 @@ class MessageService {
 
     final overlayEntry = OverlayEntry(
       builder:
-          (context) => _ToastWidget(message: message, background: background),
+          (context) => ToastWidget(message: message, background: background),
     );
 
     overlayState.insert(overlayEntry);
@@ -180,73 +154,5 @@ class MessageService {
       ),
     );
     return res ?? false;
-  }
-}
-
-class _ToastWidget extends StatefulWidget {
-  final String message;
-  final Color background;
-
-  const _ToastWidget({required this.message, required this.background});
-
-  @override
-  State<_ToastWidget> createState() => _ToastWidgetState();
-}
-
-class _ToastWidgetState extends State<_ToastWidget>
-    with SingleTickerProviderStateMixin {
-  late final AnimationController _controller = AnimationController(
-    vsync: this,
-    duration: const Duration(milliseconds: 300),
-  );
-  late final Animation<Offset> _offsetAnimation = Tween(
-    begin: const Offset(0, -1),
-    end: const Offset(0, 0),
-  ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
-
-  @override
-  void initState() {
-    super.initState();
-    _controller.forward();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Positioned(
-      top: MediaQuery.of(context).padding.top + 16,
-      left: 20,
-      right: 20,
-      child: SlideTransition(
-        position: _offsetAnimation,
-        child: Material(
-          color: Colors.transparent,
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            decoration: BoxDecoration(
-              color: widget.background,
-              borderRadius: BorderRadius.circular(12),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black26,
-                  blurRadius: 6,
-                  offset: Offset(0, 2),
-                ),
-              ],
-            ),
-            child: Text(
-              widget.message,
-              style: const TextStyle(color: Colors.white, fontSize: 16),
-              textAlign: TextAlign.center,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
   }
 }
