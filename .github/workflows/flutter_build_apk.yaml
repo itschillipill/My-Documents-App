@@ -13,19 +13,23 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # 1️⃣ Checkout
       - uses: actions/checkout@v4
 
+      # 2️⃣ Устанавливаем Java
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: 17
 
+      # 3️⃣ Устанавливаем Flutter с кэшем
       - uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.29.3'
+          flutter-version: '3.29.3'  # зафиксированная версия
           cache: true
 
-      - name: Cache Gradle
+      # 4️⃣ Кэш Gradle, SDK, NDK
+      - name: Cache Gradle & Android SDK
         uses: actions/cache@v4
         with:
           path: |
@@ -36,15 +40,18 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
-      - name: Install dependencies
+      # 5️⃣ Получаем зависимости Flutter
+      - name: Get Flutter dependencies
         run: flutter pub get
 
+      # 6️⃣ Сборка release APK
       - name: Build APK
-        run: flutter build apk
+        run: flutter build apk --release
 
+      # 7️⃣ Создание GitHub Release и прикрепление APK
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ github.ref_name }}    
+          tag_name: ${{ github.ref_name }}     # имя тега
           name: Release ${{ github.ref_name }}
           files: build/app/outputs/flutter-apk/app-release.apk
