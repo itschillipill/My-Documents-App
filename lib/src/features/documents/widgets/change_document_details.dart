@@ -65,7 +65,6 @@ class _ChangeDocumentDetailsState extends State<ChangeDocumentDetails> {
         final res = await MessageService.$confirmAction(
           title: "Discard the changes?",
         );
-
         if (res && context.mounted) {
           Navigator.pop(context);
         } 

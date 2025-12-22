@@ -16,20 +16,20 @@ jobs:
       # 1️⃣ Checkout
       - uses: actions/checkout@v4
 
-      # 2️⃣ Устанавливаем Java
+      # 2️⃣ Установка Java
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: 17
 
-      # 3️⃣ Устанавливаем Flutter с кэшем
+      # 3️⃣ Установка Flutter с кэшем
       - uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.29.3'  # зафиксированная версия
+          flutter-version: '3.29.3'
           cache: true
 
-      # 4️⃣ Кэш Gradle, SDK, NDK
-      - name: Cache Gradle & Android SDK
+      # 4️⃣ Кэш Gradle + Android SDK/NDK
+      - name: Cache Gradle & Android SDK/NDK
         uses: actions/cache@v4
         with:
           path: |
@@ -40,18 +40,35 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
-      # 5️⃣ Получаем зависимости Flutter
+      # 5️⃣ Получение зависимостей Flutter
       - name: Get Flutter dependencies
         run: flutter pub get
 
-      # 6️⃣ Сборка release APK
+      # 6️⃣ Подготовка keystore
+      - name: Prepare keystore
+        env:
+          KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+          STORE_PASSWORD: ${{ secrets.ANDROID_STORE_PASSWORD }}
+          ENCODED_KEYSTORE: ${{ secrets.UPLOAD_KEYSTORE_BASE64 }}
+        run: |
+          mkdir -p android/app
+          echo "$ENCODED_KEYSTORE" | base64 --decode > android/app/upload-keystore.jks
+          cat > android/key.properties <<EOF
+          storePassword=$STORE_PASSWORD
+          keyPassword=$KEY_PASSWORD
+          keyAlias=$KEY_ALIAS
+          storeFile=upload-keystore.jks
+          EOF
+
+      # 7️⃣ Сборка release APK
       - name: Build APK
         run: flutter build apk --release
 
-      # 7️⃣ Создание GitHub Release и прикрепление APK
+      # 8️⃣ Создание GitHub Release с APK
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ github.ref_name }}     # имя тега
+          tag_name: ${{ github.ref_name }}
           name: Release ${{ github.ref_name }}
           files: build/app/outputs/flutter-apk/app-release.apk
