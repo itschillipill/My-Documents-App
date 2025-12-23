@@ -60,12 +60,16 @@ class DocumentsCubit extends Cubit<DocumentsState> {
 
   Future<void> deleteDocuments(List<int> documentIds) async {
     try {
+      final documentsToDelete = getDocumentsByIds(documentIds);
+
       final res = await dataSource.deleteDocumentsByIds(documentIds);
-      if (res) {
-        await loadData();
-        final documents = getDocumentsByIds(documentIds);
-        await FileService.deleteDocumentsFiles(documents, documentsOrEmpty);
-      }
+      if (!res) return;
+
+      await FileService.deleteDocumentsFiles(
+        documentsToDelete,
+        documentsOrEmpty,
+      );
+      await loadData();
     } catch (e) {
       emit(DocumentsError(e.toString()));
     }

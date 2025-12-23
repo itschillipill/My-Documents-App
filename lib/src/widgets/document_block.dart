@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:my_documents/src/core/extensions/extensions.dart';
 import 'package:my_documents/src/features/documents/cubit/documents_cubit.dart';
 import 'package:my_documents/src/features/documents/model/document.dart';
 import 'package:my_documents/src/features/folders/model/folder.dart';
@@ -43,7 +42,7 @@ class DocumentsBlock extends StatelessWidget {
             ),
             itemBuilder: (context, index) {
               final doc = items[index];
-              return _buildDocCard(doc, context);
+              return _buildDocCard(doc, context, Theme.of(context).cardColor);
             },
           );
         }
@@ -53,34 +52,33 @@ class DocumentsBlock extends StatelessWidget {
     );
   }
 
-  Widget _buildCard(Widget icon, {VoidCallback? onTap, Widget? label}) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        spacing: 5,
-        children: [icon, if (label != null) label],
-      ).withBorder(padding: EdgeInsets.all(16)),
-    );
-  }
-
-  Widget _buildDocCard(Document? doc, BuildContext context) {
+  Widget _buildDocCard(Document? doc, BuildContext context, Color cardColor) {
     final isAll = doc == null;
-    return _buildCard(
+    return GestureDetector(
       onTap: () {
-        if (isAll) {
-          Navigator.push(context, FolderViewPage.route(folder: _allFolder));
-        } else {
-          Navigator.push(context, DocumentViewPage.route(doc.id));
-        }
+        Navigator.push(
+          context,
+          isAll
+              ? FolderViewPage.route(folder: _allFolder)
+              : DocumentViewPage.route(doc.id),
+        );
       },
-      Icon(isAll ? Icons.folder_open : Icons.description, size: 40),
-      label: Text(
-        isAll ? "All" : doc.title,
-        style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
+      child: ColoredBox(
+        color: cardColor,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          spacing: 5,
+          children: [
+            Icon(isAll ? Icons.folder_open : Icons.description, size: 40),
+            Text(
+              isAll ? "All" : doc.title,
+              style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ],
+        ),
       ),
     );
   }

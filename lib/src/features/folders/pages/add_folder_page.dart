@@ -50,6 +50,7 @@ class AddFolderPage extends StatelessWidget {
             BorderBox(
               child: TextField(
                 controller: _nameController,
+                maxLength: 20,
                 decoration: const InputDecoration(
                   hintText: "Folder Name",
                   border: InputBorder.none,

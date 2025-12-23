@@ -5,6 +5,7 @@ import 'package:my_documents/src/features/folders/folder_actions.dart';
 import 'package:my_documents/src/features/folders/model/folder.dart';
 import 'package:my_documents/src/features/documents/widgets/document_card.dart';
 import 'package:my_documents/src/utils/page_transition/app_page_route.dart';
+import 'package:my_documents/src/utils/sevices/message_service.dart';
 
 class FolderViewPage extends StatefulWidget {
   static PageRoute route({required Folder folder}) => AppPageRoute.build(
@@ -98,10 +99,16 @@ class _FolderViewPageState extends State<FolderViewPage> {
                       ),
                       actions: [
                         IconButton(
-                          onPressed: () {
-                            BlocProvider.of<DocumentsCubit>(
-                              context,
-                            ).deleteDocuments(selectedDocumentsIds.toList());
+                          onPressed: () async {
+                            final res = await MessageService.$confirmAction(
+                              title:
+                                  "Delete ${selectedDocumentsIds.length} documents",
+                            );
+                            if (res && context.mounted) {
+                              BlocProvider.of<DocumentsCubit>(
+                                context,
+                              ).deleteDocuments(selectedDocumentsIds.toList());
+                            }
                             resetSelecting();
                           },
                           icon: Icon(Icons.delete_rounded),
@@ -126,46 +133,41 @@ class _FolderViewPageState extends State<FolderViewPage> {
               return Center(child: CircularProgressIndicator());
             }
             final documents = widget.folder.getDocuments(state.documents);
-            return Padding(
-              padding: EdgeInsets.all(12.0),
-              child: Column(
-                children: [
-                  documents.isNotEmpty
-                      ? Expanded(
-                        child: ListView.builder(
-                          itemCount: documents.length,
-                          itemBuilder: (context, index) {
-                            return GestureDetector(
-                              onLongPress:
-                                  () => setState(() {
-                                    selectedDocumentsIds.add(
-                                      documents[index].id,
-                                    );
-                                    isSelecting = true;
-                                  }),
-                              child: DocumentCard(
-                                document: documents[index],
-                                isSelected: selectedDocumentsIds.contains(
-                                  documents[index].id,
-                                ),
-                                onTap:
-                                    !isSelecting
-                                        ? null
-                                        : () {
-                                          setState(() {
-                                            selectedDocumentsIds.addOrRemove(
-                                              documents[index].id,
-                                            );
-                                          });
-                                        },
+            return Column(
+              children: [
+                documents.isNotEmpty
+                    ? Expanded(
+                      child: ListView.builder(
+                        itemCount: documents.length,
+                        itemBuilder: (context, index) {
+                          return GestureDetector(
+                            onLongPress:
+                                () => setState(() {
+                                  selectedDocumentsIds.add(documents[index].id);
+                                  isSelecting = true;
+                                }),
+                            child: DocumentCard(
+                              document: documents[index],
+                              isSelected: selectedDocumentsIds.contains(
+                                documents[index].id,
                               ),
-                            );
-                          },
-                        ),
-                      )
-                      : Center(child: Text("No documents found")),
-                ],
-              ),
+                              onTap:
+                                  !isSelecting
+                                      ? null
+                                      : () {
+                                        setState(() {
+                                          selectedDocumentsIds.addOrRemove(
+                                            documents[index].id,
+                                          );
+                                        });
+                                      },
+                            ),
+                          );
+                        },
+                      ),
+                    )
+                    : Center(child: Text("No documents found")),
+              ],
             );
           },
         ),

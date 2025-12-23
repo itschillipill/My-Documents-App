@@ -31,120 +31,115 @@ class _SearchPageState extends State<SearchPage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<DocumentsCubit, DocumentsState>(
-      builder: (context, documentsState) {
-        if ((documentsState is! DocumentsLoaded)) return SizedBox.shrink();
-        return BlocBuilder<FoldersCubit, FoldersState>(
-          builder: (context, foldersState) {
-            if ((foldersState is! FoldersLoaded)) return SizedBox.shrink();
-            final results =
-                documentsState.documents
-                    .where((doc) => doc.title.toLowerCase().contains(_query))
-                    .toList();
+    // ⬇️ Получаем только нужные данные
+    final documents = context.select<DocumentsCubit, List<Document>?>(
+      (cubit) => cubit.documentsOrEmpty,
+    );
 
-            final Map<int?, List<Document>> grouped = {};
-            for (var doc in results) {
-              grouped.putIfAbsent(doc.folderId, () => []).add(doc);
-            }
-            return Scaffold(
-              appBar: AppBar(
-                title: Text(
-                  "Search",
-                  style: Theme.of(context).textTheme.headlineMedium,
-                ),
-                centerTitle: true,
+    final folders = context.select<FoldersCubit, Map<int?, Folder>?>(
+      (cubit) => {
+        for (final f in cubit.foldersOrEmpty) f.id: f,
+        null: Folder.noFolder,
+      },
+    );
+
+    // ⬇️ Если данные ещё не готовы
+    if (documents == null || folders == null) {
+      return const SizedBox.shrink();
+    }
+
+    // ⬇️ Поиск
+    final results =
+        documents
+            .where((doc) => doc.title.toLowerCase().contains(_query))
+            .toList();
+
+    // ⬇️ Группировка по папкам
+    final Map<int?, List<Document>> grouped = {};
+    for (final doc in results) {
+      (grouped[doc.folderId] ??= []).add(doc);
+    }
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          "Search",
+          style: Theme.of(context).textTheme.headlineMedium,
+        ),
+        centerTitle: true,
+      ),
+      body: SafeArea(
+        minimum: const EdgeInsets.all(8),
+        child: Column(
+          children: [
+            TextField(
+              controller: _searchController,
+              onChanged: _searchFor,
+              decoration: InputDecoration(
+                prefixIcon: const Icon(Icons.search),
+                hintText: "Search documents...",
+                suffixIcon:
+                    _searchController.text.isNotEmpty
+                        ? IconButton(
+                          icon: const Icon(Icons.cancel_outlined),
+                          onPressed: () {
+                            setState(() {
+                              _searchController.clear();
+                              _query = "";
+                            });
+                          },
+                        )
+                        : null,
               ),
-              body: SafeArea(
-                minimum: const EdgeInsets.all(8),
-                child: Column(
-                  children: [
-                    TextField(
-                      controller: _searchController,
-                      onChanged: _searchFor,
-                      decoration: InputDecoration(
-                        prefixIcon: const Icon(Icons.search),
-                        hintText: "Search documents...",
-                        suffixIcon:
-                            _searchController.text.isNotEmpty
-                                ? IconButton(
-                                  onPressed:
-                                      () => setState(() {
-                                        _searchController.clear();
-                                        _query = "";
-                                      }),
-                                  icon: const Icon(Icons.cancel_outlined),
-                                )
-                                : null,
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                    Expanded(
-                      child:
-                          _query.isEmpty
-                              ? const Center(child: Text("Type to search..."))
-                              : grouped.isEmpty
-                              ? const Center(child: Text("No results found"))
-                              : ListView(
-                                children:
-                                    grouped.entries.map((entry) {
-                                      final folderName =
-                                          entry.key == null
-                                              ? Folder.noFolder.name
-                                              : foldersState.folders
-                                                  .firstWhere(
-                                                    (f) => f.id == entry.key,
-                                                    orElse:
-                                                        () => Folder(
-                                                          id: entry.key!,
-                                                          name:
-                                                              "Unknown Folder",
-                                                        ),
-                                                  )
-                                                  .name;
+            ),
+            const SizedBox(height: 10),
+            Expanded(
+              child:
+                  _query.isEmpty
+                      ? const Center(child: Text("Type to search..."))
+                      : grouped.isEmpty
+                      ? const Center(child: Text("No results found"))
+                      : ListView(
+                        children:
+                            grouped.entries.map((entry) {
+                              final folderName =
+                                  folders[entry.key]?.name ?? "Unknown Folder";
 
-                                      return Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  if (folderName != Folder.noFolder.name)
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        vertical: 8,
+                                      ),
+                                      child: Row(
                                         mainAxisSize: MainAxisSize.min,
                                         children: [
-                                          if (folderName !=
-                                              Folder.noFolder.name)
-                                            Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                    vertical: 8.0,
-                                                  ),
-                                              child: Row(
-                                                mainAxisSize: MainAxisSize.min,
-                                                spacing: 5,
-                                                children: [
-                                                  Icon(Icons.folder),
-                                                  Text(
-                                                    folderName,
-                                                    style:
-                                                        Theme.of(
-                                                          context,
-                                                        ).textTheme.titleMedium,
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ...entry.value.map(
-                                            (doc) =>
-                                                DocumentCard(document: doc),
+                                          const Icon(Icons.folder),
+                                          const SizedBox(width: 5),
+                                          Text(
+                                            folderName,
+                                            style:
+                                                Theme.of(
+                                                  context,
+                                                ).textTheme.titleMedium,
                                           ),
                                         ],
-                                      );
-                                    }).toList(),
-                              ),
-                    ),
-                  ],
-                ),
-              ),
-            );
-          },
-        );
-      },
+                                      ),
+                                    ),
+                                  ...entry.value.map(
+                                    (doc) => DocumentCard(document: doc),
+                                  ),
+                                ],
+                              );
+                            }).toList(),
+                      ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

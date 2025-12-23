@@ -109,6 +109,8 @@ class FileService {
     List<Document> documents,
     List<Document> allDocuments,
   ) async {
+    debugPrint("documents to delete: ${documents.length}");
+
     // Уже обработанные пути, чтобы не удалять повторно
     final Set<String> processedPaths = {};
 
@@ -133,7 +135,7 @@ class FileService {
         }
 
         try {
-          await FileService.deleteFile(filePath);
+          await deleteFile(filePath);
           debugPrint("Deleted file: $filePath");
         } catch (e, st) {
           debugPrint("Failed to delete $filePath: $e");

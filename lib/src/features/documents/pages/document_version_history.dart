@@ -22,10 +22,18 @@ class DocumentVersionHistory extends StatelessWidget {
       builder: (context, state) {
         if (state is! DocumentsLoaded) return SizedBox.shrink();
         final document = state.documents.firstWhere((d) => d.id == documentId);
-        final versions = [
-          ...document.versions.where((v) => v.id == document.currentVersionId),
-          ...document.versions.where((v) => v.id != document.currentVersionId),
-        ];
+        final versionsWithIndex =
+            document.versions
+                .asMap()
+                .entries
+                .map((e) => (version: e.value, index: e.key))
+                .toList()
+              ..sort((a, b) {
+                if (a.version.id == document.currentVersionId) return -1;
+                if (b.version.id == document.currentVersionId) return 1;
+                return 0;
+              });
+        debugPrint(versionsWithIndex.toString());
         return Scaffold(
           appBar: AppBar(
             title: Text(
@@ -46,26 +54,28 @@ class DocumentVersionHistory extends StatelessWidget {
                     child: ListTile(
                       title: Text(document.title),
                       leading: Icon(Icons.description_rounded),
-                      subtitle: Text("${versions.length} versions found"),
+                      subtitle: Text(
+                        "${versionsWithIndex.length} versions found",
+                      ),
                     ),
                   ),
                   Expanded(
                     child: ListView.builder(
-                      itemCount: versions.length,
+                      itemCount: versionsWithIndex.length,
                       itemBuilder: (context, index) {
+                        final version = versionsWithIndex[index].version;
                         return DocumentVersionCard(
-                          index: document.versions.indexOf(versions[index]),
+                          index: versionsWithIndex[index].index,
+                          documentVersion: version,
+                          isCurrent: version.id == document.currentVersionId,
                           onDelete: () {},
                           onSetCurrent: () {},
-                          documentVersion: versions[index],
-                          isCurrent:
-                              document.currentVersionId == versions[index].id,
                           onOpen: () {
                             Navigator.push(
                               context,
                               DocumentViewPage.route(
                                 documentId,
-                                versionId: versions[index].id,
+                                versionId: version.id,
                               ),
                             );
                           },

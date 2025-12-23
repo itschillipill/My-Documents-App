@@ -28,6 +28,9 @@ class Folder {
                   e.status == DocumentStatus.expairing,
             )
             .toList();
+      case -3:
+        return documents.where((e) => e.folderId == null).toList();
+
       default:
         return documents.where((e) => e.folderId == id).toList();
     }

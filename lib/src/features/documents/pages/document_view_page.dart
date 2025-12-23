@@ -15,12 +15,12 @@ import 'document_version_history.dart';
 class DocumentViewPage extends StatelessWidget {
   static PageRoute route(int documentId, {int? versionId}) =>
       AppPageRoute.build(
-        page: DocumentViewPage(documentId: documentId, versionId: versionId),
+        page: DocumentViewPage._(documentId: documentId, versionId: versionId),
         transition: PageTransitionType.slideFromBottom,
       );
   final int documentId;
   final int? versionId;
-  const DocumentViewPage({super.key, required this.documentId, this.versionId});
+  const DocumentViewPage._({required this.documentId, this.versionId});
 
   @override
   Widget build(BuildContext context) {

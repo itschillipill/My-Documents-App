@@ -4,6 +4,7 @@ import 'package:my_documents/src/features/documents/model/document.dart';
 import 'package:my_documents/src/widgets/border_box.dart';
 import 'package:my_documents/src/widgets/label.dart';
 import 'package:my_documents/src/utils/sevices/file_service.dart';
+import 'package:path/path.dart' as p;
 
 class DocumentVersionCard extends StatelessWidget {
   final int index;
@@ -116,6 +117,15 @@ class DocumentVersionCard extends StatelessWidget {
                           padding: const EdgeInsets.only(top: 4),
                           child: Text(
                             "Size: ${(FileService.getFileSize(documentVersion.filePath) / 1024 / 1024).toStringAsFixed(2)} MB",
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: Colors.redAccent,
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 4),
+                          child: Text(
+                            "File Name: ${p.basename(documentVersion.filePath)}",
                             style: theme.textTheme.bodySmall?.copyWith(
                               color: Colors.redAccent,
                             ),

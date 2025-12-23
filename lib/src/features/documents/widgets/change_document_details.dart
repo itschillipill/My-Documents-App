@@ -163,6 +163,7 @@ class _ChangeDocumentDetailsState extends State<ChangeDocumentDetails> {
                     ),
                     TextField(
                       controller: _titleController,
+                      maxLength: 20,
                       decoration: const InputDecoration(
                         hintText: "Document Name",
                       ),

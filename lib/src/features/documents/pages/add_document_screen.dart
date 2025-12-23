@@ -122,6 +122,7 @@ class _AddDocumentScreenState extends State<AddDocumentScreen> {
                   ),
                   TextField(
                     controller: _titleController,
+                    maxLength: 20,
                     decoration: const InputDecoration(
                       hintText: "Document Name",
                     ),
