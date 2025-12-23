@@ -67,7 +67,7 @@ class _ChangeDocumentDetailsState extends State<ChangeDocumentDetails> {
         );
         if (res && context.mounted) {
           Navigator.pop(context);
-        } 
+        }
       },
       child: Scaffold(
         appBar: AppBar(

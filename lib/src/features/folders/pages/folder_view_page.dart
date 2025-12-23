@@ -8,11 +8,11 @@ import 'package:my_documents/src/utils/page_transition/app_page_route.dart';
 
 class FolderViewPage extends StatefulWidget {
   static PageRoute route({required Folder folder}) => AppPageRoute.build(
-    page: FolderViewPage(folder: folder),
-    transition: PageTransitionType.fade,
+    page: FolderViewPage._(folder: folder),
+    transition: PageTransitionType.slideFromLeft,
   );
   final Folder folder;
-  const FolderViewPage({super.key, required this.folder});
+  const FolderViewPage._({required this.folder});
 
   @override
   State<FolderViewPage> createState() => _FolderViewPageState();
@@ -37,72 +37,88 @@ class _FolderViewPageState extends State<FolderViewPage> {
         if (!didPop && isSelecting) resetSelecting();
       },
       child: Scaffold(
-        appBar:
-            !isSelecting
-                ? AppBar(
-                  title: Text(
-                    widget.folder.name,
-                    style: Theme.of(context).textTheme.headlineMedium,
-                  ),
-                  actions:
-                      widget.folder.isVirtual
-                          ? null
-                          : [
-                            PopupMenuButton<FolderMenuActions>(
-                              popUpAnimationStyle: AnimationStyle(
-                                curve: Curves.bounceInOut,
-                              ),
-                              icon: Icon(Icons.more_vert_rounded),
-                              position: PopupMenuPosition.under,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              onSelected:
-                                  (action) =>
-                                      action.call(context, widget.folder),
-                              itemBuilder: (context) {
-                                return [
-                                  PopupMenuItem(
-                                    value: FolderMenuActions.rename,
-                                    child: Text("Rename"),
-                                  ),
-                                  PopupMenuItem(
-                                    value: FolderMenuActions.delete,
-                                    child: Text("Delete"),
-                                  ),
-                                ];
-                              },
-                            ),
-                          ],
-                )
-                : AppBar(
-                  title: Text("Select Documents"),
-                  centerTitle: false,
-                  leading: IconButton(
-                    onPressed: resetSelecting,
-                    icon: Icon(Icons.cancel_outlined),
-                  ),
-                  actions: [
-                    IconButton(
-                      onPressed: () {
-                        BlocProvider.of<DocumentsCubit>(
-                          context,
-                        ).deleteDocuments(selectedDocumentsIds.toList());
-                        resetSelecting();
-                      },
-                      icon: Icon(Icons.delete_rounded),
-                    ),
-                    IconButton(
-                      onPressed: () {
-                        BlocProvider.of<DocumentsCubit>(
-                          context,
-                        ).shareDocuments(selectedDocumentsIds.toList());
-                        resetSelecting();
-                      },
-                      icon: Icon(Icons.share),
-                    ),
-                  ],
+        appBar: PreferredSize(
+          preferredSize: const Size.fromHeight(kToolbarHeight),
+          child: AnimatedSwitcher(
+            duration: const Duration(milliseconds: 250),
+            transitionBuilder: (child, animation) {
+              return FadeTransition(
+                opacity: animation,
+                child: SlideTransition(
+                  position: Tween<Offset>(
+                    begin: const Offset(0, -0.2),
+                    end: Offset.zero,
+                  ).animate(animation),
+                  child: child,
                 ),
+              );
+            },
+            child:
+                !isSelecting
+                    ? AppBar(
+                      key: const ValueKey('normal'),
+                      title: Text(widget.folder.name),
+                      actions:
+                          widget.folder.isVirtual
+                              ? null
+                              : [
+                                PopupMenuButton<FolderMenuActions>(
+                                  popUpAnimationStyle: AnimationStyle(
+                                    curve: Curves.bounceInOut,
+                                  ),
+                                  icon: Icon(Icons.more_vert_rounded),
+                                  position: PopupMenuPosition.under,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  onSelected:
+                                      (action) =>
+                                          action.call(context, widget.folder),
+                                  itemBuilder: (context) {
+                                    return [
+                                      PopupMenuItem(
+                                        value: FolderMenuActions.rename,
+                                        child: Text("Rename"),
+                                      ),
+                                      PopupMenuItem(
+                                        value: FolderMenuActions.delete,
+                                        child: Text("Delete"),
+                                      ),
+                                    ];
+                                  },
+                                ),
+                              ],
+                    )
+                    : AppBar(
+                      key: const ValueKey('select'),
+                      title: const Text("Select Documents"),
+                      leading: IconButton(
+                        onPressed: resetSelecting,
+                        icon: const Icon(Icons.cancel_outlined),
+                      ),
+                      actions: [
+                        IconButton(
+                          onPressed: () {
+                            BlocProvider.of<DocumentsCubit>(
+                              context,
+                            ).deleteDocuments(selectedDocumentsIds.toList());
+                            resetSelecting();
+                          },
+                          icon: Icon(Icons.delete_rounded),
+                        ),
+                        IconButton(
+                          onPressed: () {
+                            BlocProvider.of<DocumentsCubit>(
+                              context,
+                            ).shareDocuments(selectedDocumentsIds.toList());
+                            resetSelecting();
+                          },
+                          icon: Icon(Icons.share),
+                        ),
+                      ],
+                    ),
+          ),
+        ),
         body: BlocBuilder<DocumentsCubit, DocumentsState>(
           buildWhen: (_, current) => current is DocumentsLoaded,
           builder: (context, state) {

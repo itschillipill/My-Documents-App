@@ -105,28 +105,41 @@ class FileService {
     );
   }
 
-  static Future<void> deleteDocumentsFiles() async {
-    MessageService.showErrorSnack("Not implemented yet");
-  }
-
-  static Future<void> deleteDocumentFiles(
-    Document document,
+  static Future<void> deleteDocumentsFiles(
+    List<Document> documents,
     List<Document> allDocuments,
   ) async {
-    for (final version in document.versions) {
-      final filePath = version.filePath;
+    // Уже обработанные пути, чтобы не удалять повторно
+    final Set<String> processedPaths = {};
 
-      // Проверяем, используется ли этот файл в других документах
-      final isUsedElsewhere = allDocuments.any(
-        (doc) =>
-            doc.id != document.id &&
-            doc.versions.any((v) => v.filePath == filePath),
-      );
+    for (final document in documents) {
+      for (final version in document.versions) {
+        final filePath = version.filePath;
 
-      if (!isUsedElsewhere) {
-        await FileService.deleteFile(filePath);
-      } else {
-        debugPrint("File $filePath is used in another document, not deleting");
+        // Пропускаем, если этот файл уже проверяли
+        if (!processedPaths.add(filePath)) {
+          continue;
+        }
+
+        final isUsedElsewhere = allDocuments.any(
+          (doc) =>
+              doc.id != document.id &&
+              doc.versions.any((v) => v.filePath == filePath),
+        );
+
+        if (isUsedElsewhere) {
+          debugPrint("Skip deleting $filePath — used in another document");
+          continue;
+        }
+
+        try {
+          await FileService.deleteFile(filePath);
+          debugPrint("Deleted file: $filePath");
+        } catch (e, st) {
+          debugPrint("Failed to delete $filePath: $e");
+          debugPrintStack(stackTrace: st);
+          // продолжаем, не падаем
+        }
       }
     }
   }
@@ -179,6 +192,7 @@ class FileService {
   }
 
   static Future<void> shareFiles(List<String> paths) async {
+    debugPrint("Share files: $paths");
     if (paths.isEmpty) {
       MessageService.showErrorSnack("No files to share");
       return;

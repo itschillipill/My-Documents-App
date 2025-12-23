@@ -177,6 +177,39 @@ class DocumentService {
     });
   }
 
+  Future<bool> deleteDocumentsByIds(List<int> ids) async {
+    if (_db == null) {
+      if (kDebugMode) {
+        throw Exception('Database not initialized');
+      }
+      return false;
+    }
+
+    if (ids.isEmpty) {
+      return true; // нечего удалять — не ошибка
+    }
+
+    final placeholders = List.filled(ids.length, '?').join(',');
+
+    return await _db.transaction((txn) async {
+      // 1️⃣ удаляем версии
+      await txn.delete(
+        'document_versions',
+        where: 'documentId IN ($placeholders)',
+        whereArgs: ids,
+      );
+
+      // 2️⃣ удаляем документы
+      final deletedCount = await txn.delete(
+        'documents',
+        where: 'id IN ($placeholders)',
+        whereArgs: ids,
+      );
+
+      return deletedCount > 0;
+    });
+  }
+
   Future<DocumentVersion?> getDocumentVersionByDocumentId(
     int documentId,
   ) async {

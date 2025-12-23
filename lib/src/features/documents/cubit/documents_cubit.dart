@@ -49,7 +49,7 @@ class DocumentsCubit extends Cubit<DocumentsState> {
       final res = await dataSource.deleteDocument(document.id);
       if (res) {
         await loadData();
-        await FileService.deleteDocumentFiles(document, documentsOrEmpty);
+        await FileService.deleteDocumentsFiles([document], documentsOrEmpty);
       }
       return res;
     } catch (e) {
@@ -60,7 +60,12 @@ class DocumentsCubit extends Cubit<DocumentsState> {
 
   Future<void> deleteDocuments(List<int> documentIds) async {
     try {
-      await FileService.deleteDocumentsFiles();
+      final res = await dataSource.deleteDocumentsByIds(documentIds);
+      if (res) {
+        await loadData();
+        final documents = getDocumentsByIds(documentIds);
+        await FileService.deleteDocumentsFiles(documents, documentsOrEmpty);
+      }
     } catch (e) {
       emit(DocumentsError(e.toString()));
     }
@@ -69,10 +74,11 @@ class DocumentsCubit extends Cubit<DocumentsState> {
   Future<void> shareDocuments(List<int> documentIds) async {
     try {
       List<String> paths = [];
-      for (final document in documentsOrEmpty) {
-        for (final version in document.versions) {
-          paths.add(version.filePath);
-        }
+      final documents = getDocumentsByIds(documentIds);
+      for (final doc in documents) {
+        paths.add(
+          doc.versions.firstWhere((v) => doc.currentVersionId == v.id).filePath,
+        );
       }
       await FileService.shareFiles(paths);
     } catch (e) {
@@ -110,6 +116,10 @@ class DocumentsCubit extends Cubit<DocumentsState> {
     if (versionId == null) return document.versions.first;
     return document.versions.where((e) => e.id == versionId).firstOrNull ??
         document.versions.firstOrNull;
+  }
+
+  List<Document> getDocumentsByIds(List<int> documentIds) {
+    return documentsOrEmpty.where((e) => documentIds.contains(e.id)).toList();
   }
 
   Future<void> saveDocument({
