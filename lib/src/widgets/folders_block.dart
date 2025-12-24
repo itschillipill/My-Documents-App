@@ -45,7 +45,7 @@ class FoldersBlock extends StatelessWidget {
                   tileColor: Theme.of(context).cardColor,
                   leading: const Icon(Icons.folder),
                   title: Text(folder.name),
-                  subtitle: Text("${folderDocuments.length} items"),
+                  subtitle: Text("${folderDocuments.length} ${context.l10n.items}"),
                   trailing: const Icon(Icons.arrow_forward_ios_sharp),
                   onTap: () {
                     Navigator.push(

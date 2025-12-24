@@ -181,8 +181,9 @@ class _SettingsPageState extends State<SettingsPage> {
                                         );
                                         return;
                                       }
-                                      settingCubit
+                                        settingCubit
                                           .changeBiometricAuthentication(v);
+                                          setState((){});
                                     },
                                   ),
                                 ]
