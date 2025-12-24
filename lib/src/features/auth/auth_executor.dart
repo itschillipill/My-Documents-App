@@ -1,5 +1,6 @@
-import 'package:flutter/material.dart' show ChangeNotifier, debugPrint;
+import 'package:flutter/material.dart' show ChangeNotifier;
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart' show ValueNotifier;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:local_auth/local_auth.dart';
 
@@ -7,11 +8,11 @@ class AuthenticationExecutor extends ChangeNotifier {
   final FlutterSecureStorage prefs;
 
   AuthenticationExecutor(this.prefs) {
-    _checkPassword();
+    _init();
   }
 
+  final ValueNotifier<bool> hasPasswordNotifier = ValueNotifier(false);
   bool _authenticated = false;
-  bool hasPassword = false;
   bool get authenticated => _authenticated;
   set authenticated(bool value) {
     _authenticated = value;
@@ -19,7 +20,6 @@ class AuthenticationExecutor extends ChangeNotifier {
   }
 
   static const _storageKey = 'auth_key';
-
   final LocalAuthentication _auth = LocalAuthentication();
 
   Future<bool> get canCheckBiometrics async => await _auth.canCheckBiometrics;
@@ -38,14 +38,8 @@ class AuthenticationExecutor extends ChangeNotifier {
       );
     } catch (e) {
       Clipboard.setData(ClipboardData(text: e.toString()));
-      debugPrint('Authentication failed: $e');
     }
-    if (result == true) {
-      _authenticated = true;
-    } else {
-      _authenticated = false;
-    }
-    notifyListeners();
+    authenticated = result == true;
     return authenticated;
   }
 
@@ -60,21 +54,27 @@ class AuthenticationExecutor extends ChangeNotifier {
 
   Future<void> savePin(String pin) async {
     await prefs.write(key: _storageKey, value: pin);
-    _checkPassword();
+    _updateHasPassword();
   }
 
   Future<void> clearPin() async {
     await prefs.delete(key: _storageKey);
-    _checkPassword();
+    _updateHasPassword();
   }
 
   Future<void> createOrChangePin(String pin) async {
     await prefs.write(key: _storageKey, value: pin);
-    _checkPassword();
+    _updateHasPassword();
   }
 
-  Future<void> _checkPassword() async {
-    hasPassword = await prefs.containsKey(key: _storageKey);
-    notifyListeners();
+  Future<void> _init() async {
+    final exists = await prefs.containsKey(key: _storageKey);
+    hasPasswordNotifier.value = exists;
+  }
+
+  Future<void> _updateHasPassword() async {
+    final exists = await prefs.containsKey(key: _storageKey);
+    // обновляем ValueNotifier, а не напрямую hasPassword
+    hasPasswordNotifier.value = exists;
   }
 }

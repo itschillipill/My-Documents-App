@@ -11,4 +11,5 @@ class Constants {
   static const localeKey = "language_code";
   static const themeModeKey = "themeMode";
   static const useBiometricsKey = "useBiometrics";
+  static const isFirstLaunchKey = 'auth_key';
 }

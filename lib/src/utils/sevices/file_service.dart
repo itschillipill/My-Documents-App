@@ -194,7 +194,10 @@ class FileService {
     }
   }
 
-  static Future<void> shareFiles(List<String> paths, BuildContext context) async {
+  static Future<void> shareFiles(
+    List<String> paths,
+    BuildContext context,
+  ) async {
     debugPrint("Share files: $paths");
     if (paths.isEmpty) return;
     try {
@@ -213,7 +216,8 @@ class FileService {
       await SharePlus.instance.share(ShareParams(files: files));
     } catch (e) {
       debugPrint("Share files error: $e");
-     if(context.mounted) MessageService.showErrorSnack(context.l10n.failedToShare);
+      if (context.mounted)
+        MessageService.showErrorSnack(context.l10n.failedToShare);
     }
   }
 
@@ -221,7 +225,10 @@ class FileService {
     MessageService.showErrorToast(context.l10n.notImplemented);
   }
 
-  static Future<void> exportData(BuildContext context,{List<Document> documents = const []}) async {
+  static Future<void> exportData(
+    BuildContext context, {
+    List<Document> documents = const [],
+  }) async {
     MessageService.showErrorToast(context.l10n.notImplemented);
   }
 }

@@ -3,9 +3,5 @@ class Package {
   final String name;
   final List<int> documentsIds;
 
-  Package({
-    required this.id,
-    required this.name,
-    required this.documentsIds,
-  });
+  Package({required this.id, required this.name, required this.documentsIds});
 }

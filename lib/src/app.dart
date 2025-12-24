@@ -6,6 +6,7 @@ import 'package:my_documents/src/features/auth/widgets/auth_scope.dart';
 import 'package:my_documents/src/features/auth/widgets/auth_screen.dart';
 import 'package:my_documents/src/features/settings/cubit/settings_cubit.dart';
 import 'package:my_documents/src/pages/app_gate.dart';
+import 'package:my_documents/src/pages/onboarding_page.dart';
 import 'package:my_documents/src/utils/sevices/message_service.dart';
 import 'dependencies/widgets/dependencies_scope.dart';
 import 'package:my_documents/src/utils/theme/theme.dart';
@@ -26,8 +27,7 @@ class App extends StatelessWidget {
         BlocProvider(create: (_) => deps.foldersCubit),
         BlocProvider(create: (_) => deps.settingsCubit),
       ],
-      child: BlocSelector<SettingsCubit, SettingsState, (ThemeMode, Locale?)>(
-        selector: (state) => (state.themeMode, state.locale),
+      child: BlocBuilder<SettingsCubit, SettingsState>(
         builder: (context, state) {
           return MaterialApp(
             scaffoldMessengerKey: MessageService.messengerKey,
@@ -36,8 +36,10 @@ class App extends StatelessWidget {
             debugShowCheckedModeBanner: false,
             theme: AppTheme.lightTheme,
             darkTheme: AppTheme.darkTheme,
-            themeMode: state.$1,
+            themeMode: state.themeMode,
             home: AuthScope(
+              isFirstLaunch: state.isFurstLaunch,
+              onboardingPage: OnboardingPage(),
               authExecutor: deps.authExecutor,
               authScreenBuilder:
                   (executor) => VerefyPinScreen(
@@ -65,7 +67,7 @@ class App extends StatelessWidget {
               GlobalWidgetsLocalizations.delegate,
               GlobalCupertinoLocalizations.delegate,
             ],
-            locale: state.$2 ?? Constants.defaultLocale,
+            locale: state.locale,
             supportedLocales: Constants.supportedLocales,
           );
         },

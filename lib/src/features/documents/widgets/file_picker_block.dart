@@ -33,7 +33,10 @@ class FilePickerBlock extends StatelessWidget {
     }
     return BuildSection(
       children: [
-        Text(context.l10n.chooseMethod, style: Theme.of(context).textTheme.bodyLarge),
+        Text(
+          context.l10n.chooseMethod,
+          style: Theme.of(context).textTheme.bodyLarge,
+        ),
         Row(
           spacing: 10,
           children: [

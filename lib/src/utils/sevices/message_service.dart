@@ -139,9 +139,7 @@ class MessageService {
             ],
           ),
         ),
-        content: Text(
-          message ?? ctx.l10n.confirmAction,
-        ),
+        content: Text(message ?? ctx.l10n.confirmAction),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),

@@ -46,11 +46,11 @@ class _VerefyPinScreenState extends State<VerefyPinScreen> {
     setState(() => _loading = true);
     try {
       final success = await widget.onAuthByPIN(controller.text);
-      if (!success&&mounted) {
+      if (!success && mounted) {
         MessageService.showSnackBar(context.l10n.invalidPIN);
       }
     } catch (e) {
-      if (mounted)MessageService.showSnackBar("${context.l10n.error}: $e");
+      if (mounted) MessageService.showSnackBar("${context.l10n.error}: $e");
     } finally {
       setState(() => _loading = false);
     }
@@ -60,11 +60,11 @@ class _VerefyPinScreenState extends State<VerefyPinScreen> {
     setState(() => _loading = true);
     try {
       final success = await widget.onAuthByBiometrics();
-      if (!success&&mounted) {
+      if (!success && mounted) {
         MessageService.showSnackBar(context.l10n.biometricFailed);
       }
     } catch (e) {
-      if (mounted)MessageService.showSnackBar("${context.l10n.error}: $e");
+      if (mounted) MessageService.showSnackBar("${context.l10n.error}: $e");
     } finally {
       setState(() => _loading = false);
     }
@@ -139,7 +139,7 @@ class _VerefyPinScreenState extends State<VerefyPinScreen> {
                       onSubmitted: (_) => _loading ? null : _handlePinAuth,
                     ),
                     ElevatedButton.icon(
-                      onPressed: _loading ? null :_handlePinAuth,
+                      onPressed: _loading ? null : _handlePinAuth,
                       icon:
                           _loading
                               ? const SizedBox(
@@ -150,7 +150,9 @@ class _VerefyPinScreenState extends State<VerefyPinScreen> {
                                 ),
                               )
                               : const Icon(Icons.lock_open_rounded),
-                      label: Text(_loading ? context.l10n.verifying : context.l10n.unlock),
+                      label: Text(
+                        _loading ? context.l10n.verifying : context.l10n.unlock,
+                      ),
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 14),
                         textStyle: const TextStyle(fontSize: 16),

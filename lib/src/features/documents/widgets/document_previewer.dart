@@ -37,12 +37,7 @@ class DocumentPreviewer extends StatelessWidget {
                     )
                     : null,
           ),
-          child:
-              !isImage
-                  ? Center(
-                    child: Text(context.l10n.noPreview),
-                  )
-                  : null,
+          child: !isImage ? Center(child: Text(context.l10n.noPreview)) : null,
         ),
       ),
     );

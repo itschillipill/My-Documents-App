@@ -76,7 +76,10 @@ class DocumentsCubit extends Cubit<DocumentsState> {
     }
   }
 
-  Future<void> shareDocuments(List<int> documentIds, BuildContext context) async {
+  Future<void> shareDocuments(
+    List<int> documentIds,
+    BuildContext context,
+  ) async {
     try {
       List<String> paths = [];
       final documents = getDocumentsByIds(documentIds);

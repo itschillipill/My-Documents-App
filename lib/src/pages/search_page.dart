@@ -97,14 +97,15 @@ class _SearchPageState extends State<SearchPage> {
             Expanded(
               child:
                   _query.isEmpty
-                      ?  Center(child: Text(context.l10n.typeToSearch))
+                      ? Center(child: Text(context.l10n.typeToSearch))
                       : grouped.isEmpty
-                      ?  Center(child: Text(context.l10n.noDocumentsFound))
+                      ? Center(child: Text(context.l10n.noDocumentsFound))
                       : ListView(
                         children:
                             grouped.entries.map((entry) {
                               final folderName =
-                                  folders[entry.key]?.name ?? context.l10n.unknownFolder;
+                                  folders[entry.key]?.name ??
+                                  context.l10n.unknownFolder;
 
                               return Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,

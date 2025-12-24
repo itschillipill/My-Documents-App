@@ -18,7 +18,7 @@ class _AppGateState extends State<AppGate> {
   int _selectedIndex = 0;
   final PageController _controller = PageController(initialPage: 0);
   final List<Widget> pages = [MyHomePage(), SearchPage()];
-   List<BottomNavigationBarItem> navItems(BuildContext ctx) => [
+  List<BottomNavigationBarItem> navItems(BuildContext ctx) => [
     BottomNavigationBarItem(icon: Icon(Icons.home), label: ctx.l10n.home),
     BottomNavigationBarItem(icon: Icon(Icons.search), label: ctx.l10n.search),
   ];

@@ -29,7 +29,10 @@ class FoldersBlock extends StatelessWidget {
       children: [
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 8.0),
-          child: Text(context.l10n.folders, style: Theme.of(context).textTheme.titleLarge),
+          child: Text(
+            context.l10n.folders,
+            style: Theme.of(context).textTheme.titleLarge,
+          ),
         ),
         Column(
           children: [

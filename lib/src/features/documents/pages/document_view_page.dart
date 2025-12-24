@@ -112,7 +112,10 @@ class DocumentViewPage extends StatelessWidget {
                               ? documentVersion.expirationDate!.formatted
                               : context.l10n.noExpiration,
                         ),
-                        DocumentRow(context.l10n.status, document.status.localizedText(context)),
+                        DocumentRow(
+                          context.l10n.status,
+                          document.status.localizedText(context),
+                        ),
                       ],
                     ).withBorder(padding: EdgeInsets.all(8)),
                     DocumentPreviewer(

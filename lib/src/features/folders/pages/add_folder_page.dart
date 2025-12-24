@@ -52,7 +52,7 @@ class AddFolderPage extends StatelessWidget {
                 controller: _nameController,
                 maxLength: 20,
                 decoration: InputDecoration(
-                  hintText:context.l10n.folderName,
+                  hintText: context.l10n.folderName,
                   border: InputBorder.none,
                   contentPadding: EdgeInsets.all(8),
                 ),

@@ -15,7 +15,8 @@ enum DocumentStatus {
         return Colors.redAccent.shade700;
     }
   }
-   String localizedText(BuildContext context) {
+
+  String localizedText(BuildContext context) {
     switch (this) {
       case DocumentStatus.functioning:
         return context.l10n.functioning;
@@ -26,4 +27,3 @@ enum DocumentStatus {
     }
   }
 }
-

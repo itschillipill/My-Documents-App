@@ -82,7 +82,9 @@ class _AddDocumentScreenState extends State<AddDocumentScreen> {
                     child: ListTile(
                       leading: const Icon(Icons.folder_rounded),
                       title: Text(
-                        _folder != null ? _folder!.name : context.l10n.selectFolder,
+                        _folder != null
+                            ? _folder!.name
+                            : context.l10n.selectFolder,
                       ),
                       onTap: () async {
                         final Folder? folder = await Navigator.push(
