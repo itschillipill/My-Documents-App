@@ -210,13 +210,12 @@ class _OnboardingPageState extends State<OnboardingPage> {
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
+                      spacing: 5,
                       children: [
                         Icon(
                           Icons.privacy_tip_rounded,
-                          size: 18,
                           color: Colors.grey.shade600,
                         ),
-                        const SizedBox(width: 8),
                        Text(context.l10n.privacyPolicy),
                       ],
                     ),
@@ -368,12 +367,12 @@ class PrivacyPolicyModal extends StatelessWidget {
                         Icon(
                           Icons.privacy_tip_rounded,
                           color: Colors.blueAccent,
-                          size: 28,
+                          size: 20,
                         ),
                         const SizedBox(width: 12),
                         Text(
                           context.l10n.privacyPolicy,
-                          style: theme.textTheme.headlineSmall?.copyWith(
+                          style: theme.textTheme.titleMedium?.copyWith(
                             fontWeight: FontWeight.w700,
                           ),
                         ),

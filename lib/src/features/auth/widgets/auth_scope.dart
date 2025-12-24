@@ -22,21 +22,31 @@ class AuthScope extends StatelessWidget {
     return ValueListenableBuilder<bool>(
       valueListenable: authExecutor.hasPasswordNotifier,
       builder: (context, hasPassword, _) {
-        debugPrint("auth scope rebuild");
+        debugPrint('AuthScope → hasPassword: $hasPassword');
 
-        if (isFirstLaunch) return onboardingPage;
-
-        if (!hasPassword) {
-          // безопасно обновляем authenticated после текущей микротаски
-          if (!authExecutor.authenticated) {
-            Future.microtask(() => authExecutor.authenticated = true);
-          }
-          return child;
+        if (isFirstLaunch) {
+          return onboardingPage;
         }
 
-        return authExecutor.authenticated
-            ? child
-            : authScreenBuilder(authExecutor);
+        return ValueListenableBuilder<bool>(
+          valueListenable: authExecutor.authenticatedNotifier,
+          builder: (context, authenticated, _) {
+            debugPrint('AuthScope → authenticated: $authenticated');
+
+            /// Если пароля нет — сразу пускаем
+            if (!hasPassword) {
+              return child;
+            }
+
+            /// Пароль есть, но пользователь ещё не ввёл его
+            if (!authenticated) {
+              return authScreenBuilder(authExecutor);
+            }
+
+            /// Всё ок — главная страница
+            return child;
+          },
+        );
       },
     );
   }

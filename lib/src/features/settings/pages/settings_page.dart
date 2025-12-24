@@ -26,7 +26,7 @@ class _SettingsPageState extends State<SettingsPage> {
     final oldPin = await _showPinSheet(context.l10n.enterCurrentPIN);
     return oldPin != null &&
         oldPin.isNotEmpty &&
-        await authExecutor.verefyPin(oldPin);
+        await authExecutor.verifyPin(oldPin);
   }
 
   Future<void> _createOrChangePin(
