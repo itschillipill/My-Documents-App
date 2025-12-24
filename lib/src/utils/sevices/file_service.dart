@@ -3,6 +3,7 @@ import 'package:crypto/crypto.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:my_documents/src/core/extensions/extensions.dart';
 import 'package:my_documents/src/utils/sevices/message_service.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
@@ -58,7 +59,7 @@ class FileService {
     String? path;
     if (imageSource != null) {
       if (imageSource == ImageSource.camera && !isMobile) {
-        MessageService.showToast("This feature is not available on desktop");
+        MessageService.showToast(context.l10n.notAvailableOnDesktop);
         return null;
       }
       final image = await ImagePicker().pickImage(source: imageSource);
@@ -193,13 +194,9 @@ class FileService {
     }
   }
 
-  static Future<void> shareFiles(List<String> paths) async {
+  static Future<void> shareFiles(List<String> paths, BuildContext context) async {
     debugPrint("Share files: $paths");
-    if (paths.isEmpty) {
-      MessageService.showErrorSnack("No files to share");
-      return;
-    }
-
+    if (paths.isEmpty) return;
     try {
       final files =
           paths
@@ -209,22 +206,22 @@ class FileService {
               .toList();
 
       if (files.isEmpty) {
-        MessageService.showErrorSnack("Selected files not found");
+        MessageService.showErrorSnack(context.l10n.filesNotFound);
         return;
       }
 
       await SharePlus.instance.share(ShareParams(files: files));
     } catch (e) {
       debugPrint("Share files error: $e");
-      MessageService.showErrorSnack("Failed to share files");
+     if(context.mounted) MessageService.showErrorSnack(context.l10n.failedToShare);
     }
   }
 
-  static Future<void> importData() async {
-    MessageService.showErrorToast("Not implemented yet");
+  static Future<void> importData(BuildContext context) async {
+    MessageService.showErrorToast(context.l10n.notImplemented);
   }
 
-  static Future<void> exportData({List<Document> documents = const []}) async {
-    MessageService.showErrorToast("Not implemented yet");
+  static Future<void> exportData(BuildContext context,{List<Document> documents = const []}) async {
+    MessageService.showErrorToast(context.l10n.notImplemented);
   }
 }

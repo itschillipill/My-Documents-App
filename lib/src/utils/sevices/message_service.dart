@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:my_documents/src/core/extensions/extensions.dart';
 import 'package:my_documents/src/widgets/loading_overlay.dart';
 
 import '../../widgets/toast_wiget.dart';
@@ -130,7 +131,7 @@ class MessageService {
         title: RichText(
           text: TextSpan(
             children: [
-              TextSpan(text: "Confirm Action "),
+              TextSpan(text: "${ctx.l10n.confirm} "),
               TextSpan(
                 text: title,
                 style: TextStyle(fontWeight: FontWeight.bold),
@@ -139,16 +140,16 @@ class MessageService {
           ),
         ),
         content: Text(
-          message ?? "Are you sure you want to perform this action?",
+          message ?? ctx.l10n.confirmAction,
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: Text("Cancel"),
+            child: Text(ctx.l10n.cancel),
           ),
           TextButton(
             onPressed: () => Navigator.pop(ctx, true),
-            child: Text("Confirm"),
+            child: Text(ctx.l10n.ok),
           ),
         ],
       ),

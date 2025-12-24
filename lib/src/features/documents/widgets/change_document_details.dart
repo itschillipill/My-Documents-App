@@ -63,7 +63,7 @@ class _ChangeDocumentDetailsState extends State<ChangeDocumentDetails> {
         if (didPop) return;
 
         final res = await MessageService.$confirmAction(
-          title: "Discard the changes?",
+          title: context.l10n.discardChanges,
         );
         if (res && context.mounted) {
           Navigator.pop(context);
@@ -72,7 +72,7 @@ class _ChangeDocumentDetailsState extends State<ChangeDocumentDetails> {
       child: Scaffold(
         appBar: AppBar(
           title: Text(
-            "Change Document Details",
+            context.l10n.changeDetails,
             style: Theme.of(context).textTheme.headlineMedium,
           ),
           actions: [
@@ -82,7 +82,7 @@ class _ChangeDocumentDetailsState extends State<ChangeDocumentDetails> {
                 onPressed: () async {
                   final title = _titleController.text.trim();
                   if (title.isEmpty) {
-                    MessageService.showSnackBar("Please enter a title");
+                    MessageService.showSnackBar(context.l10n.enterTitle);
                     return;
                   }
                   if (title != widget.oldParams.title &&
@@ -90,12 +90,12 @@ class _ChangeDocumentDetailsState extends State<ChangeDocumentDetails> {
                         (e) => title == e.title,
                       )) {
                     MessageService.showSnackBar(
-                      "Document with this title already exists",
+                      context.l10n.documentTitleExists,
                     );
                     return;
                   }
                   final res = await MessageService.$confirmAction(
-                    title: "Change Document Details",
+                    title: context.l10n.changeDetails,
                   );
                   if (res && context.mounted) {
                     widget.onUpdate((
@@ -106,7 +106,7 @@ class _ChangeDocumentDetailsState extends State<ChangeDocumentDetails> {
                     Navigator.pop(context);
                   }
                 },
-                child: const Text("Save"),
+                child: Text(context.l10n.save),
               ),
             ),
           ],
@@ -121,7 +121,7 @@ class _ChangeDocumentDetailsState extends State<ChangeDocumentDetails> {
                 BuildSection(
                   children: [
                     Text(
-                      "Add To Folder",
+                      context.l10n.addToFolder,
                       style: Theme.of(context).textTheme.bodyLarge,
                     ),
                     BorderBox(
@@ -130,7 +130,7 @@ class _ChangeDocumentDetailsState extends State<ChangeDocumentDetails> {
                         title: Text(
                           _folder != null
                               ? _folder!.name
-                              : "Select a folder...",
+                              : context.l10n.selectFolder,
                         ),
                         onTap: () async {
                           final Folder? folder = await Navigator.push(
@@ -158,21 +158,21 @@ class _ChangeDocumentDetailsState extends State<ChangeDocumentDetails> {
                 BuildSection(
                   children: [
                     Text(
-                      "Document Details",
+                      context.l10n.documentDetails,
                       style: Theme.of(context).textTheme.bodyLarge,
                     ),
                     TextField(
                       controller: _titleController,
                       maxLength: 20,
-                      decoration: const InputDecoration(
-                        hintText: "Document Name",
+                      decoration: InputDecoration(
+                        hintText: context.l10n.documentName,
                       ),
                     ),
                   ],
                 ),
 
                 ListTile(
-                  title: const Text("Add to Favorites"),
+                  title: Text(context.l10n.addToFavorities),
                   leading: const Icon(Icons.star_border_rounded),
                   trailing: Switch.adaptive(
                     value: isFavorite,

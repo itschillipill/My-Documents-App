@@ -118,7 +118,7 @@ class _FolderViewPageState extends State<FolderViewPage> {
                           onPressed: () {
                             BlocProvider.of<DocumentsCubit>(
                               context,
-                            ).shareDocuments(selectedDocumentsIds.toList());
+                            ).shareDocuments(selectedDocumentsIds.toList(), context);
                             resetSelecting();
                           },
                           icon: Icon(Icons.share),
@@ -156,11 +156,14 @@ class _FolderViewPageState extends State<FolderViewPage> {
                                   !isSelecting
                                       ? null
                                       : () {
-                                        setState(() {
-                                          selectedDocumentsIds.addOrRemove(
+                                          setState(() {
+                                            selectedDocumentsIds.addOrRemove(
                                             documents[index].id,
                                           );
-                                        });
+                                          });
+                                          if (selectedDocumentsIds.isEmpty) {
+                                            resetSelecting();
+                                          }
                                       },
                             ),
                           );

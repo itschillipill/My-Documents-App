@@ -32,7 +32,7 @@ class AddFolderPage extends StatelessWidget {
                     Folder(id: 0, name: _nameController.text.trim()),
                     onSaved: () => Navigator.pop(context),
                   ),
-              child: Text("Save"),
+              child: Text(context.l10n.save),
             ),
           ),
         ],
@@ -44,7 +44,7 @@ class AddFolderPage extends StatelessWidget {
           spacing: 20,
           children: [
             Text(
-              "Folder Details",
+              context.l10n.folderDetails,
               style: Theme.of(context).textTheme.bodyLarge,
             ),
             BorderBox(
@@ -52,7 +52,7 @@ class AddFolderPage extends StatelessWidget {
                 controller: _nameController,
                 maxLength: 20,
                 decoration: InputDecoration(
-                  hintText: "Folder Name",
+                  hintText:context.l10n.folderName,
                   border: InputBorder.none,
                   contentPadding: EdgeInsets.all(8),
                 ),
