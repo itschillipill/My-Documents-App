@@ -14,11 +14,11 @@ class DatePicker extends StatelessWidget {
       controller: TextEditingController(
         text:
             expirationDate == null
-                ? "No expiration"
+                ? context.l10n.noExpiration
                 : expirationDate!.formatted,
       ),
-      decoration: const InputDecoration(
-        hintText: "Expiration Date",
+      decoration: InputDecoration(
+        hintText: context.l10n.expirationDate,
         suffixIcon: Icon(Icons.calendar_month_rounded),
       ),
       onTap: () async {

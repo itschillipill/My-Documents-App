@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:my_documents/src/core/extensions/extensions.dart';
 import 'package:my_documents/src/features/documents/cubit/documents_cubit.dart';
 import 'package:my_documents/src/features/folders/folder_actions.dart';
 import 'package:my_documents/src/features/folders/model/folder.dart';
@@ -58,7 +59,7 @@ class _FolderViewPageState extends State<FolderViewPage> {
                 !isSelecting
                     ? AppBar(
                       key: const ValueKey('normal'),
-                      title: Text(widget.folder.name),
+                      title: Text(widget.folder.folderTitle(context)),
                       actions:
                           widget.folder.isVirtual
                               ? null
@@ -79,11 +80,11 @@ class _FolderViewPageState extends State<FolderViewPage> {
                                     return [
                                       PopupMenuItem(
                                         value: FolderMenuActions.rename,
-                                        child: Text("Rename"),
+                                        child: Text(context.l10n.rename),
                                       ),
                                       PopupMenuItem(
                                         value: FolderMenuActions.delete,
-                                        child: Text("Delete"),
+                                        child: Text(context.l10n.delete),
                                       ),
                                     ];
                                   },
@@ -92,7 +93,7 @@ class _FolderViewPageState extends State<FolderViewPage> {
                     )
                     : AppBar(
                       key: const ValueKey('select'),
-                      title: const Text("Select Documents"),
+                      title: Text(context.l10n.selectDocuments),
                       leading: IconButton(
                         onPressed: resetSelecting,
                         icon: const Icon(Icons.cancel_outlined),
@@ -102,7 +103,7 @@ class _FolderViewPageState extends State<FolderViewPage> {
                           onPressed: () async {
                             final res = await MessageService.$confirmAction(
                               title:
-                                  "Delete ${selectedDocumentsIds.length} documents",
+                                  "${context.l10n.delete} ${selectedDocumentsIds.length} ${context.l10n.documents}",
                             );
                             if (res && context.mounted) {
                               BlocProvider.of<DocumentsCubit>(
@@ -166,7 +167,7 @@ class _FolderViewPageState extends State<FolderViewPage> {
                         },
                       ),
                     )
-                    : Center(child: Text("No documents found")),
+                    : Center(child: Text(context.l10n.noDocumentsFound)),
               ],
             );
           },

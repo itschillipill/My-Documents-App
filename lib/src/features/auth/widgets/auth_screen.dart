@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_documents/src/core/extensions/extensions.dart';
 import 'package:my_documents/src/utils/page_transition/app_page_route.dart';
 import 'package:my_documents/src/utils/sevices/message_service.dart';
 import 'package:my_documents/src/widgets/border_box.dart';
@@ -38,18 +39,18 @@ class _VerefyPinScreenState extends State<VerefyPinScreen> {
 
   Future<void> _handlePinAuth() async {
     if (controller.text.trim().isEmpty) {
-      MessageService.showSnackBar("Please enter your PIN.");
+      MessageService.showSnackBar(context.l10n.enterYourPIN);
       return;
     }
 
     setState(() => _loading = true);
     try {
       final success = await widget.onAuthByPIN(controller.text);
-      if (!success) {
-        MessageService.showSnackBar("Invalid PIN, try again.");
+      if (!success&&mounted) {
+        MessageService.showSnackBar(context.l10n.invalidPIN);
       }
     } catch (e) {
-      MessageService.showSnackBar("Error: $e");
+      if (mounted)MessageService.showSnackBar("${context.l10n.error}: $e");
     } finally {
       setState(() => _loading = false);
     }
@@ -59,11 +60,11 @@ class _VerefyPinScreenState extends State<VerefyPinScreen> {
     setState(() => _loading = true);
     try {
       final success = await widget.onAuthByBiometrics();
-      if (!success) {
-        MessageService.showSnackBar("Biometric authentication failed.");
+      if (!success&&mounted) {
+        MessageService.showSnackBar(context.l10n.biometricFailed);
       }
     } catch (e) {
-      MessageService.showSnackBar("Error: $e");
+      if (mounted)MessageService.showSnackBar("${context.l10n.error}: $e");
     } finally {
       setState(() => _loading = false);
     }
@@ -94,13 +95,13 @@ class _VerefyPinScreenState extends State<VerefyPinScreen> {
                   color: theme.colorScheme.primary,
                 ),
                 Text(
-                  "My Documents",
+                  context.l10n.appTitle,
                   style: theme.textTheme.headlineMedium?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 Text(
-                  "Enter your PIN to access your documents",
+                  context.l10n.enterPINToAccess,
                   style: theme.textTheme.bodyMedium?.copyWith(
                     color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                   ),
@@ -122,7 +123,7 @@ class _VerefyPinScreenState extends State<VerefyPinScreen> {
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
-                        hintText: "Enter your PIN",
+                        hintText: context.l10n.enterPIN,
                         suffixIcon: IconButton(
                           onPressed:
                               () => setState(
@@ -135,10 +136,10 @@ class _VerefyPinScreenState extends State<VerefyPinScreen> {
                           ),
                         ),
                       ),
-                      onSubmitted: (_) => _loading ? null : _handlePinAuth(),
+                      onSubmitted: (_) => _loading ? null : _handlePinAuth,
                     ),
                     ElevatedButton.icon(
-                      onPressed: _loading ? null : _handlePinAuth,
+                      onPressed: _loading ? null :_handlePinAuth,
                       icon:
                           _loading
                               ? const SizedBox(
@@ -149,7 +150,7 @@ class _VerefyPinScreenState extends State<VerefyPinScreen> {
                                 ),
                               )
                               : const Icon(Icons.lock_open_rounded),
-                      label: Text(_loading ? "Verifying..." : "Unlock"),
+                      label: Text(_loading ? context.l10n.verifying : context.l10n.unlock),
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 14),
                         textStyle: const TextStyle(fontSize: 16),
@@ -175,7 +176,7 @@ class _VerefyPinScreenState extends State<VerefyPinScreen> {
                             color: theme.colorScheme.primary,
                           ),
                           Text(
-                            "Use Biometrics",
+                            context.l10n.useBiometrics,
                             style: theme.textTheme.titleMedium?.copyWith(
                               color: theme.colorScheme.primary,
                               fontWeight: FontWeight.w500,
@@ -188,7 +189,7 @@ class _VerefyPinScreenState extends State<VerefyPinScreen> {
 
                 const SizedBox(height: 20),
                 Text(
-                  "Your data is securely protected",
+                  context.l10n.dataProtected,
                   style: theme.textTheme.bodySmall?.copyWith(
                     color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                   ),

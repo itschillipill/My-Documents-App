@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:my_documents/src/core/extensions/extensions.dart';
 import 'package:my_documents/src/features/documents/cubit/documents_cubit.dart';
 import 'package:my_documents/src/features/folders/cubit/folders_cubit.dart';
 import 'package:my_documents/src/features/documents/widgets/document_card.dart';
@@ -63,7 +64,7 @@ class _SearchPageState extends State<SearchPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "Search",
+          context.l10n.search,
           style: Theme.of(context).textTheme.headlineMedium,
         ),
         centerTitle: true,
@@ -77,7 +78,7 @@ class _SearchPageState extends State<SearchPage> {
               onChanged: _searchFor,
               decoration: InputDecoration(
                 prefixIcon: const Icon(Icons.search),
-                hintText: "Search documents...",
+                hintText: context.l10n.searchDocumentsHint,
                 suffixIcon:
                     _searchController.text.isNotEmpty
                         ? IconButton(
@@ -96,14 +97,14 @@ class _SearchPageState extends State<SearchPage> {
             Expanded(
               child:
                   _query.isEmpty
-                      ? const Center(child: Text("Type to search..."))
+                      ?  Center(child: Text(context.l10n.typeToSearch))
                       : grouped.isEmpty
-                      ? const Center(child: Text("No results found"))
+                      ?  Center(child: Text(context.l10n.noDocumentsFound))
                       : ListView(
                         children:
                             grouped.entries.map((entry) {
                               final folderName =
-                                  folders[entry.key]?.name ?? "Unknown Folder";
+                                  folders[entry.key]?.name ?? context.l10n.unknownFolder;
 
                               return Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,

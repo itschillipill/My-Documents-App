@@ -67,7 +67,7 @@ class DocumentVersionCard extends StatelessWidget {
                         Row(
                           children: [
                             Text(
-                              "Version ${index + 1}",
+                              "${context.l10n.version} ${index + 1}",
                               style: theme.textTheme.titleMedium?.copyWith(
                                 fontWeight: FontWeight.w600,
                               ),
@@ -77,7 +77,7 @@ class DocumentVersionCard extends StatelessWidget {
                               Label(
                                 color: Colors.green,
                                 label: Text(
-                                  "Current",
+                                  context.l10n.current,
                                   style: theme.textTheme.bodySmall?.copyWith(
                                     color: Colors.white,
                                   ),
@@ -87,7 +87,7 @@ class DocumentVersionCard extends StatelessWidget {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          "Uploaded: ${documentVersion.uploadedAt.formatted}",
+                          "${context.l10n.uploaded}: ${documentVersion.uploadedAt.formatted}",
                           style: theme.textTheme.bodySmall?.copyWith(
                             color: theme.colorScheme.onSurface.withValues(
                               alpha: 0.6,
@@ -99,7 +99,7 @@ class DocumentVersionCard extends StatelessWidget {
                           Padding(
                             padding: const EdgeInsets.only(top: 4),
                             child: Text(
-                              "Comment: ${documentVersion.comment}",
+                              "${context.l10n.comment}: ${documentVersion.comment}",
                               style: theme.textTheme.bodySmall,
                             ),
                           ),
@@ -107,7 +107,7 @@ class DocumentVersionCard extends StatelessWidget {
                           Padding(
                             padding: const EdgeInsets.only(top: 4),
                             child: Text(
-                              "Expires: ${documentVersion.expirationDate!.formatted}",
+                              "${context.l10n.expiresAt}: ${documentVersion.expirationDate!.formatted}",
                               style: theme.textTheme.bodySmall?.copyWith(
                                 color: Colors.redAccent,
                               ),
@@ -116,7 +116,7 @@ class DocumentVersionCard extends StatelessWidget {
                         Padding(
                           padding: const EdgeInsets.only(top: 4),
                           child: Text(
-                            "Size: ${(FileService.getFileSize(documentVersion.filePath) / 1024 / 1024).toStringAsFixed(2)} MB",
+                            "${context.l10n.fileSize}: ${(FileService.getFileSize(documentVersion.filePath) / 1024 / 1024).toStringAsFixed(2)} MB",
                             style: theme.textTheme.bodySmall?.copyWith(
                               color: Colors.redAccent,
                             ),
@@ -125,7 +125,7 @@ class DocumentVersionCard extends StatelessWidget {
                         Padding(
                           padding: const EdgeInsets.only(top: 4),
                           child: Text(
-                            "File Name: ${p.basename(documentVersion.filePath)}",
+                            "${context.l10n.fileName}: ${p.basename(documentVersion.filePath)}",
                             style: theme.textTheme.bodySmall?.copyWith(
                               color: Colors.redAccent,
                             ),
@@ -148,28 +148,11 @@ class DocumentVersionCard extends StatelessWidget {
                           child: OutlinedButton.icon(
                             onPressed: onOpen,
                             icon: const Icon(Icons.remove_red_eye_outlined),
-                            label: const Text("Open"),
+                            label: Text(context.l10n.open),
                           ),
                         ),
-
-                        // IconButton(
-                        //   onPressed: onDelete,
-                        //   icon: const Icon(Icons.delete_outline),
-                        //   color: Colors.redAccent,
-                        // ),
                       ],
                     ),
-                    // Row(
-                    //   children: [
-                    //     Expanded(
-                    //       child: ElevatedButton.icon(
-                    //         onPressed: onSetCurrent,
-                    //         icon: const Icon(Icons.check_circle_outline),
-                    //         label: const Text("Set current"),
-                    //       ),
-                    //     ),
-                    //   ],
-                    // ),
                   ],
                 ),
             ],

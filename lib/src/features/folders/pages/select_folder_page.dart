@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:my_documents/src/core/extensions/extensions.dart';
 import 'package:my_documents/src/features/folders/cubit/folders_cubit.dart';
 import 'package:my_documents/src/features/folders/model/folder.dart';
 import 'package:my_documents/src/widgets/border_box.dart';
@@ -72,7 +73,7 @@ class SelectFolderPage extends StatelessWidget {
                           )
                           : Center(
                             child: Text(
-                              "No folders found",
+                              context.l10n.noFoldersFound,
                               style: Theme.of(context).textTheme.bodyLarge,
                             ),
                           ),

@@ -1,3 +1,6 @@
+import 'package:flutter/material.dart' show BuildContext;
+import 'package:my_documents/src/core/extensions/extensions.dart';
+
 import '../../documents/model/document.dart';
 
 class Folder {
@@ -25,7 +28,7 @@ class Folder {
             .where(
               (e) =>
                   e.status == DocumentStatus.expired ||
-                  e.status == DocumentStatus.expairing,
+                  e.status == DocumentStatus.expiring,
             )
             .toList();
       case -3:
@@ -48,6 +51,21 @@ class Folder {
   Folder copyWith({String? name}) {
     return Folder(id: id, name: name ?? this.name);
   }
+  String folderTitle(BuildContext context) {
+  if (!isVirtual) return name;
+
+  switch (id) {
+    case -1:
+      return context.l10n.all;
+    case -2:
+      return context.l10n.expiringDocuments;
+    case -3:
+      return context.l10n.noFolder;
+    default:
+      return name;
+  }
+}
+
 
   @override
   String toString() => 'Folder(id: $id, name: $name)';

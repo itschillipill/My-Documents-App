@@ -68,7 +68,7 @@ class DocumentViewPage extends StatelessWidget {
                           context: context,
                           document: document,
                         ),
-                        child: Text("Change Details"),
+                        child: Text(context.l10n.changeDetails),
                       ),
                     ];
                   },
@@ -89,7 +89,7 @@ class DocumentViewPage extends StatelessWidget {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Text(
-                            "Comment:",
+                            "${context.l10n.comment}:",
                             style: Theme.of(context).textTheme.bodyLarge,
                           ),
                           SelectableText(
@@ -103,16 +103,16 @@ class DocumentViewPage extends StatelessWidget {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         DocumentRow(
-                          "Upload Date",
+                          context.l10n.uploadDate,
                           document.createdAt.formatted,
                         ),
                         DocumentRow(
-                          "Expiration Date",
+                          context.l10n.expirationDate,
                           documentVersion.expirationDate != null
                               ? documentVersion.expirationDate!.formatted
-                              : "No expiration",
+                              : context.l10n.noExpiration,
                         ),
-                        DocumentRow("Status", document.status.statusText),
+                        DocumentRow(context.l10n.status, document.status.localizedText(context)),
                       ],
                     ).withBorder(padding: EdgeInsets.all(8)),
                     DocumentPreviewer(
@@ -128,13 +128,13 @@ class DocumentViewPage extends StatelessWidget {
                         spacing: 5,
                         children: [
                           Icon(Icons.remove_red_eye_rounded),
-                          Text("Open In External App"),
+                          Text(context.l10n.openExternal),
                         ],
                       ),
                     ),
 
                     tile(
-                      label: "Share Document",
+                      label: context.l10n.shareDocument,
                       icon: Icons.share_rounded,
                       action: Share$DocumentAction(
                         path: documentVersion.filePath,
@@ -142,7 +142,7 @@ class DocumentViewPage extends StatelessWidget {
                     ),
                     if (isCurrent) ...[
                       tile(
-                        label: "Upload New Version",
+                        label: context.l10n.uploadNewVersion,
                         icon: Icons.file_download_outlined,
                         onTap:
                             () async => await Navigator.push(
@@ -151,7 +151,7 @@ class DocumentViewPage extends StatelessWidget {
                             ),
                       ),
                       tile(
-                        label: "Manage Versions",
+                        label: context.l10n.manageVersions,
                         icon: Icons.history_rounded,
                         onTap:
                             () => Navigator.push(
@@ -160,7 +160,7 @@ class DocumentViewPage extends StatelessWidget {
                             ),
                       ),
                       tile(
-                        label: "Delete Document",
+                        label: context.l10n.deleteDocument,
                         icon: Icons.delete_rounded,
                         action: Delete$DocumentAction(
                           document: document,

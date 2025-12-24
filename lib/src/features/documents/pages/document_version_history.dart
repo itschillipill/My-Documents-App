@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:my_documents/src/core/extensions/extensions.dart';
 import 'package:my_documents/src/features/documents/cubit/documents_cubit.dart';
 import 'package:my_documents/src/features/documents/pages/document_view_page.dart';
 import 'package:my_documents/src/widgets/border_box.dart';
@@ -37,7 +38,7 @@ class DocumentVersionHistory extends StatelessWidget {
         return Scaffold(
           appBar: AppBar(
             title: Text(
-              "Version History",
+              context.l10n.versionHistory,
               style: Theme.of(context).textTheme.headlineMedium,
             ),
             actions: [
@@ -55,7 +56,7 @@ class DocumentVersionHistory extends StatelessWidget {
                       title: Text(document.title),
                       leading: Icon(Icons.description_rounded),
                       subtitle: Text(
-                        "${versionsWithIndex.length} versions found",
+                        "${versionsWithIndex.length} ${context.l10n.versions}",
                       ),
                     ),
                   ),

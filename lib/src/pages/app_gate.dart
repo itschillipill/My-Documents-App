@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:my_documents/src/core/extensions/extensions.dart';
 import 'package:my_documents/src/features/folders/pages/add_folder_page.dart';
 
 import '../features/documents/pages/add_document_screen.dart';
@@ -17,9 +18,9 @@ class _AppGateState extends State<AppGate> {
   int _selectedIndex = 0;
   final PageController _controller = PageController(initialPage: 0);
   final List<Widget> pages = [MyHomePage(), SearchPage()];
-  final List<BottomNavigationBarItem> navItems = [
-    BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
-    BottomNavigationBarItem(icon: Icon(Icons.search), label: "Search"),
+   List<BottomNavigationBarItem> navItems(BuildContext ctx) => [
+    BottomNavigationBarItem(icon: Icon(Icons.home), label: ctx.l10n.home),
+    BottomNavigationBarItem(icon: Icon(Icons.search), label: ctx.l10n.search),
   ];
 
   @override
@@ -67,15 +68,15 @@ class _AppGateState extends State<AppGate> {
               );
             });
           },
-          items: navItems,
+          items: navItems(context),
         ),
-        floatingActionButton: _buildFAB(),
+        floatingActionButton: _buildFAB(context),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       ),
     );
   }
 
-  Widget? _buildFAB() {
+  Widget? _buildFAB(BuildContext ctx) {
     if (_selectedIndex != 0) return null;
 
     return SpeedDial(
@@ -85,12 +86,12 @@ class _AppGateState extends State<AppGate> {
       children: [
         SpeedDialChild(
           child: const Icon(Icons.upload_file_rounded),
-          label: 'Add Document',
+          label: ctx.l10n.addDocument,
           onTap: () => Navigator.push(context, AddDocumentScreen.route()),
         ),
         SpeedDialChild(
           child: const Icon(Icons.create_new_folder),
-          label: 'Add Folder',
+          label: ctx.l10n.addFolder,
           onTap: () => Navigator.push(context, AddFolderPage.route()),
         ),
       ],

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:my_documents/src/core/extensions/extensions.dart';
 import 'package:my_documents/src/features/documents/model/document.dart';
 import 'package:my_documents/src/features/documents/widgets/date_picker.dart';
 import 'package:my_documents/src/features/documents/widgets/file_picker_block.dart';
@@ -37,17 +38,13 @@ class _AddNewDocumentVersionState extends State<AddNewDocumentVersion> {
     final cubit = context.read<DocumentsCubit>();
 
     if (_originalPath == null) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text("Please choose a file")));
+      MessageService.showSnackBar(context.l10n.chooseFile);
       return;
     }
 
     final isValidSize = await FileService.validateFileSize(_originalPath!);
     if (!isValidSize && context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("File is too large (max 50 MB)")),
-      );
+      MessageService.showErrorSnack(context.l10n.fileIsTooLarge);
       return;
     }
 
@@ -68,11 +65,9 @@ class _AddNewDocumentVersionState extends State<AddNewDocumentVersion> {
 
       await cubit.addNewVersion(widget.documentId, docVersion);
     } catch (e) {
-      MessageService.showSnackBar("Error saving file: $e");
+     if(context.mounted) MessageService.showSnackBar("${context.l10n.errorSavirgFile}: $e");
     }
-    if (context.mounted) {
-      Navigator.pop(context);
-    }
+    if (context.mounted)Navigator.pop(context);
   }
 
   @override
@@ -80,7 +75,7 @@ class _AddNewDocumentVersionState extends State<AddNewDocumentVersion> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "Add Version",
+          context.l10n.addVersion,
           style: Theme.of(context).textTheme.headlineMedium,
         ),
         actions: [
@@ -88,7 +83,7 @@ class _AddNewDocumentVersionState extends State<AddNewDocumentVersion> {
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: ElevatedButton(
               onPressed: () => _saveDocument(context),
-              child: const Text("Save"),
+              child: Text(context.l10n.save),
             ),
           ),
         ],
@@ -109,7 +104,7 @@ class _AddNewDocumentVersionState extends State<AddNewDocumentVersion> {
               BuildSection(
                 children: [
                   Text(
-                    "Version Details",
+                    context.l10n.versionDetais,
                     style: Theme.of(context).textTheme.bodyLarge,
                   ),
                   TextField(
@@ -117,7 +112,7 @@ class _AddNewDocumentVersionState extends State<AddNewDocumentVersion> {
                     maxLength: 150,
                     maxLines: 5,
                     minLines: 3,
-                    decoration: const InputDecoration(hintText: "Comment"),
+                    decoration: InputDecoration(hintText: context.l10n.comment),
                   ),
                   DatePicker(
                     onTap: (date) {

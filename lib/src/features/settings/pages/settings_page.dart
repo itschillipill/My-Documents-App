@@ -24,7 +24,7 @@ class SettingsPage extends StatefulWidget {
 
 class _SettingsPageState extends State<SettingsPage> {
   Future<bool> _verifyOldPin(AuthenticationExecutor authExecutor) async {
-    final oldPin = await _showPinSheet("Enter current PIN");
+    final oldPin = await _showPinSheet(context.l10n.enterCurrentPIN);
     return oldPin != null &&
         oldPin.isNotEmpty &&
         await authExecutor.verefyPin(oldPin);
@@ -35,51 +35,26 @@ class _SettingsPageState extends State<SettingsPage> {
     bool verifyOld = false,
   }) async {
     if (verifyOld && !await _verifyOldPin(authExecutor)) return;
-
-    final newPin = await _showPinSheet("Enter new PIN");
+    final newPin = mounted? await _showPinSheet(context.l10n.enterNewPIN):"";
     if (newPin?.isNotEmpty ?? false) {
       await authExecutor.createOrChangePin(newPin!);
       if (mounted) {
         setState(() {});
-        MessageService.showSnackBar("PIN updated successfully");
+        MessageService.showSnackBar(context.l10n.pinUpdated);
       }
     }
   }
 
   Future<void> _deletePin(AuthenticationExecutor authExecutor) async {
-    final confirm = await showDialog<bool>(
-      context: context,
-      builder:
-          (ctx) => AlertDialog(
-            title: const Text("Delete PIN"),
-            content: const Text("Are you sure you want to remove your PIN?"),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(ctx, false),
-                child: const Text("Cancel"),
-              ),
-              ElevatedButton(
-                onPressed: () => Navigator.pop(ctx, true),
-                child: const Text("Delete"),
-              ),
-            ],
-          ),
+    final confirm = await MessageService.$confirmAction(
+      title: context.l10n.deletePIN,
+      message:context.l10n.deletePinConfirm
     );
 
     if (confirm == true && await _verifyOldPin(authExecutor)) {
       await authExecutor.clearPin();
       setState(() {});
-      MessageService.showSnackBar("PIN deleted");
-    }
-  }
-
-  Future<void> fn() async {
-    final size = await context.deps.documentsCubit.getAllDocumentsSize();
-    MessageService.showSnackBar(
-      "All Documents Size: ${(size / 1024 / 1024).toStringAsFixed(2)} MB",
-    );
-    if (mounted) {
-      await context.deps.documentsCubit.debugAllFiles();
+     if(mounted) MessageService.showSnackBar(context.l10n.pinDeleted);
     }
   }
 
@@ -110,9 +85,9 @@ class _SettingsPageState extends State<SettingsPage> {
                 controller: controller,
                 keyboardType: TextInputType.number,
                 obscureText: true,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  hintText: "Enter PIN",
+                decoration: InputDecoration(
+                  border:const OutlineInputBorder(),
+                  hintText: ctx.l10n.enterPIN,
                 ),
               ),
               Row(
@@ -121,13 +96,13 @@ class _SettingsPageState extends State<SettingsPage> {
                   Expanded(
                     child: OutlinedButton(
                       onPressed: () => Navigator.pop(ctx),
-                      child: const Text("Cancel"),
+                      child: Text(ctx.l10n.cancel),
                     ),
                   ),
                   Expanded(
                     child: ElevatedButton(
                       onPressed: () => Navigator.pop(ctx, controller.text),
-                      child: const Text("OK"),
+                      child: Text(ctx.l10n.ok),
                     ),
                   ),
                 ],
@@ -150,7 +125,7 @@ class _SettingsPageState extends State<SettingsPage> {
         return Scaffold(
           appBar: AppBar(
             title: Text(
-              "Settings",
+              context.l10n.settings,
               style: Theme.of(context).textTheme.headlineMedium,
             ),
           ),
@@ -162,14 +137,14 @@ class _SettingsPageState extends State<SettingsPage> {
                   spacing: 20,
                   children: [
                     SectionBlock(
-                      title: "Security",
+                      title: context.l10n.security,
                       children:
                           authExecutor.hasPassword
                               ? [
                                 settingsTile(
                                   icon: Icons.lock_rounded,
-                                  title: "Change PIN",
-                                  subtitle: "Update your security PIN",
+                                  title: context.l10n.changePIN,
+                                  subtitle: context.l10n.updatePIN,
                                   onTap:
                                       () => _createOrChangePin(
                                         authExecutor,
@@ -179,8 +154,8 @@ class _SettingsPageState extends State<SettingsPage> {
                                 settingsTile(
                                   icon: Icons.delete_forever,
                                   iconColor: Colors.red,
-                                  title: "Delete PIN",
-                                  subtitle: "Remove your PIN protection",
+                                  title: context.l10n.deletePIN,
+                                  subtitle: context.l10n.removePIN,
                                   onTap: () => _deletePin(authExecutor),
                                 ),
                                 SwitchListTile.adaptive(
@@ -188,9 +163,9 @@ class _SettingsPageState extends State<SettingsPage> {
                                       settingCubit.canUseBiometrics
                                           ? state.useBiometrics
                                           : false,
-                                  title: const Text("Biometric Authentication"),
-                                  subtitle: const Text(
-                                    "Use fingerprint or face ID",
+                                  title: Text(context.l10n.biometricAuthentication),
+                                  subtitle: Text(
+                                    context.l10n.useBiometricsInfo
                                   ),
                                   secondary: const Icon(
                                     Icons.fingerprint_rounded,
@@ -198,7 +173,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                   onChanged: (v) {
                                     if (!settingCubit.canUseBiometrics) {
                                       MessageService.showErrorSnack(
-                                        "Biometric Authentication is not available on this device",
+                                       context.l10n.biometricNotAvailable,
                                       );
                                       return;
                                     }
@@ -211,36 +186,36 @@ class _SettingsPageState extends State<SettingsPage> {
                               : [
                                 settingsTile(
                                   icon: Icons.lock_rounded,
-                                  title: "Create PIN",
+                                  title: context.l10n.createPIN,
                                   onTap: () => _createOrChangePin(authExecutor),
                                 ),
                               ],
                     ),
 
                     SectionBlock(
-                      title: "Data Management",
+                      title: context.l10n.dataManagement,
                       children: [
                         settingsTile(
                           icon: Icons.file_upload_outlined,
-                          title: "Export Data",
-                          subtitle: "Backup your documents",
+                          title: context.l10n.exportData,
+                          subtitle: context.l10n.backupDocuments,
                           onTap: () async => await FileService.exportData(),
                         ),
                         settingsTile(
                           icon: Icons.file_download_outlined,
-                          title: "Import Data",
-                          subtitle: "Restore from backup",
+                          title: context.l10n.importData,
+                          subtitle: context.l10n.restoreFromBackup,
                           onTap: () async => await FileService.importData(),
                         ),
                       ],
                     ),
                     SectionBlock(
-                      title: "Appearance",
+                      title: context.l10n.appearance,
                       children: [
                         ListTile(
-                          title: Text("Theme"),
+                          title: Text(context.l10n.theme),
                           leading: Icon(Icons.dark_mode),
-                          subtitle: Text("Choose app theme"),
+                          subtitle: Text(context.l10n.chooseAppTheme),
                           trailing: DropdownButton<ThemeMode>(
                             borderRadius: BorderRadius.circular(8),
                             underline: SizedBox.shrink(),
@@ -251,41 +226,70 @@ class _SettingsPageState extends State<SettingsPage> {
                               }
                             },
                             value: state.themeMode,
-                            items: [
-                              DropdownMenuItem(
-                                value: ThemeMode.light,
-                                child: Text("Light"),
-                              ),
-                              DropdownMenuItem(
-                                value: ThemeMode.dark,
-                                child: Text("Dark"),
-                              ),
-                              DropdownMenuItem(
-                                value: ThemeMode.system,
-                                child: Text("System"),
-                              ),
-                            ],
+                            items:
+                                ThemeMode.values
+                                    .map(
+                                      (tm) => DropdownMenuItem(
+                                        value: tm,
+                                        child: Text(switch (tm) {
+                                          ThemeMode.light =>
+                                            context.l10n.themeLight,
+                                          ThemeMode.dark =>
+                                            context.l10n.themeDark,
+                                          ThemeMode.system =>
+                                            context.l10n.themeSystem,
+                                        }),
+                                      ),
+                                    )
+                                    .toList(),
+                          ),
+                        ),
+                        ListTile(
+                          title: Text(context.l10n.language),
+                          leading: Icon(Icons.language),
+                          subtitle: Text(context.l10n.chooseAppLanguage),
+                          trailing: DropdownButton<Locale>(
+                            borderRadius: BorderRadius.circular(8),
+                            underline: SizedBox.shrink(),
+                            icon: Icon(Icons.arrow_drop_down),
+                            onChanged: (value) {
+                              if (value != null) {
+                                settingCubit.changeLocale(value);
+                              }
+                            },
+                            value: state.locale,
+                            items:
+                                Constants.supportedLocales
+                                    .map(
+                                      (e) => DropdownMenuItem(
+                                        value: e,
+                                        child: Text(
+                                          e.languageCode.toUpperCase(),
+                                        ),
+                                      ),
+                                    )
+                                    .toList(),
                           ),
                         ),
                       ],
                     ),
                     SectionBlock(
-                      title: "About",
+                      title: context.l10n.about,
                       children: [
                         settingsTile(
                           icon: Icons.info,
-                          title: "App Version",
+                          title: context.l10n.appVersion,
                           subtitle: Constants.appVersion,
                         ),
                         settingsTile(
                           icon: Icons.star_rate_rounded,
-                          title: "Rate App",
-                          subtitle: "Rate this app",
+                          title: context.l10n.rateApp,
+                          subtitle: context.l10n.rateThisApp,
                         ),
                         settingsTile(
                           icon: Icons.grid_view_rounded,
-                          title: "Other projects",
-                          subtitle: "More projects from our team!",
+                          title: context.l10n.otherProjects,
+                          subtitle: context.l10n.moreProjects,
                         ),
                       ],
                     ),
@@ -294,14 +298,15 @@ class _SettingsPageState extends State<SettingsPage> {
                         final size =
                             await context.deps.documentsCubit
                                 .getAllDocumentsSize();
-                        MessageService.showSnackBar(
-                          "All Documents Size: ${(size / 1024 / 1024).toStringAsFixed(2)} MB",
-                        );
+                        
                         if (context.mounted) {
+                          MessageService.showSnackBar(
+                          "${context.l10n.allDocumentsSize}: ${(size / 1024 / 1024).toStringAsFixed(2)} MB",
+                        );
                           await context.deps.documentsCubit.debugAllFiles();
                         }
                       },
-                      child: Text("Get All Documents Size"),
+                      child: Text(context.l10n.getAllDocumentsSize),
                     ),
                   ],
                 ),

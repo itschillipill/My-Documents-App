@@ -1,6 +1,7 @@
 import 'dart:io' show File;
 
 import 'package:flutter/material.dart';
+import 'package:my_documents/src/core/extensions/extensions.dart';
 
 class DocumentPreviewer extends StatelessWidget {
   final String path;
@@ -39,7 +40,7 @@ class DocumentPreviewer extends StatelessWidget {
           child:
               !isImage
                   ? Center(
-                    child: Text("Preview is not available for this document"),
+                    child: Text(context.l10n.noPreview),
                   )
                   : null,
         ),
@@ -53,7 +54,7 @@ class DocumentPreviewer extends StatelessWidget {
       MaterialPageRoute(
         builder:
             (context) => Scaffold(
-              appBar: AppBar(title: Text('Image Viewer')),
+              appBar: AppBar(title: Text(context.l10n.preview)),
               body: Container(
                 color: Colors.black,
                 child: InteractiveViewer(

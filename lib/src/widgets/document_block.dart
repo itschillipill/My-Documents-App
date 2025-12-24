@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:my_documents/src/core/extensions/extensions.dart';
 import 'package:my_documents/src/features/documents/cubit/documents_cubit.dart';
 import 'package:my_documents/src/features/documents/model/document.dart';
 import 'package:my_documents/src/features/folders/model/folder.dart';
@@ -72,7 +73,7 @@ class DocumentsBlock extends StatelessWidget {
           children: [
             Icon(isAll ? Icons.folder_open : Icons.description, size: 40),
             Text(
-              isAll ? "All" : doc.title,
+              isAll ? context.l10n.all : doc.title,
               style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,

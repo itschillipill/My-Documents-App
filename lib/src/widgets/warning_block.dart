@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:my_documents/src/core/extensions/extensions.dart';
 import 'package:my_documents/src/features/documents/cubit/documents_cubit.dart';
 import 'package:my_documents/src/features/folders/model/folder.dart';
 import 'package:my_documents/src/features/folders/pages/folder_view_page.dart';
@@ -35,11 +36,11 @@ class WarningBlock extends StatelessWidget {
             borderRadius: BorderRadius.circular(10),
           ),
           title: Text(
-            "Tap to view",
+            context.l10n.tapToView,
             style: Theme.of(context).textTheme.bodyLarge,
           ),
           subtitle: Text(
-            "${expiring.length} document(s) are expiring soon or expired",
+            "${expiring.length} ${context.l10n.documentsExpiring}",
             style: const TextStyle(color: Colors.redAccent),
           ),
           onTap:

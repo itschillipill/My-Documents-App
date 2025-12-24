@@ -20,7 +20,7 @@ class AddFolderPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "Add Folder",
+          context.l10n.addFolder,
           style: Theme.of(context).textTheme.headlineMedium,
         ),
         actions: [
@@ -32,7 +32,7 @@ class AddFolderPage extends StatelessWidget {
                     Folder(id: 0, name: _nameController.text.trim()),
                     onSaved: () => Navigator.pop(context),
                   ),
-              child: const Text("Save"),
+              child: Text("Save"),
             ),
           ),
         ],
@@ -51,7 +51,7 @@ class AddFolderPage extends StatelessWidget {
               child: TextField(
                 controller: _nameController,
                 maxLength: 20,
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   hintText: "Folder Name",
                   border: InputBorder.none,
                   contentPadding: EdgeInsets.all(8),

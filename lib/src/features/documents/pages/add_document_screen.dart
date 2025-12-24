@@ -43,7 +43,7 @@ class _AddDocumentScreenState extends State<AddDocumentScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "Add Document",
+          context.l10n.addDocument,
           style: Theme.of(context).textTheme.headlineMedium,
         ),
         actions: [
@@ -60,7 +60,7 @@ class _AddDocumentScreenState extends State<AddDocumentScreen> {
                     comment: _commentController.text.trim(),
                     expirationDate: _expirationDate,
                   ),
-              child: const Text("Save"),
+              child: Text(context.l10n.save),
             ),
           ),
         ],
@@ -75,14 +75,14 @@ class _AddDocumentScreenState extends State<AddDocumentScreen> {
               BuildSection(
                 children: [
                   Text(
-                    "Add To Folder",
+                    context.l10n.addToFolder,
                     style: Theme.of(context).textTheme.bodyLarge,
                   ),
                   BorderBox(
                     child: ListTile(
                       leading: const Icon(Icons.folder_rounded),
                       title: Text(
-                        _folder != null ? _folder!.name : "Select a folder...",
+                        _folder != null ? _folder!.name : context.l10n.selectFolder,
                       ),
                       onTap: () async {
                         final Folder? folder = await Navigator.push(
@@ -117,14 +117,14 @@ class _AddDocumentScreenState extends State<AddDocumentScreen> {
               BuildSection(
                 children: [
                   Text(
-                    "Document Details",
+                    context.l10n.documentDetails,
                     style: Theme.of(context).textTheme.bodyLarge,
                   ),
                   TextField(
                     controller: _titleController,
                     maxLength: 20,
-                    decoration: const InputDecoration(
-                      hintText: "Document Name",
+                    decoration: InputDecoration(
+                      hintText: context.l10n.documentName,
                     ),
                   ),
                   TextField(
@@ -132,7 +132,7 @@ class _AddDocumentScreenState extends State<AddDocumentScreen> {
                     maxLength: 150,
                     maxLines: 5,
                     minLines: 3,
-                    decoration: const InputDecoration(hintText: "Comment"),
+                    decoration: InputDecoration(hintText: context.l10n.comment),
                   ),
                   DatePicker(
                     onTap:
@@ -145,7 +145,7 @@ class _AddDocumentScreenState extends State<AddDocumentScreen> {
               ),
 
               ListTile(
-                title: const Text("Add to Favorites"),
+                title: Text(context.l10n.addToFavorities),
                 leading: const Icon(Icons.star_border_rounded),
                 trailing: Switch.adaptive(
                   value: isFavorite,

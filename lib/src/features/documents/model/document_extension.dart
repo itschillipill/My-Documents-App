@@ -8,8 +8,8 @@ extension DocumentExtensions on Document {
 
   DocumentStatus get status {
     if (currentVersion.isExpired) return DocumentStatus.expired;
-    if (currentVersion.isExpiringSoon) return DocumentStatus.expairing;
-    return DocumentStatus.functionating;
+    if (currentVersion.isExpiringSoon) return DocumentStatus.expiring;
+    return DocumentStatus.functioning;
   }
 }
 

@@ -1,6 +1,5 @@
-import 'dart:ui' show Color;
-
-import 'package:my_documents/src/utils/theme/theme.dart';
+import 'package:flutter/material.dart' show BuildContext, Colors, Color;
+import 'package:my_documents/src/core/extensions/extensions.dart';
 
 part 'document_version.dart';
 part 'document_extension.dart';

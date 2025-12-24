@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:my_documents/src/core/extensions/extensions.dart';
 import 'package:my_documents/src/features/documents/cubit/documents_cubit.dart';
 import 'package:my_documents/src/features/folders/cubit/folders_cubit.dart';
 import 'package:my_documents/src/features/folders/pages/folder_view_page.dart';
@@ -28,7 +29,7 @@ class FoldersBlock extends StatelessWidget {
       children: [
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 8.0),
-          child: Text("Folders", style: Theme.of(context).textTheme.titleLarge),
+          child: Text(context.l10n.folders, style: Theme.of(context).textTheme.titleLarge),
         ),
         Column(
           children: [
@@ -41,7 +42,7 @@ class FoldersBlock extends StatelessWidget {
                   tileColor: Theme.of(context).cardColor,
                   leading: const Icon(Icons.folder),
                   title: Text(folder.name),
-                  subtitle: Text("${folderDocuments.length} documents"),
+                  subtitle: Text("${folderDocuments.length} items"),
                   trailing: const Icon(Icons.arrow_forward_ios_sharp),
                   onTap: () {
                     Navigator.push(
