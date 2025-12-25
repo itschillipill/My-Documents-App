@@ -39,7 +39,7 @@ class MyHomePage extends StatelessWidget {
               slivers: [
                 SliverToBoxAdapter(child: DocumentsBlock()),
                 const WarningBlock(),
-                SliverToBoxAdapter(child: FoldersBlock()),
+                FoldersBlock(),
               ],
             ),
           ),
