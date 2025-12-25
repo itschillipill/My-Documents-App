@@ -71,13 +71,9 @@ class AuthenticationExecutor {
 
   /// ================= PIN =================
 
-  Future<void> savePin(String pin) async {
-    await _prefs.write(key: _storageKey, value: pin);
-    await _updateHasPassword();
-  }
-
   Future<void> createOrChangePin(String pin) async {
     await _prefs.write(key: _storageKey, value: pin);
+    authenticatedNotifier.value = true;
     await _updateHasPassword();
   }
 

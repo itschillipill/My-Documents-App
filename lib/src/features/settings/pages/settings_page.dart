@@ -3,18 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:my_documents/src/core/constants.dart';
 import 'package:my_documents/src/core/extensions/extensions.dart';
 import 'package:my_documents/src/features/auth/auth_executor.dart';
-import 'package:my_documents/src/features/folders/widgets/section_block.dart';
-import 'package:my_documents/src/features/settings/widgets/action_tile.dart';
 import 'package:my_documents/src/utils/sevices/message_service.dart';
-
-import '../../../utils/page_transition/app_page_route.dart';
-import '../../../utils/sevices/file_service.dart';
+import 'package:my_documents/src/utils/page_transition/app_page_route.dart';
+import 'package:my_documents/src/utils/sevices/file_service.dart';
 
 class SettingsPage extends StatefulWidget {
   static PageRoute route() => AppPageRoute.build(
-    page: SettingsPage(),
-    transition: PageTransitionType.slideFromRight,
-  );
+        page: SettingsPage(),
+        transition: PageTransitionType.slideFromRight,
+      );
   const SettingsPage({super.key});
 
   @override
@@ -22,26 +19,35 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-  Future<bool> _verifyOldPin(AuthenticationExecutor authExecutor) async {
+  Future<bool?> _verifyOldPin(AuthenticationExecutor authExecutor) async {
     final oldPin = await _showPinSheet(context.l10n.enterCurrentPIN);
-    return oldPin != null &&
-        oldPin.isNotEmpty &&
+    if (oldPin == null) return null;
+    return oldPin.isNotEmpty &&
         await authExecutor.verifyPin(oldPin);
   }
 
   Future<void> _createOrChangePin(
-    AuthenticationExecutor authExecutor, {
-    bool verifyOld = false,
-  }) async {
-    if (verifyOld && !await _verifyOldPin(authExecutor)) return;
-    final newPin = mounted ? await _showPinSheet(context.l10n.enterNewPIN) : "";
-    if (newPin?.isNotEmpty ?? false) {
-      await authExecutor.createOrChangePin(newPin!);
-      if (mounted) {
-        MessageService.showSnackBar(context.l10n.pinUpdated);
-      }
+  AuthenticationExecutor authExecutor, {
+  bool verifyOld = false,
+}) async {
+  if (verifyOld) {
+    final isValid = await _verifyOldPin(authExecutor);
+
+    if (isValid == null) return;
+
+    if (!isValid && mounted) {
+      MessageService.showErrorSnack(context.l10n.wrongPIN);
+      return;
     }
   }
+
+  if (!mounted) return;
+  final newPin = await _showPinSheet(context.l10n.enterNewPIN);
+  if (newPin == null || newPin.isEmpty) return;
+  await authExecutor.createOrChangePin(newPin);
+  if (mounted) MessageService.showSnackBar(context.l10n.pinUpdated);
+}
+
 
   Future<void> _deletePin(AuthenticationExecutor authExecutor) async {
     final confirm = await MessageService.$confirmAction(
@@ -49,70 +55,157 @@ class _SettingsPageState extends State<SettingsPage> {
       message: context.l10n.deletePinConfirm,
     );
 
-    if (confirm == true && await _verifyOldPin(authExecutor)) {
-      debugPrint("deleting pin");
+    if (confirm == true) {
+      bool? verifyOldPin= await _verifyOldPin(authExecutor);
+      if(verifyOldPin==null) return;
+      verifyOldPin==true?
       Future.microtask(() async {
         await authExecutor.clearPin();
-        if (mounted) MessageService.showSnackBar(context.l10n.pinDeleted);
-      });
+       if(mounted)  MessageService.showSnackBar(context.l10n.pinDeleted);
+      }):{if(mounted) MessageService.showErrorSnack(context.l10n.wrongPIN)};
     }
   }
 
   Future<String?> _showPinSheet(String title) async {
-    final controller = TextEditingController();
     final pin = await showModalBottomSheet<String>(
       context: context,
       isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-      ),
+      backgroundColor: Colors.transparent,
       builder: (ctx) {
+         final controller = TextEditingController();
         return Padding(
           padding: EdgeInsets.only(
-            bottom:
-                MediaQuery.of(ctx).viewInsets.bottom +
+            bottom: MediaQuery.of(ctx).viewInsets.bottom +
                 MediaQuery.of(ctx).padding.bottom,
-            left: 20,
-            right: 20,
-            top: 20,
           ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            spacing: 16,
-            children: [
-              Text(title, style: Theme.of(ctx).textTheme.titleLarge),
-              TextField(
-                controller: controller,
-                keyboardType: TextInputType.number,
-                obscureText: true,
-                decoration: InputDecoration(
-                  border: const OutlineInputBorder(),
-                  hintText: ctx.l10n.enterPIN,
-                ),
+          child: Container(
+            decoration: BoxDecoration(
+              color: Theme.of(ctx).colorScheme.surface,
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(24),
               ),
-              Row(
-                spacing: 20,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.1),
+                  blurRadius: 20,
+                  spreadRadius: 5,
+                ),
+              ],
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  Expanded(
-                    child: OutlinedButton(
-                      onPressed: () => Navigator.pop(ctx),
-                      child: Text(ctx.l10n.cancel),
+                  // Handle indicator
+                  Container(
+                    width: 40,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: Theme.of(ctx).colorScheme.onSurface.withValues(alpha: 0.2),
+                      borderRadius: BorderRadius.circular(2),
                     ),
                   ),
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () => Navigator.pop(ctx, controller.text),
-                      child: Text(ctx.l10n.ok),
+                  const SizedBox(height: 20),
+                  
+                  // Title
+                  Text(
+                    title,
+                    style: Theme.of(ctx).textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.w600,
                     ),
+                  ),
+                  const SizedBox(height: 24),
+                  
+                  // PIN Input
+                  TextField(
+                    controller: controller,
+                    keyboardType: TextInputType.number,
+                    obscureText: true,
+                    textAlign: TextAlign.center,
+                    style: Theme.of(ctx).textTheme.headlineSmall?.copyWith(
+                      letterSpacing: 8,
+                    ),
+                    maxLength: 4,
+                    decoration: InputDecoration(
+                      counterText: '',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(
+                          color: Theme.of(ctx).colorScheme.outline,
+                        ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(
+                          color: Theme.of(ctx).colorScheme.primary,
+                          width: 2,
+                        ),
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 18,
+                      ),
+                      hintText: '••••',
+                      hintStyle: Theme.of(ctx).textTheme.headlineSmall?.copyWith(
+                        letterSpacing: 8,
+                        color: Theme.of(ctx).colorScheme.onSurface.withValues(alpha: 0.3),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  
+                  // Buttons
+                  Row(
+                    children: [
+                      Expanded(
+                        child: OutlinedButton(
+                          onPressed: () => Navigator.pop(ctx),
+                          style: OutlinedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          child: Text(
+                            ctx.l10n.cancel,
+                            style: TextStyle(
+                              color: Theme.of(ctx).colorScheme.onSurface,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: () => Navigator.pop(ctx, controller.text),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Theme.of(ctx).colorScheme.primary,
+                            foregroundColor: Theme.of(ctx).colorScheme.onPrimary,
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            elevation: 0,
+                          ),
+                          child: Text(
+                            ctx.l10n.ok,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
-            ],
+            ),
           ),
         );
       },
     );
-    controller.dispose();
     return pin;
   }
 
@@ -121,204 +214,505 @@ class _SettingsPageState extends State<SettingsPage> {
     final authExecutor = context.deps.authExecutor;
     final settingCubit = context.deps.settingsCubit;
     final state = settingCubit.state;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
           context.l10n.settings,
-          style: Theme.of(context).textTheme.headlineMedium,
+          style: theme.textTheme.headlineMedium?.copyWith(
+            fontWeight: FontWeight.w700,
+          ),
         ),
+        centerTitle: false,
       ),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.all(12.0),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: Column(
               spacing: 20,
               children: [
-                ValueListenableBuilder<bool>(
-                  valueListenable: authExecutor.hasPasswordNotifier,
-                  builder:
-                      (context, hasPassword, _) => SectionBlock(
-                        title: context.l10n.security,
-                        children:
-                            hasPassword
-                                ? [
-                                  settingsTile(
-                                    icon: Icons.lock_rounded,
-                                    title: context.l10n.changePIN,
-                                    subtitle: context.l10n.updatePIN,
-                                    onTap:
-                                        () => _createOrChangePin(
-                                          authExecutor,
-                                          verifyOld: true,
+                // Security Section
+                _buildSection(
+                  context,
+                  title: context.l10n.security,
+                  icon: Icons.security_rounded,
+                  children: [
+                    ValueListenableBuilder<bool>(
+                      valueListenable: authExecutor.hasPasswordNotifier,
+                      builder: (context, hasPassword, _) {
+                        if (hasPassword) {
+                          return Column(
+                            children: [
+                              _buildTile(
+                                context,
+                                icon: Icons.lock_rounded,
+                                title: context.l10n.changePIN,
+                                subtitle: context.l10n.updatePIN,
+                                onTap: () => _createOrChangePin(
+                                  authExecutor,
+                                  verifyOld: true,
+                                ),
+                              ),
+                              _buildDivider(),
+                              _buildTile(
+                                context,
+                                icon: Icons.delete_forever_rounded,
+                                title: context.l10n.deletePIN,
+                                subtitle: context.l10n.removePIN,
+                                onTap: () => _deletePin(authExecutor),
+                                isDanger: true,
+                              ),
+                              _buildDivider(),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 12),
+                                child: Row(
+                                  spacing: 10,
+                                  children: [
+                                    Container(
+                                      width: 40,
+                                      height: 40,
+                                      decoration: BoxDecoration(
+                                        color: colorScheme.primary.withValues(alpha: 0.1),
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                      child: Icon(
+                                        Icons.fingerprint_rounded,
+                                        color: colorScheme.primary,
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: Text(
+                                        context.l10n.biometricAuthentication,
+                                        style: theme.textTheme.bodyLarge?.copyWith(
+                                          fontWeight: FontWeight.w500,
                                         ),
-                                  ),
-                                  settingsTile(
-                                    icon: Icons.delete_forever,
-                                    iconColor: Colors.red,
-                                    title: context.l10n.deletePIN,
-                                    subtitle: context.l10n.removePIN,
-                                    onTap: () => _deletePin(authExecutor),
-                                  ),
-                                  SwitchListTile.adaptive(
-                                    value:
-                                        settingCubit.canUseBiometrics
-                                            ? state.useBiometrics
-                                            : false,
-                                    title: Text(
-                                      context.l10n.biometricAuthentication,
+                                      ),
                                     ),
-                                    subtitle: Text(
-                                      context.l10n.useBiometricsInfo,
+                                    Switch(
+                                      value: settingCubit.canUseBiometrics
+                                          ? state.useBiometrics
+                                          : false,
+                                      onChanged: (v) {
+                                        if (!settingCubit.canUseBiometrics) {
+                                          MessageService.showErrorSnack(
+                                            context.l10n.biometricNotAvailable,
+                                          );
+                                          return;
+                                        }
+                                        settingCubit.changeBiometricAuthentication(v);
+                                        setState(() {});
+                                      },
+                                      activeColor: colorScheme.primary,
                                     ),
-                                    secondary: const Icon(
-                                      Icons.fingerprint_rounded,
-                                    ),
-                                    onChanged: (v) {
-                                      if (!settingCubit.canUseBiometrics) {
-                                        MessageService.showErrorSnack(
-                                          context.l10n.biometricNotAvailable,
-                                        );
-                                        return;
-                                      }
-                                        settingCubit
-                                          .changeBiometricAuthentication(v);
-                                          setState((){});
-                                    },
-                                  ),
-                                ]
-                                : [
-                                  settingsTile(
-                                    icon: Icons.lock_rounded,
-                                    title: context.l10n.createPIN,
-                                    onTap:
-                                        () => _createOrChangePin(authExecutor),
-                                  ),
-                                ],
-                      ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          );
+                        } else {
+                          return _buildTile(
+                            context,
+                            icon: Icons.lock_rounded,
+                            title: context.l10n.createPIN,
+                            subtitle: context.l10n.setUpPIN,
+                            onTap: () => _createOrChangePin(authExecutor),
+                          );
+                        }
+                      },
+                    ),
+                  ],
                 ),
 
-                SectionBlock(
+                // Data Management Section
+                _buildSection(
+                  context,
                   title: context.l10n.dataManagement,
+                  icon: Icons.storage_rounded,
                   children: [
-                    settingsTile(
-                      icon: Icons.file_upload_outlined,
+                    _buildTile(
+                      context,
+                      icon: Icons.file_upload_rounded,
                       title: context.l10n.exportData,
                       subtitle: context.l10n.backupDocuments,
                       onTap: () async => await FileService.exportData(context),
                     ),
-                    settingsTile(
-                      icon: Icons.file_download_outlined,
+                    _buildDivider(),
+                    _buildTile(
+                      context,
+                      icon: Icons.file_download_rounded,
                       title: context.l10n.importData,
                       subtitle: context.l10n.restoreFromBackup,
                       onTap: () async => await FileService.importData(context),
                     ),
                   ],
                 ),
-                SectionBlock(
+                
+                // Appearance Section
+                _buildSection(
+                  context,
                   title: context.l10n.appearance,
+                  icon: Icons.palette_rounded,
                   children: [
-                    ListTile(
-                      title: Text(context.l10n.theme),
-                      leading: Icon(Icons.dark_mode),
-                      subtitle: Text(context.l10n.chooseAppTheme),
-                      trailing: DropdownButton<ThemeMode>(
-                        borderRadius: BorderRadius.circular(8),
-                        underline: SizedBox.shrink(),
-                        icon: Icon(Icons.arrow_drop_down),
-                        onChanged: (value) {
-                          if (value != null) {
-                            settingCubit.changeThemeMode(value);
-                          }
-                        },
-                        value: state.themeMode,
-                        items:
-                            ThemeMode.values
-                                .map(
-                                  (tm) => DropdownMenuItem(
-                                    value: tm,
-                                    child: Text(switch (tm) {
-                                      ThemeMode.light =>
-                                        context.l10n.themeLight,
-                                      ThemeMode.dark => context.l10n.themeDark,
-                                      ThemeMode.system =>
-                                        context.l10n.themeSystem,
-                                    }),
-                                  ),
-                                )
-                                .toList(),
-                      ),
+                    _buildOptionTile<ThemeMode>(
+                      context,
+                      icon: Icons.dark_mode_rounded,
+                      title: context.l10n.theme,
+                      subtitle: context.l10n.chooseAppTheme,
+                      value: state.themeMode,
+                      options: ThemeMode.values,
+                      optionBuilder: (tm) => switch (tm) {
+                        ThemeMode.light => context.l10n.themeLight,
+                        ThemeMode.dark => context.l10n.themeDark,
+                        ThemeMode.system => context.l10n.themeSystem,
+                      },
+                      onChanged: (value) {
+                        if (value != null) {
+                          settingCubit.changeThemeMode(value);
+                        }
+                      },
                     ),
-                    ListTile(
-                      title: Text(context.l10n.language),
-                      leading: Icon(Icons.language),
-                      subtitle: Text(context.l10n.chooseAppLanguage),
-                      trailing: DropdownButton<Locale>(
-                        borderRadius: BorderRadius.circular(8),
-                        underline: SizedBox.shrink(),
-                        icon: Icon(Icons.arrow_drop_down),
-                        onChanged: (value) {
-                          if (value != null) {
-                            settingCubit.changeLocale(value);
-                          }
-                        },
-                        value: state.locale,
-                        items:
-                            Constants.supportedLocales
-                                .map(
-                                  (e) => DropdownMenuItem(
-                                    value: e,
-                                    child: Text(e.languageCode.toUpperCase()),
-                                  ),
-                                )
-                                .toList(),
-                      ),
+                    _buildDivider(),
+                    _buildOptionTile<Locale>(
+                      context,
+                      icon: Icons.language_rounded,
+                      title: context.l10n.language,
+                      subtitle: context.l10n.chooseAppLanguage,
+                      value: state.locale,
+                      options: Constants.supportedLocales,
+                      optionBuilder: (locale) => locale.languageCode.toUpperCase(),
+                      onChanged: (value) {
+                        if (value != null) {
+                          settingCubit.changeLocale(value);
+                        }
+                      },
                     ),
                   ],
                 ),
-                SectionBlock(
+
+                // About Section
+                _buildSection(
+                  context,
                   title: context.l10n.about,
+                  icon: Icons.info_rounded,
                   children: [
-                    settingsTile(
-                      icon: Icons.info,
-                      title: context.l10n.appVersion,
+                    _buildTile(
+                      context,
+                      icon: Icons.verified_sharp,
+                      title: context.l10n.version,
                       subtitle: Constants.appVersion,
+                      onTap: null,
                     ),
-                    settingsTile(
+                    _buildDivider(),
+                    _buildTile(
+                      context,
                       icon: Icons.star_rate_rounded,
                       title: context.l10n.rateApp,
                       subtitle: context.l10n.rateThisApp,
+                      onTap: () {},
                     ),
-                    settingsTile(
+                    _buildDivider(),
+                    _buildTile(
+                      context,
                       icon: Icons.grid_view_rounded,
                       title: context.l10n.otherProjects,
                       subtitle: context.l10n.moreProjects,
+                      onTap: () {},
                     ),
                   ],
                 ),
-                ElevatedButton(
-                  onPressed: () async {
-                    final size =
-                        await context.deps.documentsCubit.getAllDocumentsSize();
-
-                    if (context.mounted) {
-                      MessageService.showSnackBar(
-                        "${context.l10n.allDocumentsSize}: ${(size / 1024 / 1024).toStringAsFixed(2)} MB",
-                      );
-                      await context.deps.documentsCubit.debugAllFiles();
-                    }
-                  },
-                  child: Text(context.l10n.getAllDocumentsSize),
-                ),
-                if (kDebugMode)
-                  ElevatedButton(
-                    onPressed: settingCubit.resetFirstLaunch,
-                    child: Text("reset first launch"),
+                
+                // Utility Buttons
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  child: Column(
+                    children: [
+                      SizedBox(
+                        width: double.infinity,
+                        child: FilledButton.tonal(
+                          onPressed: () async {
+                            final size = await context.deps
+                                .documentsCubit
+                                .getAllDocumentsSize();
+                            if (context.mounted) {
+                              MessageService.showSnackBar(
+                                "${context.l10n.allDocumentsSize}: ${(size / 1024 / 1024).toStringAsFixed(2)} MB",
+                              );
+                              await context.deps.documentsCubit.debugAllFiles();
+                            }
+                          },
+                          style: FilledButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          child: Text(
+                            context.l10n.getAllDocumentsSize,
+                            style: const TextStyle(fontWeight: FontWeight.w500),
+                          ),
+                        ),
+                      ),
+                      if (kDebugMode) ...[
+                        const SizedBox(height: 12),
+                        SizedBox(
+                          width: double.infinity,
+                          child: OutlinedButton(
+                            onPressed: settingCubit.resetFirstLaunch,
+                            style: OutlinedButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(vertical: 16),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              side: BorderSide(
+                                color: colorScheme.error,
+                              ),
+                            ),
+                            child: Text(
+                              "Reset First Launch",
+                              style: TextStyle(
+                                color: colorScheme.error,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ],
                   ),
+                ),
+                const SizedBox(height: 5),
               ],
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildSection(
+    BuildContext context, {
+    required String title,
+    required IconData icon,
+    required List<Widget> children,
+  }) {
+    final theme = Theme.of(context);
+    return Container(
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surface,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 10,
+            spreadRadius: 1,
+          ),
+        ],
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Section Header
+            Padding(
+              padding: const EdgeInsets.only(bottom: 16),
+              child: Row(
+                children: [
+                  Icon(
+                    icon,
+                    size: 20,
+                    color: theme.colorScheme.primary,
+                  ),
+                  const SizedBox(width: 12),
+                  Text(
+                    title,
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: theme.colorScheme.primary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            // Section Content
+            ...children,
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTile(
+    BuildContext context, {
+    required IconData icon,
+    required String title,
+    String? subtitle,
+    required VoidCallback? onTap,
+    bool isDanger = false,
+  }) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(12),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 12),
+          child: Row(
+            children: [
+              Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: (isDanger
+                      ? colorScheme.error
+                      : colorScheme.primary).withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Icon(
+                  icon,
+                  color: isDanger ? colorScheme.error : colorScheme.primary,
+                  size: 22,
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: theme.textTheme.bodyLarge?.copyWith(
+                        fontWeight: FontWeight.w500,
+                        color: isDanger
+                            ? colorScheme.error
+                            : colorScheme.onSurface,
+                      ),
+                    ),
+                    if (subtitle != null) ...[
+                      const SizedBox(height: 2),
+                      Text(
+                        subtitle,
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: colorScheme.onSurface.withValues(alpha: 0.6),
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+              if (onTap != null)
+                Icon(
+                  Icons.arrow_forward_ios_rounded,
+                  size: 16,
+                  color: colorScheme.onSurface.withValues(alpha: 0.5),
+                ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDivider() {
+    return Divider(
+      height: 1,
+      thickness: 1,
+      indent: 56,
+      endIndent: 0,
+      color: Theme.of(context).colorScheme.surfaceContainerHighest,
+    );
+  }
+
+  Widget _buildOptionTile<T>(
+    BuildContext context, {
+    required IconData icon,
+    required String title,
+    required String subtitle,
+    required T value,
+    required List<T> options,
+    required String Function(T) optionBuilder,
+    required ValueChanged<T?> onChanged,
+  }) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 12),
+      child: Row(
+        children: [
+          Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              color: colorScheme.surfaceContainerHighest,
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Icon(
+              icon,
+              size: 22,
+            ),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: theme.textTheme.bodyLarge?.copyWith(
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  subtitle,
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: colorScheme.onSurface.withValues(alpha: 0.6),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 16),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            decoration: BoxDecoration(
+              color: colorScheme.surfaceContainerHighest,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: DropdownButton<T>(
+              value: value,
+              onChanged: onChanged,
+              items: options.map((option) {
+                return DropdownMenuItem<T>(
+                  value: option,
+                  child: Text(
+                    optionBuilder(option),
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                );
+              }).toList(),
+              underline: const SizedBox(),
+              icon: Icon(
+                Icons.arrow_drop_down_rounded,
+                color: colorScheme.onSurface.withValues(alpha: 0.6),
+              ),
+              borderRadius: BorderRadius.circular(12),
+              dropdownColor: colorScheme.surface,
+              elevation: 4,
+              isDense: true,
+            ),
+          ),
+        ],
       ),
     );
   }

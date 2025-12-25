@@ -42,7 +42,7 @@ class App extends StatelessWidget {
               onboardingPage: OnboardingPage(),
               authExecutor: deps.authExecutor,
               authScreenBuilder:
-                  (executor) => VerefyPinScreen(
+                  (executor) => VerifyPinScreen(
                     useBiometrics:
                         deps.settingsCubit.state.useBiometrics &&
                         deps.settingsCubit.canUseBiometrics,

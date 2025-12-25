@@ -3,84 +3,231 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_documents/src/core/extensions/extensions.dart';
 import 'package:my_documents/src/features/documents/cubit/documents_cubit.dart';
 import 'package:my_documents/src/features/documents/model/document.dart';
-import 'package:my_documents/src/features/folders/model/folder.dart';
+import 'package:my_documents/src/features/documents/pages/add_document_screen.dart';
 import 'package:my_documents/src/features/documents/pages/document_view_page.dart';
+import 'package:my_documents/src/features/folders/model/folder.dart';
 import 'package:my_documents/src/features/folders/pages/folder_view_page.dart';
 
 class DocumentsBlock extends StatelessWidget {
   static const Folder _allFolder = Folder.allFolder;
+  
   const DocumentsBlock({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<DocumentsCubit, DocumentsState>(
-      buildWhen: (previous, current) => current is DocumentsLoaded,
-      builder: (context, state) {
-        if (state is DocumentsLoaded) {
-          final documents = state.documents;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final screenWidth = MediaQuery.of(context).size.width;
 
-          final favorites = documents.where((e) => e.isFavorite).toList();
-          final nonFavorites = documents.where((e) => !e.isFavorite).toList();
-          final prioritizedDocs = [...favorites, ...nonFavorites];
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: BlocBuilder<DocumentsCubit, DocumentsState>(
+        buildWhen: (previous, current) => current is DocumentsLoaded,
+        builder: (context, state) {
+          if (state is DocumentsLoaded) {
+            final documents = state.documents;
+            if (documents.isEmpty) {
+              return _buildEmptyState(context, colorScheme, screenWidth);
+            }
 
-          final docsToShow = prioritizedDocs.take(3).toList();
-          if (docsToShow.isEmpty) {
-            return Center(child: Text("No documents here, yet!"));
+            // Separate favorites and non-favorites
+            final favorites = documents.where((e) => e.isFavorite);
+            final nonFavorites = documents.where((e) => !e.isFavorite);
+            final prioritizedDocs = [...favorites, ...nonFavorites];
+
+            // Take first 3 documents or less
+            final docsToShow = prioritizedDocs.take(3);
+            final items = [...docsToShow, null]; // Add "All Documents" card at the end
+
+            // Calculate responsive values based on screen width
+            final gridDelegate = _calculateGridDelegate(screenWidth);
+            final iconSize = _calculateIconSize(screenWidth);
+
+            return GridView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: items.length,
+              gridDelegate: gridDelegate,
+              itemBuilder: (context, index) {
+                return _buildDocumentCard(
+                  doc: items[index],
+                  context: context,
+                  colorScheme: colorScheme,
+                  theme: theme,
+                  iconSize: iconSize,
+                  screenWidth: screenWidth,
+                );
+              },
+            );
           }
-
-          final items = [...docsToShow, null];
-
-          return GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
-            itemCount: items.length,
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: MediaQuery.of(context).size.width > 700 ? 4 : 2,
-              mainAxisSpacing: 12,
-              crossAxisSpacing: 12,
-              childAspectRatio: 3.5 / 2,
-            ),
-            itemBuilder: (context, index) {
-              final doc = items[index];
-              return _buildDocCard(doc, context, Theme.of(context).cardColor);
-            },
-          );
-        }
-
-        return const Center(child: CircularProgressIndicator());
-      },
-    );
-  }
-
-  Widget _buildDocCard(Document? doc, BuildContext context, Color cardColor) {
-    final isAll = doc == null;
-    return GestureDetector(
-      onTap: () {
-        Navigator.push(
-          context,
-          isAll
-              ? FolderViewPage.route(folder: _allFolder)
-              : DocumentViewPage.route(doc.id),
-        );
-      },
-      child: ColoredBox(
-        color: cardColor,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          spacing: 5,
-          children: [
-            Icon(isAll ? Icons.folder_open : Icons.description, size: 40),
-            Text(
-              isAll ? context.l10n.all : doc.title,
-              style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ],
-        ),
+          return _buildLoadingState(colorScheme, screenWidth, context);
+        },
       ),
     );
   }
+
+  SliverGridDelegateWithFixedCrossAxisCount _calculateGridDelegate(double screenWidth) {
+    if (screenWidth < 400) {
+      // For very small screens (phones in portrait)
+      return const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        mainAxisSpacing: 8,
+        crossAxisSpacing: 8,
+        childAspectRatio: 1.4,
+      );
+    } else if (screenWidth < 500) {
+      // For medium-small screens
+      return const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        mainAxisSpacing: 10,
+        crossAxisSpacing: 10,
+        childAspectRatio: 1.3,
+      );
+    } else if (screenWidth < 700) {
+      // For medium screens (tablets in portrait, large phones)
+      return const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 3,
+        mainAxisSpacing: 12,
+        crossAxisSpacing: 12,
+        childAspectRatio: 1.2,
+      );
+    } else if (screenWidth < 900) {
+      // For large screens (tablets in landscape)
+      return const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 4,
+        mainAxisSpacing: 12,
+        crossAxisSpacing: 12,
+        childAspectRatio: 1.1,
+      );
+    } else {
+      // For very large screens (desktop)
+      return const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 5,
+        mainAxisSpacing: 16,
+        crossAxisSpacing: 16,
+        childAspectRatio: 1.0,
+      );
+    }
+  }
+
+  double _calculateIconSize(double screenWidth) {
+    if (screenWidth < 400) {
+      return 24;
+    } else if (screenWidth < 500) {
+      return 28;
+    } else if (screenWidth < 700) {
+      return 32;
+    } else {
+      return 36;
+    }
+  }
+
+  Widget _buildDocumentCard({
+    required Document? doc,
+    required BuildContext context,
+    required ColorScheme colorScheme,
+    required ThemeData theme,
+    required double iconSize,
+    required double screenWidth,
+  }) {
+    final isAll = doc == null;
+    double iconContainerSize = 50;
+    double borderRadius = 14;
+
+    return MaterialButton(
+      onPressed:  () {
+          Navigator.push(
+            context,
+            isAll
+                ? FolderViewPage.route(folder: _allFolder)
+                : DocumentViewPage.route(doc.id),
+          );
+        },
+      color: colorScheme.surface,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(borderRadius),
+        side: BorderSide(
+          color: colorScheme.outline.withValues(alpha: 0.1),
+            width: 1,
+        )
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        spacing: 8,
+        children: [
+          Container(
+            width: iconContainerSize,
+            height: iconContainerSize,
+            decoration: BoxDecoration(
+              color:  colorScheme.primaryContainer.withValues(alpha: 0.8),
+              borderRadius: BorderRadius.circular(borderRadius - 4),
+            ),
+            child: Icon(
+              isAll ? Icons.folder_open_rounded: Icons.description_rounded,
+              size: iconSize,
+              color: colorScheme.onPrimaryContainer,
+            ),
+          ),
+          Text(
+            isAll ? context.l10n.all : doc.title,
+            maxLines: screenWidth < 400 ? 1 : 2,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEmptyState(BuildContext context, ColorScheme colorScheme, double screenWidth) {
+    final isSmallScreen = screenWidth < 400;
+    
+    return Container(
+      padding: EdgeInsets.symmetric(
+        vertical: isSmallScreen ? 20 : 28,
+      ),
+      decoration: BoxDecoration(
+        color: colorScheme.surfaceContainerHighest,
+        borderRadius: BorderRadius.circular(isSmallScreen ? 16 : 20),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        spacing: 10,
+        children: [
+          Text(
+            context.l10n.addFirstDocument,
+            style: Theme.of(context).textTheme.bodyLarge,
+          ),
+          SizedBox(
+            width: isSmallScreen ? double.infinity : null,
+            child: ElevatedButton.icon(
+              onPressed: () =>Navigator.push(context, AddDocumentScreen.route()),
+              
+              icon: const Icon(Icons.add_rounded),
+              label: Text(context.l10n.addDocument),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLoadingState(ColorScheme colorScheme, double screenWidth, BuildContext context) {
+    final isSmallScreen = screenWidth < 400;
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: isSmallScreen ? 20 : 32),
+      child: Column(
+        spacing: 10,
+        children: [
+          Center(
+            child: CircularProgressIndicator(
+              color: colorScheme.primary,
+              strokeWidth: isSmallScreen ? 2.5 : 3,
+            ),
+          ),
+          Text(context.l10n.loadingDocuments),
+        ],
+      ),
+    );
+  }
+
 }
