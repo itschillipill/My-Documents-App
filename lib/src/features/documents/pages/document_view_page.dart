@@ -104,12 +104,14 @@ class DocumentViewPage extends StatelessWidget {
                       children: [
                         DocumentRow(
                           context.l10n.uploadDate,
-                          document.createdAt.formatted,
+                          document.createdAt.formatted(context),
                         ),
                         DocumentRow(
                           context.l10n.expirationDate,
                           documentVersion.expirationDate != null
-                              ? documentVersion.expirationDate!.formatted
+                              ? documentVersion.expirationDate!.formatted(
+                                context,
+                              )
                               : context.l10n.noExpiration,
                         ),
                         DocumentRow(

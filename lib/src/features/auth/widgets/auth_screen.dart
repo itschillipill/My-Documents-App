@@ -8,14 +8,13 @@ class VerifyPinScreen extends StatefulWidget {
     required bool useBiometrics,
     required Future<bool> Function(String) onAuthByPIN,
     required Future<bool> Function() onAuthByBiometrics,
-  }) =>
-      AppPageRoute.build(
-        page: VerifyPinScreen(
-          useBiometrics: useBiometrics,
-          onAuthByPIN: onAuthByPIN,
-          onAuthByBiometrics: onAuthByBiometrics,
-        ),
-      );
+  }) => AppPageRoute.build(
+    page: VerifyPinScreen(
+      useBiometrics: useBiometrics,
+      onAuthByPIN: onAuthByPIN,
+      onAuthByBiometrics: onAuthByBiometrics,
+    ),
+  );
 
   final bool useBiometrics;
   final Future<bool> Function(String) onAuthByPIN;
@@ -49,7 +48,7 @@ class _VerifyPinScreenState extends State<VerifyPinScreen> {
       _loading = true;
       _showError = false;
     });
-    
+
     try {
       final success = await widget.onAuthByPIN(controller.text);
       if (mounted) {
@@ -80,7 +79,7 @@ class _VerifyPinScreenState extends State<VerifyPinScreen> {
       _loading = true;
       _showError = false;
     });
-    
+
     try {
       final success = await widget.onAuthByBiometrics();
       if (mounted) {
@@ -131,14 +130,16 @@ class _VerifyPinScreenState extends State<VerifyPinScreen> {
                       width: 100,
                       height: 100,
                       decoration: BoxDecoration(
-                        color: _showError
-                            ? colorScheme.error.withOpacity(0.1)
-                            : colorScheme.primary.withOpacity(0.1),
+                        color:
+                            (_showError
+                                ? colorScheme.error
+                                : colorScheme.primary).withValues(alpha: 0.1),
                         shape: BoxShape.circle,
                         border: Border.all(
-                          color: _showError
-                              ? colorScheme.error.withOpacity(0.3)
-                              : colorScheme.primary.withOpacity(0.3),
+                          color:(
+                              _showError
+                                  ? colorScheme.error
+                                  : colorScheme.primary).withValues(alpha: 0.3),
                           width: 2,
                         ),
                       ),
@@ -147,13 +148,14 @@ class _VerifyPinScreenState extends State<VerifyPinScreen> {
                             ? Icons.lock_reset_rounded
                             : Icons.lock_rounded,
                         size: 48,
-                        color: _showError
-                            ? colorScheme.error
-                            : colorScheme.primary,
+                        color:
+                            _showError
+                                ? colorScheme.error
+                                : colorScheme.primary,
                       ),
                     ),
                     const SizedBox(height: 32),
-                    
+
                     // Title
                     Text(
                       context.l10n.appTitle,
@@ -163,18 +165,18 @@ class _VerifyPinScreenState extends State<VerifyPinScreen> {
                       ),
                     ),
                     const SizedBox(height: 8),
-                    
+
                     // Description
                     Text(
                       context.l10n.enterPINToAccess,
                       style: theme.textTheme.bodyLarge?.copyWith(
-                        color: colorScheme.onSurface.withOpacity(0.7),
+                        color: colorScheme.onSurface.withValues(alpha: 0.7),
                         height: 1.4,
                       ),
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 4),
-                    
+
                     // Error message if any
                     if (_showError && _attempts > 0)
                       Padding(
@@ -198,7 +200,7 @@ class _VerifyPinScreenState extends State<VerifyPinScreen> {
                     Container(
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(16),
-                        color: colorScheme.surfaceVariant.withOpacity(0.5),
+                        color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
                       ),
                       child: TextField(
                         controller: controller,
@@ -224,12 +226,12 @@ class _VerifyPinScreenState extends State<VerifyPinScreen> {
                           hintText: '••••',
                           hintStyle: theme.textTheme.headlineSmall?.copyWith(
                             letterSpacing: 8,
-                            color: colorScheme.onSurface.withOpacity(0.3),
+                            color: colorScheme.onSurface.withValues(alpha: 0.3),
                             fontWeight: FontWeight.w600,
                           ),
                           prefixIcon: Icon(
                             Icons.lock_outline_rounded,
-                            color: colorScheme.onSurface.withOpacity(0.6),
+                            color: colorScheme.onSurface.withValues(alpha: 0.6),
                           ),
                           suffixIcon: IconButton(
                             onPressed: _toggleObscureText,
@@ -237,7 +239,7 @@ class _VerifyPinScreenState extends State<VerifyPinScreen> {
                               _isObscureText
                                   ? Icons.visibility_rounded
                                   : Icons.visibility_off_rounded,
-                              color: colorScheme.onSurface.withOpacity(0.6),
+                              color: colorScheme.onSurface.withValues(alpha: 0.6),
                             ),
                           ),
                         ),
@@ -245,14 +247,14 @@ class _VerifyPinScreenState extends State<VerifyPinScreen> {
                       ),
                     ),
                     const SizedBox(height: 8),
-                    
+
                     // PIN Help Text
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 8),
                       child: Text(
                         context.l10n.enterYourPIN,
                         style: theme.textTheme.bodySmall?.copyWith(
-                          color: colorScheme.onSurface.withOpacity(0.6),
+                          color: colorScheme.onSurface.withValues(alpha: 0.6),
                         ),
                       ),
                     ),
@@ -272,33 +274,31 @@ class _VerifyPinScreenState extends State<VerifyPinScreen> {
                           elevation: 0,
                           shadowColor: Colors.transparent,
                         ),
-                        child: _loading
-                            ? const SizedBox(
-                                width: 24,
-                                height: 24,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 3,
-                                  color: Colors.white,
-                                ),
-                              )
-                            : Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    Icons.lock_open_rounded,
-                                    size: 20,
+                        child:
+                            _loading
+                                ? const SizedBox(
+                                  width: 24,
+                                  height: 24,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 3,
+                                    color: Colors.white,
                                   ),
-                                  const SizedBox(width: 12),
-                                  Text(
-                                    context.l10n.unlock.toUpperCase(),
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 16,
-                                      letterSpacing: 0.5,
+                                )
+                                : Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(Icons.lock_open_rounded, size: 20),
+                                    const SizedBox(width: 12),
+                                    Text(
+                                      context.l10n.unlock.toUpperCase(),
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 16,
+                                        letterSpacing: 0.5,
+                                      ),
                                     ),
-                                  ),
-                                ],
-                              ),
+                                  ],
+                                ),
                       ),
                     ),
                   ],
@@ -314,7 +314,7 @@ class _VerifyPinScreenState extends State<VerifyPinScreen> {
                       children: [
                         Expanded(
                           child: Divider(
-                            color: colorScheme.outline.withOpacity(0.3),
+                            color: colorScheme.outline.withValues(alpha: 0.3),
                           ),
                         ),
                         Padding(
@@ -322,7 +322,7 @@ class _VerifyPinScreenState extends State<VerifyPinScreen> {
                           child: Text(
                             context.l10n.or.toUpperCase(),
                             style: theme.textTheme.bodySmall?.copyWith(
-                              color: colorScheme.onSurface.withOpacity(0.5),
+                              color: colorScheme.onSurface.withValues(alpha: 0.5),
                               fontWeight: FontWeight.w500,
                               letterSpacing: 1,
                             ),
@@ -330,14 +330,14 @@ class _VerifyPinScreenState extends State<VerifyPinScreen> {
                         ),
                         Expanded(
                           child: Divider(
-                            color: colorScheme.outline.withOpacity(0.3),
+                            color: colorScheme.outline.withValues(alpha: 0.3),
                           ),
                         ),
                       ],
                     ),
                   ),
                   const SizedBox(height: 24),
-                  
+
                   // Biometric Button
                   Material(
                     color: Colors.transparent,
@@ -349,9 +349,9 @@ class _VerifyPinScreenState extends State<VerifyPinScreen> {
                         padding: const EdgeInsets.all(20),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(16),
-                          color: colorScheme.surfaceVariant.withOpacity(0.3),
+                          color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
                           border: Border.all(
-                            color: colorScheme.outline.withOpacity(0.2),
+                            color: colorScheme.outline.withValues(alpha: 0.2),
                             width: 1,
                           ),
                         ),
@@ -378,7 +378,9 @@ class _VerifyPinScreenState extends State<VerifyPinScreen> {
                                 Text(
                                   context.l10n.fastAndSecure,
                                   style: theme.textTheme.bodySmall?.copyWith(
-                                    color: colorScheme.onSurface.withOpacity(0.6),
+                                    color: colorScheme.onSurface.withValues(
+                                      alpha: 0.6,
+                                    ),
                                   ),
                                 ),
                               ],
@@ -387,7 +389,7 @@ class _VerifyPinScreenState extends State<VerifyPinScreen> {
                             Icon(
                               Icons.arrow_forward_ios_rounded,
                               size: 16,
-                              color: colorScheme.onSurface.withOpacity(0.4),
+                              color: colorScheme.onSurface.withValues(alpha: 0.4),
                             ),
                           ],
                         ),
@@ -401,9 +403,10 @@ class _VerifyPinScreenState extends State<VerifyPinScreen> {
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: isDark
-                        ? colorScheme.primary.withOpacity(0.1)
-                        : colorScheme.surfaceVariant,
+                    color:
+                        isDark
+                            ? colorScheme.primary.withValues(alpha: 0.1)
+                            : colorScheme.surfaceContainerHighest,
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Row(
@@ -418,7 +421,7 @@ class _VerifyPinScreenState extends State<VerifyPinScreen> {
                         child: Text(
                           context.l10n.dataProtected,
                           style: theme.textTheme.bodySmall?.copyWith(
-                            color: colorScheme.onSurface.withOpacity(0.8),
+                            color: colorScheme.onSurface.withValues(alpha: 0.8),
                             height: 1.4,
                           ),
                         ),
@@ -440,9 +443,7 @@ class _VerifyPinScreenState extends State<VerifyPinScreen> {
                     ),
                     child: Text(
                       context.l10n.forgotPIN,
-                      style: TextStyle(
-                        fontWeight: FontWeight.w500,
-                      ),
+                      style: TextStyle(fontWeight: FontWeight.w500),
                     ),
                   ),
                 ],

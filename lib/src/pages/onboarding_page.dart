@@ -13,11 +13,11 @@ class _OnboardingPageState extends State<OnboardingPage> {
   final PageController _controller = PageController();
   int currentPage = 0;
 
-   List<OnboardingItem> _onboardingItems(BuildContext ctx) => [
+  List<OnboardingItem> _onboardingItems(BuildContext ctx) => [
     OnboardingItem(
       icon: Icons.folder_special_rounded,
       title: ctx.l10n.title1,
-      description:ctx.l10n.description1,
+      description: ctx.l10n.description1,
       color: Colors.blueAccent,
       gradient: LinearGradient(
         colors: [Colors.blue.shade400, Colors.blueAccent],
@@ -28,7 +28,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
     OnboardingItem(
       icon: Icons.notifications_active_rounded,
       title: ctx.l10n.title2,
-      description:ctx.l10n.description2,
+      description: ctx.l10n.description2,
       color: Colors.green,
       gradient: LinearGradient(
         colors: [Colors.green.shade400, Colors.teal.shade600],
@@ -39,7 +39,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
     OnboardingItem(
       icon: Icons.folder_open_rounded,
       title: ctx.l10n.title3,
-      description:ctx.l10n.description3,
+      description: ctx.l10n.description3,
       color: Colors.orange,
       gradient: LinearGradient(
         colors: [Colors.orange.shade400, Colors.deepOrange.shade400],
@@ -50,7 +50,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
     OnboardingItem(
       icon: Icons.security_rounded,
       title: ctx.l10n.title4,
-      description:ctx.l10n.description4,
+      description: ctx.l10n.description4,
       color: Colors.purple,
       gradient: LinearGradient(
         colors: [Colors.purple.shade400, Colors.deepPurple.shade400],
@@ -153,17 +153,20 @@ class _OnboardingPageState extends State<OnboardingPage> {
               );
             },
           ),
-         
+
           // Переключение языков
           Positioned(
             top: 24,
             right: 24,
             child: TextButton(
               onPressed: () {
-                final locale = (context.deps.settingsCubit.state.locale==Locale('ru')) ?Locale('en'):Locale('ru');
+                final locale =
+                    (context.deps.settingsCubit.state.locale == Locale('ru'))
+                        ? Locale('en')
+                        : Locale('ru');
                 context.deps.settingsCubit.changeLocale(locale);
               },
-             child: Text(context.l10n.langText) 
+              child: Text(context.l10n.langText),
             ),
           ),
           // Нижняя панель с элементами управления
@@ -216,7 +219,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                           Icons.privacy_tip_rounded,
                           color: Colors.grey.shade600,
                         ),
-                       Text(context.l10n.privacyPolicy),
+                        Text(context.l10n.privacyPolicy),
                       ],
                     ),
                   ),
@@ -280,7 +283,9 @@ class _OnboardingPageState extends State<OnboardingPage> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text(
-                                isLastPage ? context.l10n.start : context.l10n.next,
+                                isLastPage
+                                    ? context.l10n.start
+                                    : context.l10n.next,
                                 style: const TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w600,
@@ -407,7 +412,7 @@ class PrivacyPolicyModal extends StatelessWidget {
                       ),
                       _buildSection(
                         context,
-                       context.l10n.paragraph4,
+                        context.l10n.paragraph4,
                         context.l10n.content4,
                       ),
                       _buildSection(
@@ -463,7 +468,7 @@ class PrivacyPolicyModal extends StatelessWidget {
                       borderRadius: BorderRadius.circular(15),
                     ),
                   ),
-                  child:Text(
+                  child: Text(
                     context.l10n.gotIt,
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                   ),

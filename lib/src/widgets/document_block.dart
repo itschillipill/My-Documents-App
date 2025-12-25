@@ -10,7 +10,7 @@ import 'package:my_documents/src/features/folders/pages/folder_view_page.dart';
 
 class DocumentsBlock extends StatelessWidget {
   static const Folder _allFolder = Folder.allFolder;
-  
+
   const DocumentsBlock({super.key});
 
   @override
@@ -37,7 +37,10 @@ class DocumentsBlock extends StatelessWidget {
 
             // Take first 3 documents or less
             final docsToShow = prioritizedDocs.take(3);
-            final items = [...docsToShow, null]; // Add "All Documents" card at the end
+            final items = [
+              ...docsToShow,
+              null,
+            ]; // Add "All Documents" card at the end
 
             // Calculate responsive values based on screen width
             final gridDelegate = _calculateGridDelegate(screenWidth);
@@ -66,7 +69,9 @@ class DocumentsBlock extends StatelessWidget {
     );
   }
 
-  SliverGridDelegateWithFixedCrossAxisCount _calculateGridDelegate(double screenWidth) {
+  SliverGridDelegateWithFixedCrossAxisCount _calculateGridDelegate(
+    double screenWidth,
+  ) {
     if (screenWidth < 400) {
       // For very small screens (phones in portrait)
       return const SliverGridDelegateWithFixedCrossAxisCount(
@@ -135,21 +140,22 @@ class DocumentsBlock extends StatelessWidget {
     double borderRadius = 14;
 
     return MaterialButton(
-      onPressed:  () {
-          Navigator.push(
-            context,
-            isAll
-                ? FolderViewPage.route(folder: _allFolder)
-                : DocumentViewPage.route(doc.id),
-          );
-        },
+      elevation: 0,
+      onPressed: () {
+        Navigator.push(
+          context,
+          isAll
+              ? FolderViewPage.route(folder: _allFolder)
+              : DocumentViewPage.route(doc.id),
+        );
+      },
       color: colorScheme.surface,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(borderRadius),
         side: BorderSide(
           color: colorScheme.outline.withValues(alpha: 0.1),
-            width: 1,
-        )
+          width: 1,
+        ),
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -159,11 +165,11 @@ class DocumentsBlock extends StatelessWidget {
             width: iconContainerSize,
             height: iconContainerSize,
             decoration: BoxDecoration(
-              color:  colorScheme.primaryContainer.withValues(alpha: 0.8),
+              color: colorScheme.primaryContainer.withValues(alpha: 0.8),
               borderRadius: BorderRadius.circular(borderRadius - 4),
             ),
             child: Icon(
-              isAll ? Icons.folder_open_rounded: Icons.description_rounded,
+              isAll ? Icons.folder_open_rounded : Icons.description_rounded,
               size: iconSize,
               color: colorScheme.onPrimaryContainer,
             ),
@@ -178,13 +184,15 @@ class DocumentsBlock extends StatelessWidget {
     );
   }
 
-  Widget _buildEmptyState(BuildContext context, ColorScheme colorScheme, double screenWidth) {
+  Widget _buildEmptyState(
+    BuildContext context,
+    ColorScheme colorScheme,
+    double screenWidth,
+  ) {
     final isSmallScreen = screenWidth < 400;
-    
+
     return Container(
-      padding: EdgeInsets.symmetric(
-        vertical: isSmallScreen ? 20 : 28,
-      ),
+      padding: EdgeInsets.symmetric(vertical: isSmallScreen ? 20 : 28),
       decoration: BoxDecoration(
         color: colorScheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(isSmallScreen ? 16 : 20),
@@ -200,8 +208,8 @@ class DocumentsBlock extends StatelessWidget {
           SizedBox(
             width: isSmallScreen ? double.infinity : null,
             child: ElevatedButton.icon(
-              onPressed: () =>Navigator.push(context, AddDocumentScreen.route()),
-              
+              onPressed:
+                  () => Navigator.push(context, AddDocumentScreen.route()),
               icon: const Icon(Icons.add_rounded),
               label: Text(context.l10n.addDocument),
             ),
@@ -211,9 +219,13 @@ class DocumentsBlock extends StatelessWidget {
     );
   }
 
-  Widget _buildLoadingState(ColorScheme colorScheme, double screenWidth, BuildContext context) {
+  Widget _buildLoadingState(
+    ColorScheme colorScheme,
+    double screenWidth,
+    BuildContext context,
+  ) {
     final isSmallScreen = screenWidth < 400;
-    return Container(
+    return Padding(
       padding: EdgeInsets.symmetric(vertical: isSmallScreen ? 20 : 32),
       child: Column(
         spacing: 10,
@@ -229,5 +241,4 @@ class DocumentsBlock extends StatelessWidget {
       ),
     );
   }
-
 }

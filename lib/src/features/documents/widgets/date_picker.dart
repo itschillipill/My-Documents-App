@@ -15,7 +15,7 @@ class DatePicker extends StatelessWidget {
         text:
             expirationDate == null
                 ? context.l10n.noExpiration
-                : expirationDate!.formatted,
+                : expirationDate!.formatted(context),
       ),
       decoration: InputDecoration(
         hintText: context.l10n.expirationDate,

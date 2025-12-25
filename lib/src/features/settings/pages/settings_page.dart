@@ -9,9 +9,9 @@ import 'package:my_documents/src/utils/sevices/file_service.dart';
 
 class SettingsPage extends StatefulWidget {
   static PageRoute route() => AppPageRoute.build(
-        page: SettingsPage(),
-        transition: PageTransitionType.slideFromRight,
-      );
+    page: SettingsPage(),
+    transition: PageTransitionType.slideFromRight,
+  );
   const SettingsPage({super.key});
 
   @override
@@ -22,32 +22,30 @@ class _SettingsPageState extends State<SettingsPage> {
   Future<bool?> _verifyOldPin(AuthenticationExecutor authExecutor) async {
     final oldPin = await _showPinSheet(context.l10n.enterCurrentPIN);
     if (oldPin == null) return null;
-    return oldPin.isNotEmpty &&
-        await authExecutor.verifyPin(oldPin);
+    return oldPin.isNotEmpty && await authExecutor.verifyPin(oldPin);
   }
 
   Future<void> _createOrChangePin(
-  AuthenticationExecutor authExecutor, {
-  bool verifyOld = false,
-}) async {
-  if (verifyOld) {
-    final isValid = await _verifyOldPin(authExecutor);
+    AuthenticationExecutor authExecutor, {
+    bool verifyOld = false,
+  }) async {
+    if (verifyOld) {
+      final isValid = await _verifyOldPin(authExecutor);
 
-    if (isValid == null) return;
+      if (isValid == null) return;
 
-    if (!isValid && mounted) {
-      MessageService.showErrorSnack(context.l10n.wrongPIN);
-      return;
+      if (!isValid && mounted) {
+        MessageService.showErrorSnack(context.l10n.wrongPIN);
+        return;
+      }
     }
+
+    if (!mounted) return;
+    final newPin = await _showPinSheet(context.l10n.enterNewPIN);
+    if (newPin == null || newPin.isEmpty) return;
+    await authExecutor.createOrChangePin(newPin);
+    if (mounted) MessageService.showSnackBar(context.l10n.pinUpdated);
   }
-
-  if (!mounted) return;
-  final newPin = await _showPinSheet(context.l10n.enterNewPIN);
-  if (newPin == null || newPin.isEmpty) return;
-  await authExecutor.createOrChangePin(newPin);
-  if (mounted) MessageService.showSnackBar(context.l10n.pinUpdated);
-}
-
 
   Future<void> _deletePin(AuthenticationExecutor authExecutor) async {
     final confirm = await MessageService.$confirmAction(
@@ -56,13 +54,14 @@ class _SettingsPageState extends State<SettingsPage> {
     );
 
     if (confirm == true) {
-      bool? verifyOldPin= await _verifyOldPin(authExecutor);
-      if(verifyOldPin==null) return;
-      verifyOldPin==true?
-      Future.microtask(() async {
-        await authExecutor.clearPin();
-       if(mounted)  MessageService.showSnackBar(context.l10n.pinDeleted);
-      }):{if(mounted) MessageService.showErrorSnack(context.l10n.wrongPIN)};
+      bool? verifyOldPin = await _verifyOldPin(authExecutor);
+      if (verifyOldPin == null) return;
+      verifyOldPin == true
+          ? Future.microtask(() async {
+            await authExecutor.clearPin();
+            if (mounted) MessageService.showSnackBar(context.l10n.pinDeleted);
+          })
+          : {if (mounted) MessageService.showErrorSnack(context.l10n.wrongPIN)};
     }
   }
 
@@ -72,10 +71,11 @@ class _SettingsPageState extends State<SettingsPage> {
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (ctx) {
-         final controller = TextEditingController();
+        final controller = TextEditingController();
         return Padding(
           padding: EdgeInsets.only(
-            bottom: MediaQuery.of(ctx).viewInsets.bottom +
+            bottom:
+                MediaQuery.of(ctx).viewInsets.bottom +
                 MediaQuery.of(ctx).padding.bottom,
           ),
           child: Container(
@@ -102,12 +102,14 @@ class _SettingsPageState extends State<SettingsPage> {
                     width: 40,
                     height: 4,
                     decoration: BoxDecoration(
-                      color: Theme.of(ctx).colorScheme.onSurface.withValues(alpha: 0.2),
+                      color: Theme.of(
+                        ctx,
+                      ).colorScheme.onSurface.withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(2),
                     ),
                   ),
                   const SizedBox(height: 20),
-                  
+
                   // Title
                   Text(
                     title,
@@ -116,16 +118,16 @@ class _SettingsPageState extends State<SettingsPage> {
                     ),
                   ),
                   const SizedBox(height: 24),
-                  
+
                   // PIN Input
                   TextField(
                     controller: controller,
                     keyboardType: TextInputType.number,
                     obscureText: true,
                     textAlign: TextAlign.center,
-                    style: Theme.of(ctx).textTheme.headlineSmall?.copyWith(
-                      letterSpacing: 8,
-                    ),
+                    style: Theme.of(
+                      ctx,
+                    ).textTheme.headlineSmall?.copyWith(letterSpacing: 8),
                     maxLength: 4,
                     decoration: InputDecoration(
                       counterText: '',
@@ -147,14 +149,18 @@ class _SettingsPageState extends State<SettingsPage> {
                         vertical: 18,
                       ),
                       hintText: '••••',
-                      hintStyle: Theme.of(ctx).textTheme.headlineSmall?.copyWith(
+                      hintStyle: Theme.of(
+                        ctx,
+                      ).textTheme.headlineSmall?.copyWith(
                         letterSpacing: 8,
-                        color: Theme.of(ctx).colorScheme.onSurface.withValues(alpha: 0.3),
+                        color: Theme.of(
+                          ctx,
+                        ).colorScheme.onSurface.withValues(alpha: 0.3),
                       ),
                     ),
                   ),
                   const SizedBox(height: 24),
-                  
+
                   // Buttons
                   Row(
                     children: [
@@ -182,7 +188,8 @@ class _SettingsPageState extends State<SettingsPage> {
                           onPressed: () => Navigator.pop(ctx, controller.text),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Theme.of(ctx).colorScheme.primary,
-                            foregroundColor: Theme.of(ctx).colorScheme.onPrimary,
+                            foregroundColor:
+                                Theme.of(ctx).colorScheme.onPrimary,
                             padding: const EdgeInsets.symmetric(vertical: 16),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
@@ -191,9 +198,7 @@ class _SettingsPageState extends State<SettingsPage> {
                           ),
                           child: Text(
                             ctx.l10n.ok,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.w600,
-                            ),
+                            style: const TextStyle(fontWeight: FontWeight.w600),
                           ),
                         ),
                       ),
@@ -251,10 +256,11 @@ class _SettingsPageState extends State<SettingsPage> {
                                 icon: Icons.lock_rounded,
                                 title: context.l10n.changePIN,
                                 subtitle: context.l10n.updatePIN,
-                                onTap: () => _createOrChangePin(
-                                  authExecutor,
-                                  verifyOld: true,
-                                ),
+                                onTap:
+                                    () => _createOrChangePin(
+                                      authExecutor,
+                                      verifyOld: true,
+                                    ),
                               ),
                               _buildDivider(),
                               _buildTile(
@@ -267,7 +273,9 @@ class _SettingsPageState extends State<SettingsPage> {
                               ),
                               _buildDivider(),
                               Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 12),
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 12,
+                                ),
                                 child: Row(
                                   spacing: 10,
                                   children: [
@@ -275,7 +283,9 @@ class _SettingsPageState extends State<SettingsPage> {
                                       width: 40,
                                       height: 40,
                                       decoration: BoxDecoration(
-                                        color: colorScheme.primary.withValues(alpha: 0.1),
+                                        color: colorScheme.primary.withValues(
+                                          alpha: 0.1,
+                                        ),
                                         borderRadius: BorderRadius.circular(10),
                                       ),
                                       child: Icon(
@@ -286,15 +296,17 @@ class _SettingsPageState extends State<SettingsPage> {
                                     Expanded(
                                       child: Text(
                                         context.l10n.biometricAuthentication,
-                                        style: theme.textTheme.bodyLarge?.copyWith(
-                                          fontWeight: FontWeight.w500,
-                                        ),
+                                        style: theme.textTheme.bodyLarge
+                                            ?.copyWith(
+                                              fontWeight: FontWeight.w500,
+                                            ),
                                       ),
                                     ),
                                     Switch(
-                                      value: settingCubit.canUseBiometrics
-                                          ? state.useBiometrics
-                                          : false,
+                                      value:
+                                          settingCubit.canUseBiometrics
+                                              ? state.useBiometrics
+                                              : false,
                                       onChanged: (v) {
                                         if (!settingCubit.canUseBiometrics) {
                                           MessageService.showErrorSnack(
@@ -302,7 +314,8 @@ class _SettingsPageState extends State<SettingsPage> {
                                           );
                                           return;
                                         }
-                                        settingCubit.changeBiometricAuthentication(v);
+                                        settingCubit
+                                            .changeBiometricAuthentication(v);
                                         setState(() {});
                                       },
                                       activeColor: colorScheme.primary,
@@ -349,7 +362,7 @@ class _SettingsPageState extends State<SettingsPage> {
                     ),
                   ],
                 ),
-                
+
                 // Appearance Section
                 _buildSection(
                   context,
@@ -363,11 +376,12 @@ class _SettingsPageState extends State<SettingsPage> {
                       subtitle: context.l10n.chooseAppTheme,
                       value: state.themeMode,
                       options: ThemeMode.values,
-                      optionBuilder: (tm) => switch (tm) {
-                        ThemeMode.light => context.l10n.themeLight,
-                        ThemeMode.dark => context.l10n.themeDark,
-                        ThemeMode.system => context.l10n.themeSystem,
-                      },
+                      optionBuilder:
+                          (tm) => switch (tm) {
+                            ThemeMode.light => context.l10n.themeLight,
+                            ThemeMode.dark => context.l10n.themeDark,
+                            ThemeMode.system => context.l10n.themeSystem,
+                          },
                       onChanged: (value) {
                         if (value != null) {
                           settingCubit.changeThemeMode(value);
@@ -382,7 +396,8 @@ class _SettingsPageState extends State<SettingsPage> {
                       subtitle: context.l10n.chooseAppLanguage,
                       value: state.locale,
                       options: Constants.supportedLocales,
-                      optionBuilder: (locale) => locale.languageCode.toUpperCase(),
+                      optionBuilder:
+                          (locale) => locale.languageCode.toUpperCase(),
                       onChanged: (value) {
                         if (value != null) {
                           settingCubit.changeLocale(value);
@@ -423,7 +438,7 @@ class _SettingsPageState extends State<SettingsPage> {
                     ),
                   ],
                 ),
-                
+
                 // Utility Buttons
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -433,9 +448,9 @@ class _SettingsPageState extends State<SettingsPage> {
                         width: double.infinity,
                         child: FilledButton.tonal(
                           onPressed: () async {
-                            final size = await context.deps
-                                .documentsCubit
-                                .getAllDocumentsSize();
+                            final size =
+                                await context.deps.documentsCubit
+                                    .getAllDocumentsSize();
                             if (context.mounted) {
                               MessageService.showSnackBar(
                                 "${context.l10n.allDocumentsSize}: ${(size / 1024 / 1024).toStringAsFixed(2)} MB",
@@ -466,9 +481,7 @@ class _SettingsPageState extends State<SettingsPage> {
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12),
                               ),
-                              side: BorderSide(
-                                color: colorScheme.error,
-                              ),
+                              side: BorderSide(color: colorScheme.error),
                             ),
                             child: Text(
                               "Reset First Launch",
@@ -522,11 +535,7 @@ class _SettingsPageState extends State<SettingsPage> {
               padding: const EdgeInsets.only(bottom: 16),
               child: Row(
                 children: [
-                  Icon(
-                    icon,
-                    size: 20,
-                    color: theme.colorScheme.primary,
-                  ),
+                  Icon(icon, size: 20, color: theme.colorScheme.primary),
                   const SizedBox(width: 12),
                   Text(
                     title,
@@ -570,9 +579,8 @@ class _SettingsPageState extends State<SettingsPage> {
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
-                  color: (isDanger
-                      ? colorScheme.error
-                      : colorScheme.primary).withValues(alpha: 0.1),
+                  color: (isDanger ? colorScheme.error : colorScheme.primary)
+                      .withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Icon(
@@ -590,9 +598,10 @@ class _SettingsPageState extends State<SettingsPage> {
                       title,
                       style: theme.textTheme.bodyLarge?.copyWith(
                         fontWeight: FontWeight.w500,
-                        color: isDanger
-                            ? colorScheme.error
-                            : colorScheme.onSurface,
+                        color:
+                            isDanger
+                                ? colorScheme.error
+                                : colorScheme.onSurface,
                       ),
                     ),
                     if (subtitle != null) ...[
@@ -654,10 +663,7 @@ class _SettingsPageState extends State<SettingsPage> {
               color: colorScheme.surfaceContainerHighest,
               borderRadius: BorderRadius.circular(10),
             ),
-            child: Icon(
-              icon,
-              size: 22,
-            ),
+            child: Icon(icon, size: 22),
           ),
           const SizedBox(width: 16),
           Expanded(
@@ -690,17 +696,18 @@ class _SettingsPageState extends State<SettingsPage> {
             child: DropdownButton<T>(
               value: value,
               onChanged: onChanged,
-              items: options.map((option) {
-                return DropdownMenuItem<T>(
-                  value: option,
-                  child: Text(
-                    optionBuilder(option),
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                );
-              }).toList(),
+              items:
+                  options.map((option) {
+                    return DropdownMenuItem<T>(
+                      value: option,
+                      child: Text(
+                        optionBuilder(option),
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    );
+                  }).toList(),
               underline: const SizedBox(),
               icon: Icon(
                 Icons.arrow_drop_down_rounded,

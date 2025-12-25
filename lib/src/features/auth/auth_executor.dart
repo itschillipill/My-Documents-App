@@ -17,8 +17,7 @@ class AuthenticationExecutor {
   final ValueNotifier<bool> hasPasswordNotifier = ValueNotifier<bool>(false);
 
   /// Пользователь аутентифицирован
-  final ValueNotifier<bool> authenticatedNotifier =
-      ValueNotifier<bool>(false);
+  final ValueNotifier<bool> authenticatedNotifier = ValueNotifier<bool>(false);
 
   bool get hasPassword => hasPasswordNotifier.value;
   bool get authenticated => authenticatedNotifier.value;
@@ -66,8 +65,7 @@ class AuthenticationExecutor {
     return result;
   }
 
-  Future<bool> get canCheckBiometrics async =>
-      await _auth.canCheckBiometrics;
+  Future<bool> get canCheckBiometrics async => await _auth.canCheckBiometrics;
 
   /// ================= PIN =================
 
