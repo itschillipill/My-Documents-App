@@ -68,6 +68,7 @@ class MessageService {
   static void showSnackBar(String message, {Color? color, Color? textColor}) {
     messengerKey.currentState?.showSnackBar(
       SnackBar(
+        duration: const Duration(milliseconds: 800),
         content: Text(message, style: TextStyle(color: textColor)),
         backgroundColor: color,
         behavior: SnackBarBehavior.floating,
@@ -101,7 +102,7 @@ class MessageService {
 
     overlayState.insert(overlayEntry);
 
-    Future.delayed(const Duration(seconds: 2), () {
+    Future.delayed(const Duration(milliseconds: 800), () {
       overlayEntry.remove();
     });
   }
