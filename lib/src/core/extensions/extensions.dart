@@ -13,9 +13,8 @@ extension BuildContextX on BuildContext {
 }
 
 extension DateExtension on DateTime {
-  String get formatted {
-    return DateFormat('d MMMM yyyy').format(this);
-  }
+  String formatted(BuildContext ctx) =>
+      DateFormat('d MMMM yyyy', ctx.l10n.localeName).format(this);
 }
 
 extension WidgetX on Widget {
