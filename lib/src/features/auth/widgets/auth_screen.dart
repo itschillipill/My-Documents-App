@@ -130,16 +130,16 @@ class _VerifyPinScreenState extends State<VerifyPinScreen> {
                       width: 100,
                       height: 100,
                       decoration: BoxDecoration(
-                        color:
-                            (_showError
+                        color: (_showError
                                 ? colorScheme.error
-                                : colorScheme.primary).withValues(alpha: 0.1),
+                                : colorScheme.primary)
+                            .withValues(alpha: 0.1),
                         shape: BoxShape.circle,
                         border: Border.all(
-                          color:(
-                              _showError
+                          color: (_showError
                                   ? colorScheme.error
-                                  : colorScheme.primary).withValues(alpha: 0.3),
+                                  : colorScheme.primary)
+                              .withValues(alpha: 0.3),
                           width: 2,
                         ),
                       ),
@@ -200,7 +200,9 @@ class _VerifyPinScreenState extends State<VerifyPinScreen> {
                     Container(
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(16),
-                        color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+                        color: colorScheme.surfaceContainerHighest.withValues(
+                          alpha: 0.5,
+                        ),
                       ),
                       child: TextField(
                         controller: controller,
@@ -239,7 +241,9 @@ class _VerifyPinScreenState extends State<VerifyPinScreen> {
                               _isObscureText
                                   ? Icons.visibility_rounded
                                   : Icons.visibility_off_rounded,
-                              color: colorScheme.onSurface.withValues(alpha: 0.6),
+                              color: colorScheme.onSurface.withValues(
+                                alpha: 0.6,
+                              ),
                             ),
                           ),
                         ),
@@ -322,7 +326,9 @@ class _VerifyPinScreenState extends State<VerifyPinScreen> {
                           child: Text(
                             context.l10n.or.toUpperCase(),
                             style: theme.textTheme.bodySmall?.copyWith(
-                              color: colorScheme.onSurface.withValues(alpha: 0.5),
+                              color: colorScheme.onSurface.withValues(
+                                alpha: 0.5,
+                              ),
                               fontWeight: FontWeight.w500,
                               letterSpacing: 1,
                             ),
@@ -349,7 +355,9 @@ class _VerifyPinScreenState extends State<VerifyPinScreen> {
                         padding: const EdgeInsets.all(20),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(16),
-                          color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+                          color: colorScheme.surfaceContainerHighest.withValues(
+                            alpha: 0.3,
+                          ),
                           border: Border.all(
                             color: colorScheme.outline.withValues(alpha: 0.2),
                             width: 1,
@@ -389,7 +397,9 @@ class _VerifyPinScreenState extends State<VerifyPinScreen> {
                             Icon(
                               Icons.arrow_forward_ios_rounded,
                               size: 16,
-                              color: colorScheme.onSurface.withValues(alpha: 0.4),
+                              color: colorScheme.onSurface.withValues(
+                                alpha: 0.4,
+                              ),
                             ),
                           ],
                         ),

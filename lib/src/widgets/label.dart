@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class Label extends StatelessWidget {
-  final Widget label;
+  final String label;
   final Color? color;
   const Label({super.key, required this.label, this.color});
 
@@ -9,12 +9,23 @@ class Label extends StatelessWidget {
   Widget build(BuildContext context) {
     return DecoratedBox(
       decoration: BoxDecoration(
-        color: color ?? Colors.grey.shade400,
-        borderRadius: BorderRadius.all(Radius.circular(12)),
+        color: color?.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: (color ?? Theme.of(context).primaryColor).withValues(
+            alpha: 0.3,
+          ),
+        ),
       ),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4),
-        child: label,
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        child: Text(
+          label,
+          style: Theme.of(context).textTheme.labelSmall?.copyWith(
+            color: color,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
       ),
     );
   }

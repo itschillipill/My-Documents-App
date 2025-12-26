@@ -3,12 +3,11 @@ import 'package:my_documents/src/core/extensions/extensions.dart';
 import 'package:my_documents/src/utils/sevices/file_service.dart';
 import 'package:my_documents/src/utils/sevices/message_service.dart';
 
+import '../../core/model/actions.dart';
 import 'model/document.dart';
 import 'widgets/change_document_details.dart';
 
-abstract class DocumentAction {
-  Future<void> call();
-}
+typedef DocumentAction = MyActions;
 
 class ChangeDetails$DocumentAction extends DocumentAction {
   final BuildContext context;
@@ -51,19 +50,18 @@ class Rename$DocumentAction extends DocumentAction {
     final controller = TextEditingController(text: document.title);
     final newName = await MessageService.showDialogGlobal<String>(
       (ctx) => AlertDialog(
-        title: Text("Rename Document"),
+        title: Text(ctx.l10n.rename),
         content: TextField(
           controller: controller,
-          decoration: InputDecoration(hintText: "Enter new name"),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: Text("Cancel"),
+            child: Text(ctx.l10n.cancel),
           ),
           TextButton(
             onPressed: () => Navigator.pop(ctx, controller.text),
-            child: Text("Save"),
+            child: Text(ctx.l10n.save),
           ),
         ],
       ),
@@ -76,24 +74,24 @@ class Rename$DocumentAction extends DocumentAction {
 }
 
 class Delete$DocumentAction extends DocumentAction {
-  final Document document;
+  final List<int> documentsIds;
   final BuildContext context;
 
-  Delete$DocumentAction({required this.document, required this.context});
+  Delete$DocumentAction({required this.documentsIds, required this.context});
 
   @override
   Future<void> call() async {
     try {
       final confirm = await MessageService.$confirmAction(
-        title: "Delete",
+        title: context.l10n.delete,
         message:
-            "This will delete the document permanently. Including all versions.",
+            "This will delete the documents permanently. Including all versions.",
       );
       if (!confirm) return;
-      debugPrint("Deleting ${document.title}");
+      debugPrint("Deleting ${documentsIds.length} documents");
       if (context.mounted) {
         Navigator.pop(context);
-        await context.deps.documentsCubit.deleteDocument(document);
+        await context.deps.documentsCubit.deleteDocuments(documentsIds);
       }
     } catch (e) {
       MessageService.showErrorSnack(e.toString());
@@ -102,13 +100,16 @@ class Delete$DocumentAction extends DocumentAction {
 }
 
 class Share$DocumentAction extends DocumentAction {
-  final String path;
+  final List<Document> documents;
+  final BuildContext context;
 
-  Share$DocumentAction({required this.path});
+
+  Share$DocumentAction({required this.documents, required this.context});
 
   @override
   Future<void> call() async {
-    debugPrint("Sharing $path");
-    await FileService.shareFile(path);
+    final paths = documents.map((doc) => doc.currentVersion.filePath).toList();
+    debugPrint("Sharing $paths");
+    await FileService.shareFiles(paths,context);
   }
 }

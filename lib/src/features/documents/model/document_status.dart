@@ -3,7 +3,8 @@ part of 'document.dart';
 enum DocumentStatus {
   functioning,
   expiring,
-  expired;
+  expired,
+  archivated;
 
   Color get color {
     switch (this) {
@@ -13,6 +14,8 @@ enum DocumentStatus {
         return Colors.red;
       case DocumentStatus.expired:
         return Colors.redAccent.shade700;
+      case DocumentStatus.archivated:
+        return Colors.grey;
     }
   }
 
@@ -24,6 +27,8 @@ enum DocumentStatus {
         return context.l10n.expiringSoon;
       case DocumentStatus.expired:
         return context.l10n.expired;
+        case DocumentStatus.archivated:
+        return context.l10n.archivated;
     }
   }
 }

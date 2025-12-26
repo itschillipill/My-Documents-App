@@ -131,6 +131,7 @@ class MessageService {
       (ctx) => AlertDialog(
         title: RichText(
           text: TextSpan(
+            style: Theme.of(ctx).textTheme.titleMedium,
             children: [
               TextSpan(text: "${ctx.l10n.confirm} "),
               TextSpan(

@@ -1,28 +1,24 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:my_documents/src/features/documents/cubit/documents_cubit.dart';
-import 'package:my_documents/src/features/folders/cubit/folders_cubit.dart';
+import 'package:my_documents/src/core/extensions/extensions.dart';
 import 'package:my_documents/src/features/folders/model/folder.dart';
 import 'package:my_documents/src/utils/sevices/message_service.dart';
 
-typedef FolderActionHandler =
-    Future<void> Function(BuildContext context, Folder folder);
+import '../../core/model/actions.dart';
 
-enum FolderMenuActions {
-  rename(_rename),
-  delete(_delete);
+typedef FolderActions = MyActions; 
 
-  final FolderActionHandler call;
-  const FolderMenuActions(this.call);
-}
+class Rename$FolderAction extends FolderActions {
+  final BuildContext context;
+  final Folder folder;
 
-Future<void> _rename(BuildContext context, Folder folder) async {
-  final controller = TextEditingController(text: folder.name);
-  final name = await showDialog<String>(
-    context: context,
-    builder: (context) {
-      return AlertDialog(
-        title: Text("Rename Folder"),
+  Rename$FolderAction({required this.context, required this.folder});
+
+  @override
+  Future<void> call() async {
+  final name = await MessageService.showDialogGlobal((ctx){
+      final controller = TextEditingController(text: folder.name);
+       return AlertDialog(
+        title: Text(ctx.l10n.rename),
         content: TextField(
           maxLength: 20,
           controller: controller,
@@ -31,36 +27,45 @@ Future<void> _rename(BuildContext context, Folder folder) async {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text("Cancel"),
+            child: Text(ctx.l10n.cancel),
           ),
           TextButton(
-            onPressed: () => Navigator.pop(context, controller.text),
-            child: Text("Save"),
+            onPressed: () {
+              final newName = controller.text.trim();
+              if (newName.isEmpty || newName == folder.name)return;
+              Navigator.pop(context, controller.text);
+            },
+            child: Text(ctx.l10n.save),
           ),
         ],
       );
-    },
-  );
-  controller.dispose();
+    });
   if (name != null && context.mounted) {
-    context.read<FoldersCubit>().updateFolder(folder.copyWith(name: name));
+    context.deps.foldersCubit.updateFolder(folder.copyWith(name: name));
     Navigator.pop(context);
+  }
   }
 }
 
-Future<void> _delete(BuildContext context, Folder folder) async {
-  final foldersCubit = context.read<FoldersCubit>();
-  final documentsCubit = context.read<DocumentsCubit>();
+class Delete$FolderAction extends FolderActions {
+   final BuildContext context;
+  final Folder folder;
+
+  Delete$FolderAction({required this.context, required this.folder});
+
+  @override
+  Future<void> call() async {
+final foldersCubit = context.deps.foldersCubit;
 
   final confirmed = await MessageService.$confirmAction(
-    title: "Delete Folder",
-    message: "Are you sure you want to delete this folder?",
+    title: context.l10n.delete,
   );
 
   if (confirmed) {
-    await foldersCubit.deleteFolder(folder.id).then((v) async {
-      await documentsCubit.loadData();
+    await foldersCubit.deleteFolder(folder.id).then((_) async {
+      await foldersCubit.loadData();
     });
     if (context.mounted) Navigator.pop(context);
+  }
   }
 }

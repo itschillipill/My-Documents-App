@@ -2,7 +2,6 @@ import 'dart:io' show File;
 
 import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart' show kDebugMode, debugPrint;
-import 'package:flutter/material.dart' show BuildContext;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_documents/src/utils/sevices/file_service.dart';
 import 'package:my_documents/src/utils/sevices/message_service.dart';
@@ -71,24 +70,6 @@ class DocumentsCubit extends Cubit<DocumentsState> {
         documentsOrEmpty,
       );
       await loadData();
-    } catch (e) {
-      emit(DocumentsError(e.toString()));
-    }
-  }
-
-  Future<void> shareDocuments(
-    List<int> documentIds,
-    BuildContext context,
-  ) async {
-    try {
-      List<String> paths = [];
-      final documents = getDocumentsByIds(documentIds);
-      for (final doc in documents) {
-        paths.add(
-          doc.versions.firstWhere((v) => doc.currentVersionId == v.id).filePath,
-        );
-      }
-      await FileService.shareFiles(paths, context);
     } catch (e) {
       emit(DocumentsError(e.toString()));
     }

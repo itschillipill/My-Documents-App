@@ -57,12 +57,7 @@ class DocumentCard extends StatelessWidget {
                     ),
                     Label(
                       color: document.status.color,
-                      label: Text(
-                        document.status.localizedText(context),
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: Colors.white,
-                        ),
-                      ),
+                      label: document.status.localizedText(context),
                     ),
                   ],
                 ),

@@ -202,7 +202,7 @@ class FileService {
     if (paths.isEmpty) return;
     try {
       final files =
-          paths
+          paths.toSet()
               .map((path) => File(path))
               .where((file) => file.existsSync())
               .map((file) => XFile(file.path))
@@ -216,8 +216,7 @@ class FileService {
       await SharePlus.instance.share(ShareParams(files: files));
     } catch (e) {
       debugPrint("Share files error: $e");
-      if (context.mounted)
-        MessageService.showErrorSnack(context.l10n.failedToShare);
+      if (context.mounted)MessageService.showErrorSnack(context.l10n.failedToShare);
     }
   }
 

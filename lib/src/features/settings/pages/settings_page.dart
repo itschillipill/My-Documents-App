@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:my_documents/src/core/constants.dart';
 import 'package:my_documents/src/core/extensions/extensions.dart';
 import 'package:my_documents/src/features/auth/auth_executor.dart';
+import 'package:my_documents/src/features/documents/widgets/build_tile.dart';
 import 'package:my_documents/src/utils/sevices/message_service.dart';
 import 'package:my_documents/src/utils/page_transition/app_page_route.dart';
 import 'package:my_documents/src/utils/sevices/file_service.dart';
@@ -251,8 +252,7 @@ class _SettingsPageState extends State<SettingsPage> {
                         if (hasPassword) {
                           return Column(
                             children: [
-                              _buildTile(
-                                context,
+                              BuildTile(
                                 icon: Icons.lock_rounded,
                                 title: context.l10n.changePIN,
                                 subtitle: context.l10n.updatePIN,
@@ -263,8 +263,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                     ),
                               ),
                               _buildDivider(),
-                              _buildTile(
-                                context,
+                              BuildTile(
                                 icon: Icons.delete_forever_rounded,
                                 title: context.l10n.deletePIN,
                                 subtitle: context.l10n.removePIN,
@@ -326,8 +325,7 @@ class _SettingsPageState extends State<SettingsPage> {
                             ],
                           );
                         } else {
-                          return _buildTile(
-                            context,
+                          return BuildTile(
                             icon: Icons.lock_rounded,
                             title: context.l10n.createPIN,
                             subtitle: context.l10n.setUpPIN,
@@ -345,16 +343,14 @@ class _SettingsPageState extends State<SettingsPage> {
                   title: context.l10n.dataManagement,
                   icon: Icons.storage_rounded,
                   children: [
-                    _buildTile(
-                      context,
+                    BuildTile(
                       icon: Icons.file_upload_rounded,
                       title: context.l10n.exportData,
                       subtitle: context.l10n.backupDocuments,
                       onTap: () async => await FileService.exportData(context),
                     ),
                     _buildDivider(),
-                    _buildTile(
-                      context,
+                    BuildTile(
                       icon: Icons.file_download_rounded,
                       title: context.l10n.importData,
                       subtitle: context.l10n.restoreFromBackup,
@@ -413,24 +409,21 @@ class _SettingsPageState extends State<SettingsPage> {
                   title: context.l10n.about,
                   icon: Icons.info_rounded,
                   children: [
-                    _buildTile(
-                      context,
+                    BuildTile(
                       icon: Icons.verified_sharp,
                       title: context.l10n.version,
                       subtitle: Constants.appVersion,
                       onTap: null,
                     ),
                     _buildDivider(),
-                    _buildTile(
-                      context,
+                    BuildTile(
                       icon: Icons.star_rate_rounded,
                       title: context.l10n.rateApp,
                       subtitle: context.l10n.rateThisApp,
                       onTap: () {},
                     ),
                     _buildDivider(),
-                    _buildTile(
-                      context,
+                    BuildTile(
                       icon: Icons.grid_view_rounded,
                       title: context.l10n.otherProjects,
                       subtitle: context.l10n.moreProjects,
@@ -550,80 +543,6 @@ class _SettingsPageState extends State<SettingsPage> {
             // Section Content
             ...children,
           ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildTile(
-    BuildContext context, {
-    required IconData icon,
-    required String title,
-    String? subtitle,
-    required VoidCallback? onTap,
-    bool isDanger = false,
-  }) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(12),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 12),
-          child: Row(
-            children: [
-              Container(
-                width: 40,
-                height: 40,
-                decoration: BoxDecoration(
-                  color: (isDanger ? colorScheme.error : colorScheme.primary)
-                      .withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Icon(
-                  icon,
-                  color: isDanger ? colorScheme.error : colorScheme.primary,
-                  size: 22,
-                ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: theme.textTheme.bodyLarge?.copyWith(
-                        fontWeight: FontWeight.w500,
-                        color:
-                            isDanger
-                                ? colorScheme.error
-                                : colorScheme.onSurface,
-                      ),
-                    ),
-                    if (subtitle != null) ...[
-                      const SizedBox(height: 2),
-                      Text(
-                        subtitle,
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: colorScheme.onSurface.withValues(alpha: 0.6),
-                        ),
-                      ),
-                    ],
-                  ],
-                ),
-              ),
-              if (onTap != null)
-                Icon(
-                  Icons.arrow_forward_ios_rounded,
-                  size: 16,
-                  color: colorScheme.onSurface.withValues(alpha: 0.5),
-                ),
-            ],
-          ),
         ),
       ),
     );

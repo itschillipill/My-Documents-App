@@ -10,6 +10,22 @@ class AppTheme {
       surface: Colors.white,
       error: AppPalette.errorColor,
     ),
+    switchTheme: SwitchThemeData(
+  thumbColor: WidgetStateProperty.resolveWith((states) {
+    if (states.contains(WidgetState.selected)) {
+      return Colors.white;
+    }
+    return Colors.grey.shade300;
+  }),
+  trackColor: WidgetStateProperty.resolveWith((states) {
+    if (states.contains(WidgetState.selected)) {
+      return AppPalette.secondaryColor;
+    }
+    return Colors.grey.shade400;
+  }),
+  trackOutlineColor: WidgetStateProperty.all(Colors.transparent),
+),
+
     inputDecorationTheme: InputDecorationTheme(
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(8),
@@ -101,6 +117,22 @@ class AppTheme {
         borderSide: BorderSide(color: AppPalette.borderColor),
       ),
     ),
+    switchTheme: SwitchThemeData(
+  thumbColor: WidgetStateProperty.resolveWith((states) {
+    if (states.contains(WidgetState.selected)) {
+      return Colors.white;
+    }
+    return Colors.grey.shade600;
+  }),
+  trackColor: WidgetStateProperty.resolveWith((states) {
+    if (states.contains(WidgetState.selected)) {
+      return AppPalette.secondaryDarkColor;
+    }
+    return Colors.grey.shade800;
+  }),
+  trackOutlineColor: WidgetStateProperty.all(Colors.transparent),
+),
+
     scaffoldBackgroundColor: const Color(0xFF121212),
     appBarTheme: AppBarTheme(
       backgroundColor: Color(0xFF121212),

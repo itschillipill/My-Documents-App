@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_documents/src/core/extensions/extensions.dart';
+import 'package:my_documents/src/features/documents/cubit/documents_cubit.dart';
 
 import '../model/folder.dart';
 import '../pages/folder_view_page.dart';
@@ -37,12 +39,7 @@ class FolderTile extends StatelessWidget {
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),
-            subtitle: Text(
-              _getFolderInfo(folder, context),
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: colorScheme.onSurface.withValues(alpha: 0.6),
-              ),
-            ),
+            subtitle: _getCount(context, folder),
             trailing: Icon(Icons.chevron_right_rounded),
           ),
         ),
@@ -50,9 +47,8 @@ class FolderTile extends StatelessWidget {
     );
   }
 }
-
-String _getFolderInfo(Folder folder, BuildContext context) {
-  final docCount =
-      folder.getDocuments(context.deps.documentsCubit.documentsOrEmpty).length;
-  return "${context.l10n.documents}: $docCount";
+Widget _getCount(BuildContext context, Folder folder){
+  return Text(
+              "${context.l10n.documents}: ${folder.getDocuments(context.watch<DocumentsCubit>().documentsOrEmpty) .length}",
+              style: Theme.of(context).textTheme.bodySmall);
 }

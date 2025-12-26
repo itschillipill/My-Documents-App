@@ -4,7 +4,6 @@ import 'package:my_documents/src/dependencies/dependencies.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../dependencies/widgets/dependencies_scope.dart';
-import '../../widgets/border_box.dart';
 
 extension BuildContextX on BuildContext {
   Dependencies get deps => DependenciesScope.of(this);
@@ -17,7 +16,3 @@ extension DateExtension on DateTime {
       DateFormat('d MMMM yyyy', ctx.l10n.localeName).format(this);
 }
 
-extension WidgetX on Widget {
-  Widget withBorder({EdgeInsets? padding}) =>
-      BorderBox(padding: padding, width: double.infinity, child: this);
-}

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:my_documents/src/utils/theme/theme.dart' show AppPalette;
 
 class BorderBox extends StatelessWidget {
   final Widget child;
@@ -12,21 +11,21 @@ class BorderBox extends StatelessWidget {
     required this.child,
     this.constraints,
     this.height,
-    this.width,
-    this.padding = const EdgeInsets.all(4),
+    this.width = double.infinity,
+    this.padding = const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: height,
-      width: width,
       constraints: constraints,
+      height: height,
+                            width: double.infinity,
+                             decoration: BoxDecoration(
+      color: Theme.of(context).colorScheme.surfaceContainerHighest,
+      borderRadius: BorderRadius.circular(12)
+    ),
       padding: padding,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.all(Radius.circular(8)),
-        border: Border.all(color: AppPalette.borderColor),
-      ),
       child: child,
     );
   }

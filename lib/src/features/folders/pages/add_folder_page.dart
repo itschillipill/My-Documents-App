@@ -39,26 +39,16 @@ class AddFolderPage extends StatelessWidget {
       ),
       body: SafeArea(
         minimum: const EdgeInsets.all(8),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          spacing: 20,
-          children: [
-            Text(
-              context.l10n.folderDetails,
-              style: Theme.of(context).textTheme.bodyLarge,
+        child: BorderBox(
+          child: TextField(
+            controller: _nameController,
+            maxLength: 20,
+            decoration: InputDecoration(
+              hintText: context.l10n.folderName,
+              border: InputBorder.none,
+              contentPadding: EdgeInsets.all(8),
             ),
-            BorderBox(
-              child: TextField(
-                controller: _nameController,
-                maxLength: 20,
-                decoration: InputDecoration(
-                  hintText: context.l10n.folderName,
-                  border: InputBorder.none,
-                  contentPadding: EdgeInsets.all(8),
-                ),
-              ),
-            ),
-          ],
+          ),
         ),
       ),
     );

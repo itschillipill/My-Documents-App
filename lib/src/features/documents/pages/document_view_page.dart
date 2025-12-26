@@ -4,9 +4,13 @@ import 'package:my_documents/src/features/documents/cubit/documents_cubit.dart';
 import 'package:my_documents/src/core/extensions/extensions.dart';
 import 'package:my_documents/src/features/documents/model/document.dart';
 import 'package:my_documents/src/features/documents/pages/add_new_document_version.dart';
+import 'package:my_documents/src/features/documents/widgets/build_tile.dart';
 import 'package:my_documents/src/features/documents/widgets/document_error_page.dart';
 import 'package:my_documents/src/features/documents/widgets/document_previewer.dart';
+import 'package:my_documents/src/features/documents/widgets/menu_actions.dart';
 import 'package:my_documents/src/utils/page_transition/app_page_route.dart';
+import 'package:my_documents/src/widgets/border_box.dart';
+import 'package:my_documents/src/widgets/label.dart';
 import 'package:open_filex/open_filex.dart';
 
 import '../document_actions.dart';
@@ -47,34 +51,7 @@ class DocumentViewPage extends StatelessWidget {
           "Current Document Version: ${documentVersion.id}, serched for: ${versionId ?? document.currentVersionId}",
         );
         return Scaffold(
-          appBar: AppBar(
-            title: Text(document.title),
-            actions: [
-              if (isCurrent)
-                PopupMenuButton<DocumentAction>(
-                  popUpAnimationStyle: AnimationStyle(
-                    curve: Curves.bounceInOut,
-                  ),
-                  icon: Icon(Icons.more_vert_rounded),
-                  position: PopupMenuPosition.under,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  onSelected: (action) => action.call(),
-                  itemBuilder: (context) {
-                    return [
-                      PopupMenuItem(
-                        value: ChangeDetails$DocumentAction(
-                          context: context,
-                          document: document,
-                        ),
-                        child: Text(context.l10n.changeDetails),
-                      ),
-                    ];
-                  },
-                ),
-            ],
-          ),
+          appBar: _buildAppBar(document, isCurrent, context),
           body: SafeArea(
             child: SingleChildScrollView(
               child: Padding(
@@ -92,87 +69,18 @@ class DocumentViewPage extends StatelessWidget {
                             "${context.l10n.comment}:",
                             style: Theme.of(context).textTheme.bodyLarge,
                           ),
-                          SelectableText(
-                            documentVersion.comment!,
-                          ).withBorder(padding: const EdgeInsets.all(8)),
+                          BorderBox(
+                              child: SelectableText(
+                                documentVersion.comment!,
+                            ),
+                          ),
                         ],
                       ),
 
-                    Column(
-                      spacing: 5,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        DocumentRow(
-                          context.l10n.uploadDate,
-                          document.createdAt.formatted(context),
-                        ),
-                        DocumentRow(
-                          context.l10n.expirationDate,
-                          documentVersion.expirationDate != null
-                              ? documentVersion.expirationDate!.formatted(
-                                context,
-                              )
-                              : context.l10n.noExpiration,
-                        ),
-                        DocumentRow(
-                          context.l10n.status,
-                          document.status.localizedText(context),
-                        ),
-                      ],
-                    ).withBorder(padding: EdgeInsets.all(8)),
-                    DocumentPreviewer(
-                      path: documentVersion.filePath,
-                      isImage: documentVersion.isImage,
-                    ),
-                    ElevatedButton(
-                      onPressed:
-                          () async =>
-                              await OpenFilex.open(documentVersion.filePath),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        spacing: 5,
-                        children: [
-                          Icon(Icons.remove_red_eye_rounded),
-                          Text(context.l10n.openExternal),
-                        ],
-                      ),
-                    ),
+                   _buidDocumentInfo(context, documentVersion, isCurrent),
+                   _buildDocumentPreview(context, documentVersion),
 
-                    tile(
-                      label: context.l10n.shareDocument,
-                      icon: Icons.share_rounded,
-                      action: Share$DocumentAction(
-                        path: documentVersion.filePath,
-                      ),
-                    ),
-                    if (isCurrent) ...[
-                      tile(
-                        label: context.l10n.uploadNewVersion,
-                        icon: Icons.file_download_outlined,
-                        onTap:
-                            () async => await Navigator.push(
-                              context,
-                              AddNewDocumentVersion.route(document.id),
-                            ),
-                      ),
-                      tile(
-                        label: context.l10n.manageVersions,
-                        icon: Icons.history_rounded,
-                        onTap:
-                            () => Navigator.push(
-                              context,
-                              DocumentVersionHistory.route(document.id),
-                            ),
-                      ),
-                      tile(
-                        label: context.l10n.deleteDocument,
-                        icon: Icons.delete_rounded,
-                        action: Delete$DocumentAction(
-                          document: document,
-                          context: context,
-                        ),
-                      ),
-                    ],
+                    _buildDocumentActions(context, document, documentVersion, isCurrent)
                   ],
                 ),
               ),
@@ -184,41 +92,123 @@ class DocumentViewPage extends StatelessWidget {
   }
 }
 
-class DocumentRow extends StatelessWidget {
-  final String label;
-  final String value;
+PreferredSizeWidget _buildAppBar(Document document, bool isCurrent, BuildContext ctx) {
+    return AppBar(
+            title: Text(document.title),
+            centerTitle: false,
+            actions: isCurrent? [
+               MenuActions(actions: [
+                (
+                  ChangeDetails$DocumentAction(context: ctx,document: document).call,
+                  ctx.l10n.changeDetails,
+                ),
+               ]),
+            ]:null,
+          );
+}
 
-  const DocumentRow(this.label, this.value, {super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
+Widget _buidDocumentInfo(BuildContext ctx, DocumentVersion documentVersion, bool isCurrent){
+  final Color iconColor = Theme.of(ctx).colorScheme.primary.withValues(alpha: 0.7);
+  final TextStyle textStyle = Theme.of(ctx).textTheme.bodyMedium!.copyWith(fontWeight: FontWeight.w500);
+  final DocumentStatus status = isCurrent? documentVersion.status:DocumentStatus.archivated;
+  return BorderBox(
+    child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      spacing: 10,
       children: [
-        Expanded(
-          child: Text(
-            label,
-            style: Theme.of(
-              context,
-            ).textTheme.bodyMedium!.copyWith(fontWeight: FontWeight.bold),
-          ),
+        Row(
+          spacing: 8,
+          children: [
+            Icon(Icons.calendar_today, color: iconColor,),
+            Expanded(child: Text(ctx.l10n.uploadDate, style: textStyle)),
+            Text(documentVersion.uploadedAt.formatted(ctx), style: textStyle),
+            ],
         ),
-        Text(value, style: Theme.of(context).textTheme.bodyMedium),
-      ],
-    );
-  }
+        Row(
+          spacing: 8,
+          children: [
+            Icon(Icons.timer, color: iconColor),
+            Expanded(child: Text(ctx.l10n.expiresAt, style: textStyle)),
+            Text(documentVersion.expirationDate?.formatted(ctx)??ctx.l10n.noExpiration, style: textStyle),
+          ],
+        ),
+        Row(
+          spacing: 8,
+          children: [
+            Icon(Icons.circle, color: status.color),
+            Expanded(child: Text(ctx.l10n.status, style: textStyle)),
+            Label(label: status.localizedText(ctx), color: status.color),
+          ],
+        ),
+    
+      ]
+    ),
+  );
 }
 
-Widget tile({
-  required String label,
-  required IconData icon,
-  VoidCallback? onTap,
-  DocumentAction? action,
-}) {
-  return ListTile(
-    title: Text(label),
-    leading: Icon(icon),
-    onTap: onTap ?? () => action?.call(),
-    trailing: onTap != null ? Icon(Icons.arrow_forward_ios_rounded) : null,
-  ).withBorder();
+Widget _buildDocumentPreview(BuildContext ctx, DocumentVersion documentVersion){
+  return BorderBox(
+    child: Column(
+      spacing: 8,
+      children: [
+    DocumentPreviewer(
+                    path: documentVersion.filePath,
+                    isImage: documentVersion.isImage,
+                  ),
+                  ElevatedButton.icon(
+                    onPressed:
+                        () async =>
+                            await OpenFilex.open(documentVersion.filePath),
+                    label: Text(ctx.l10n.openExternal),
+                   icon: Icon(Icons.remove_red_eye_rounded),
+                  ),
+    ],),
+  );
 }
+
+Widget _buildDocumentActions(BuildContext ctx, Document document, DocumentVersion documentVersion, bool isCurrent){
+return BorderBox(
+  child: Column(
+    children: [
+      BuildTile(
+                        title: ctx.l10n.shareDocument,
+                        icon: Icons.share_rounded,
+                        onTap: Share$DocumentAction(
+                          documents: [document],
+                          context: ctx,
+                        ).call,
+                      ),
+                      if (isCurrent) ...[
+                        BuildTile(
+                          title: ctx.l10n.uploadNewVersion,
+                          icon: Icons.file_download_outlined,
+                          onTap:
+                              () async => await Navigator.push(
+                                ctx,
+                                AddNewDocumentVersion.route(document.id),
+                              ),
+                        ),
+                        BuildTile(
+                          title: ctx.l10n.manageVersions,
+                          icon: Icons.history_rounded,
+                          onTap:
+                              () => Navigator.push(
+                                ctx,
+                                DocumentVersionHistory.route(document.id),
+                              ),
+                        ),
+                        BuildTile(
+                          title: ctx.l10n.deleteDocument,
+                          icon: Icons.delete_rounded,
+                          onTap: Delete$DocumentAction(
+                            documentsIds: [document.id],
+                            context: ctx,
+                          ).call,
+                        ),
+                      ],
+    ],
+  ),
+);
+}
+
