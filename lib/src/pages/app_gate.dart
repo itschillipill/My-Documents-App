@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:my_documents/src/core/extensions/extensions.dart';
 import 'package:my_documents/src/features/folders/pages/add_folder_page.dart';
 
@@ -79,22 +78,97 @@ class _AppGateState extends State<AppGate> {
   Widget? _buildFAB(BuildContext ctx) {
     if (_selectedIndex != 0) return null;
 
-    return SpeedDial(
-      icon: Icons.add,
-      activeIcon: Icons.close,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      children: [
-        SpeedDialChild(
-          child: const Icon(Icons.upload_file_rounded),
-          label: ctx.l10n.addDocument,
-          onTap: () => Navigator.push(context, AddDocumentScreen.route()),
-        ),
-        SpeedDialChild(
-          child: const Icon(Icons.create_new_folder),
-          label: ctx.l10n.addFolder,
-          onTap: () => Navigator.push(context, AddFolderPage.route()),
-        ),
-      ],
+    return FloatingActionButton(
+      onPressed: ()=> _showAddMenu(context),
+      tooltip: ctx.l10n.addDocument,
+      child: Icon(Icons.add),
     );
   }
 }
+void _showAddMenu(BuildContext context) async{
+   await showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      barrierColor: Colors.black.withValues(alpha: 0.5),
+      builder: (context) {
+        return Container(
+          margin: const EdgeInsets.all(16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            spacing: 8,
+            children: [
+              // Document button
+              _buildMenuButton(
+                context,
+                icon: Icons.description_rounded,
+                label: context.l10n.addDocument,
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.push(context, AddDocumentScreen.route());
+                },
+              ),
+              // Folder button
+              _buildMenuButton(
+                context,
+                icon: Icons.folder_rounded,
+                label: context.l10n.addFolder,
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.push(context, AddFolderPage.route());
+                },
+              ),
+              // Close button
+              _buildMenuButton(
+                context,
+                icon: Icons.close_rounded,
+                label: context.l10n.cancel,
+                onTap: () => Navigator.pop(context),
+                isCancel: true,
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+Widget _buildMenuButton(
+    BuildContext context, {
+    required IconData icon,
+    required String label,
+    required VoidCallback onTap,
+    bool isCancel = false,
+  }) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return Material(
+      color: colorScheme.surface,
+      borderRadius: BorderRadius.circular(12),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(12),
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+          child: Row(
+            children: [
+              Icon(
+                icon,
+                color: isCancel
+                    ? colorScheme.onSurface.withValues(alpha: 0.6)
+                    : colorScheme.primary,
+              ),
+              const SizedBox(width: 16),
+              Text(
+                label,
+                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                      color: isCancel
+                          ? colorScheme.onSurface.withValues(alpha: 0.6)
+                          : colorScheme.onSurface,
+                      fontWeight: FontWeight.w500,
+                    ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
