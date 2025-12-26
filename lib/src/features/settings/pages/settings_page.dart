@@ -317,7 +317,6 @@ class _SettingsPageState extends State<SettingsPage> {
                                             .changeBiometricAuthentication(v);
                                         setState(() {});
                                       },
-                                      activeColor: colorScheme.primary,
                                     ),
                                   ],
                                 ),
