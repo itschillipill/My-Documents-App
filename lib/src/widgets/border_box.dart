@@ -12,7 +12,7 @@ class BorderBox extends StatelessWidget {
     this.constraints,
     this.height,
     this.width = double.infinity,
-    this.padding = const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+    this.padding = const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
   });
 
   @override
@@ -20,10 +20,21 @@ class BorderBox extends StatelessWidget {
     return Container(
       constraints: constraints,
       height: height,
-                            width: double.infinity,
+           width: double.infinity,
                              decoration: BoxDecoration(
       color: Theme.of(context).colorScheme.surfaceContainerHighest,
-      borderRadius: BorderRadius.circular(12)
+      borderRadius: BorderRadius.circular(12),
+      border: Border.all(
+          color:  Theme.of(context).colorScheme.outline.withValues(alpha: 0.1),
+          width: 1,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
     ),
       padding: padding,
       child: child,

@@ -111,29 +111,25 @@ class DocumentsCubit extends Cubit<DocumentsState> {
     return documentsOrEmpty.where((e) => documentIds.contains(e.id)).toList();
   }
 
-  Future<void> saveDocument({
+  Future<String?> saveDocument({
     required String title,
     required String? originalPath,
     bool isFavorite = false,
     int? folderId,
     String? comment,
     DateTime? expirationDate,
-    Function()? onSaved,
   }) async {
     if (title.isEmpty || originalPath == null) {
-      MessageService.showSnackBar("Please enter title and choose a file");
-      return;
+     return "Please enter title and choose a file";
     }
 
     if (documentsOrEmpty.any((element) => element.title == title)) {
-      MessageService.showSnackBar("Document with this title already exists");
-      return;
+      return "Document with this title already exists";
     }
 
     final isValidSize = await FileService.validateFileSize(originalPath);
     if (!isValidSize) {
-      MessageService.showSnackBar("File is too large (max 50 MB)");
-      return;
+      return "File is too large (max 50 MB)";
     }
 
     try {
@@ -160,10 +156,10 @@ class DocumentsCubit extends Cubit<DocumentsState> {
 
       await addDocument(doc);
 
-      onSaved?.call();
+      return null;
     } catch (e) {
       debugPrint("Error saving file: $e");
-      MessageService.showSnackBar("Error saving file: $e");
+      return "Error saving file: $e";
     }
   }
 

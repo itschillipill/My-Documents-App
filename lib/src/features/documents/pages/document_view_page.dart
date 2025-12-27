@@ -10,6 +10,7 @@ import 'package:my_documents/src/features/documents/widgets/document_previewer.d
 import 'package:my_documents/src/features/documents/widgets/menu_actions.dart';
 import 'package:my_documents/src/utils/page_transition/app_page_route.dart';
 import 'package:my_documents/src/widgets/border_box.dart';
+import 'package:my_documents/src/widgets/build_section.dart';
 import 'package:my_documents/src/widgets/label.dart';
 import 'package:open_filex/open_filex.dart';
 
@@ -61,14 +62,10 @@ class DocumentViewPage extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     if (documentVersion.comment?.isNotEmpty == true)
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
+                      BuildSection(
+                        title: context.l10n.comment,
+                        icon: Icons.comment_rounded,
                         children: [
-                          Text(
-                            "${context.l10n.comment}:",
-                            style: Theme.of(context).textTheme.bodyLarge,
-                          ),
                           BorderBox(
                               child: SelectableText(
                                 documentVersion.comment!,
@@ -156,12 +153,16 @@ Widget _buildDocumentPreview(BuildContext ctx, DocumentVersion documentVersion){
                     path: documentVersion.filePath,
                     isImage: documentVersion.isImage,
                   ),
-                  ElevatedButton.icon(
-                    onPressed:
-                        () async =>
-                            await OpenFilex.open(documentVersion.filePath),
-                    label: Text(ctx.l10n.openExternal),
-                   icon: Icon(Icons.remove_red_eye_rounded),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 50,
+                    child: ElevatedButton.icon(
+                      onPressed:
+                          () async =>
+                              await OpenFilex.open(documentVersion.filePath),
+                      label: Text(ctx.l10n.openExternal),
+                     icon: Icon(Icons.remove_red_eye_rounded),
+                    ),
                   ),
     ],),
   );
@@ -201,6 +202,7 @@ return BorderBox(
                         BuildTile(
                           title: ctx.l10n.deleteDocument,
                           icon: Icons.delete_rounded,
+                          isDanger: true,
                           onTap: Delete$DocumentAction(
                             documentsIds: [document.id],
                             context: ctx,

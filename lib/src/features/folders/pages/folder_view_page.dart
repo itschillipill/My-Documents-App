@@ -86,7 +86,8 @@ class _FolderViewPageState extends State<FolderViewPage> {
                     ],)
                     : AppBar(
                       key: const ValueKey('select'),
-                      title: Text(context.l10n.selectDocuments),
+                      title: Text(selectedDocumentsIds.length.toString()),
+                      centerTitle: false,
                       leading: IconButton(
                         onPressed: resetSelecting,
                         icon: const Icon(Icons.close_rounded),
@@ -109,42 +110,43 @@ class _FolderViewPageState extends State<FolderViewPage> {
                       ],),
           ),
         ),
-        body: BlocBuilder<DocumentsCubit, DocumentsState>(
-          buildWhen: (_, current) => current is DocumentsLoaded,
-          builder: (context, state) {
-            if (state is! DocumentsLoaded) {
-              return Center(child: CircularProgressIndicator());
-            }
-            final documents = sorted(folder.getDocuments(state.documents), sortOptions, isReverse);
-            if (documents.isEmpty) return Center(child: Text(context.l10n.noDocumentsFound));
-            return ListView.builder(
-              itemCount: documents.length,
-              itemBuilder: (context, index) {
-                return GestureDetector(
-                  onLongPress:
-                      () => setState(() {
-                        selectedDocumentsIds.add(documents[index].id);
-                        isSelecting = true;
-                      }),
-                  child: DocumentCard(
+        body: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          child: BlocBuilder<DocumentsCubit, DocumentsState>(
+            buildWhen: (_, current) => current is DocumentsLoaded,
+            builder: (context, state) {
+              if (state is! DocumentsLoaded) {
+                return Center(child: CircularProgressIndicator());
+              }
+              final documents = sorted(folder.getDocuments(state.documents), sortOptions, isReverse);
+              if (documents.isEmpty) return Center(child: Text(context.l10n.noDocumentsFound));
+              return ListView.builder(
+                itemCount: documents.length,
+                itemBuilder: (context, index) {
+                  return DocumentCard(
                     document: documents[index],
                     isSelected: selectedDocumentsIds.contains(
                       documents[index].id,
                     ),
+                    onLongPress:() => setState(() {
+                        selectedDocumentsIds.add(documents[index].id);
+                        isSelecting = true;
+                      }),
                     onTap:isSelecting?() {
                     setState(() => selectedDocumentsIds.addOrRemove(documents[index].id,));
                     if (selectedDocumentsIds.isEmpty)resetSelecting();
                             }:null,
-                  ),
-                );
-              },
-            );
-          },
+                  );
+                },
+              );
+            },
+          ),
         ),
       ),
     );
   }
 }
+
 List<Document> sorted(
   List<Document> documents,
   SortOptions sortOptions,
@@ -256,12 +258,10 @@ return IconButton(
 
                   SizedBox(
                     width: double.infinity,
+                    height: 50,
                     child: ElevatedButton(
                       onPressed: () {
-                        Navigator.pop(
-                          context,
-                          (tempReverse,tempSort),
-                        );
+                        Navigator.pop(context,(tempReverse,tempSort));
                       },
                       child: Text(context.l10n.apply),
                     ),

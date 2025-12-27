@@ -68,6 +68,7 @@ class _SearchPageState extends State<SearchPage> {
     return Scaffold(
       appBar: _buildAppBar(),
       body: SafeArea(
+        minimum: const EdgeInsets.symmetric(horizontal: 8),
         child: Column(
           children: [
             _buildSearchField(),
@@ -89,46 +90,36 @@ class _SearchPageState extends State<SearchPage> {
 
   PreferredSizeWidget _buildAppBar() {
     return AppBar(
-      title: Text(
-        context.l10n.search,
-        style: Theme.of(context).textTheme.headlineMedium,
-      ),
+      title: Text(context.l10n.search),
       centerTitle: false,
     );
   }
 
   Widget _buildSearchField() {
     return Padding(
-      padding: const EdgeInsets.all(16),
-      child: Material(
-        elevation: 1,
-        borderRadius: BorderRadius.circular(12),
-        child: TextField(
-          controller: _searchController,
-          onChanged: _searchFor,
-          decoration: InputDecoration(
-            fillColor: Theme.of(context).colorScheme.surface,
-            prefixIcon: Icon(Icons.search_rounded),
-            hintText: context.l10n.searchDocumentsHint,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide.none,
-            ),
-            suffixIcon:
-                _searchController.text.isNotEmpty
-                    ? IconButton(
-                      icon: Icon(Icons.clear_rounded),
-                      onPressed: () {
-                        setState(() {
-                          _searchController.clear();
-                          _query = "";
-                        });
-                      },
-                    )
-                    : null,
-          ),
-          textInputAction: TextInputAction.search,
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: TextField(
+        controller: _searchController,
+        onChanged: _searchFor,
+        decoration: InputDecoration(
+          fillColor: Theme.of(context).colorScheme.surface,
+          prefixIcon: Icon(Icons.search_rounded),
+          hintText: context.l10n.searchDocumentsHint,
+          filled: true,
+          suffixIcon:
+              _searchController.text.isNotEmpty
+                  ? IconButton(
+                    icon: Icon(Icons.clear_rounded),
+                    onPressed: () {
+                      setState(() {
+                        _searchController.clear();
+                        _query = "";
+                      });
+                    },
+                  )
+                  : null,
         ),
+        textInputAction: TextInputAction.search,
       ),
     );
   }

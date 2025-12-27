@@ -25,12 +25,20 @@ class AppTheme {
   }),
   trackOutlineColor: WidgetStateProperty.all(Colors.transparent),
 ),
-
     inputDecorationTheme: InputDecorationTheme(
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(8),
-        borderSide: BorderSide(color: AppPalette.borderColor),
-      ),
+       enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(
+                      color: Color(0xFF79747E).withValues(alpha: 0.3),
+                    ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(
+                      color: Color(0xFF1A1A1A),
+                      width: 2,
+                    ),
+                  ),
     ),
     dividerTheme: DividerThemeData(color: AppPalette.borderColor),
     listTileTheme: ListTileThemeData(
@@ -111,11 +119,24 @@ class AppTheme {
       subtitleTextStyle: TextStyle(color: Colors.grey),
       iconColor: Colors.grey.shade700,
     ),
-    inputDecorationTheme: InputDecorationTheme(
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(8),
-        borderSide: BorderSide(color: AppPalette.borderColor),
-      ),
+     inputDecorationTheme: InputDecorationTheme(
+       enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(
+                      color: Color(0xFF938F99).withValues(alpha: 0.3),
+                    ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(
+                      color: Colors.white,
+                      width: 2,
+                    ),
+                  ),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 12,
+                  ),
     ),
     switchTheme: SwitchThemeData(
   thumbColor: WidgetStateProperty.resolveWith((states) {

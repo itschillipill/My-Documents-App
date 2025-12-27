@@ -7,6 +7,7 @@ import 'package:my_documents/src/features/documents/widgets/build_tile.dart';
 import 'package:my_documents/src/utils/sevices/message_service.dart';
 import 'package:my_documents/src/utils/page_transition/app_page_route.dart';
 import 'package:my_documents/src/utils/sevices/file_service.dart';
+import 'package:my_documents/src/widgets/build_section.dart';
 
 class SettingsPage extends StatefulWidget {
   static PageRoute route() => AppPageRoute.build(
@@ -241,8 +242,7 @@ class _SettingsPageState extends State<SettingsPage> {
               spacing: 20,
               children: [
                 // Security Section
-                _buildSection(
-                  context,
+                BuildSection(
                   title: context.l10n.security,
                   icon: Icons.security_rounded,
                   children: [
@@ -337,8 +337,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 ),
 
                 // Data Management Section
-                _buildSection(
-                  context,
+                BuildSection(
                   title: context.l10n.dataManagement,
                   icon: Icons.storage_rounded,
                   children: [
@@ -359,8 +358,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 ),
 
                 // Appearance Section
-                _buildSection(
-                  context,
+                BuildSection(
                   title: context.l10n.appearance,
                   icon: Icons.palette_rounded,
                   children: [
@@ -403,8 +401,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 ),
 
                 // About Section
-                _buildSection(
-                  context,
+                BuildSection(
                   title: context.l10n.about,
                   icon: Icons.info_rounded,
                   children: [
@@ -496,57 +493,6 @@ class _SettingsPageState extends State<SettingsPage> {
       ),
     );
   }
-
-  Widget _buildSection(
-    BuildContext context, {
-    required String title,
-    required IconData icon,
-    required List<Widget> children,
-  }) {
-    final theme = Theme.of(context);
-    return Container(
-      decoration: BoxDecoration(
-        color: theme.colorScheme.surface,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 10,
-            spreadRadius: 1,
-          ),
-        ],
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // Section Header
-            Padding(
-              padding: const EdgeInsets.only(bottom: 16),
-              child: Row(
-                children: [
-                  Icon(icon, size: 20, color: theme.colorScheme.primary),
-                  const SizedBox(width: 12),
-                  Text(
-                    title,
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w600,
-                      color: theme.colorScheme.primary,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            // Section Content
-            ...children,
-          ],
-        ),
-      ),
-    );
-  }
-
   Widget _buildDivider() {
     return Divider(
       height: 1,

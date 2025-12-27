@@ -10,7 +10,7 @@ class MyHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      minimum: EdgeInsets.all(8),
+      minimum: EdgeInsets.symmetric(horizontal: 8),
       child: Column(
         spacing: 10,
         children: [
