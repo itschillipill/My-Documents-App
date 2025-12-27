@@ -44,7 +44,6 @@ class InitializationErrorScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.red[900],
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(24.0),

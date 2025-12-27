@@ -88,8 +88,7 @@ class _AppGateState extends State<AppGate> {
 void _showAddMenu(BuildContext context) async{
    await showModalBottomSheet(
       context: context,
-      backgroundColor: Colors.transparent,
-      barrierColor: Colors.black.withValues(alpha: 0.5),
+      backgroundColor: Theme.of(context).colorScheme.surface,
       builder: (context) {
         return Container(
           margin: const EdgeInsets.all(16),
@@ -141,28 +140,27 @@ Widget _buildMenuButton(
     final colorScheme = Theme.of(context).colorScheme;
 
     return Material(
-      color: colorScheme.surface,
+      color: colorScheme.primary,
       borderRadius: BorderRadius.circular(12),
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(12),
-        child: Container(
+        child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
           child: Row(
+            spacing: 16,
             children: [
               Icon(
                 icon,
                 color: isCancel
-                    ? colorScheme.onSurface.withValues(alpha: 0.6)
-                    : colorScheme.primary,
+                    ? colorScheme.surface.withValues(alpha: 0.6)
+                    : colorScheme.surface,
               ),
-              const SizedBox(width: 16),
               Text(
                 label,
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                       color: isCancel
-                          ? colorScheme.onSurface.withValues(alpha: 0.6)
-                          : colorScheme.onSurface,
+                          ? colorScheme.surface.withValues(alpha: 0.6)
+                          : colorScheme.surface,
                       fontWeight: FontWeight.w500,
                     ),
               ),
