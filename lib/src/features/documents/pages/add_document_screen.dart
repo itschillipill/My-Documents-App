@@ -92,7 +92,7 @@ class _AddDocumentScreenState extends State<AddDocumentScreen> {
 
                           if (context.mounted) {
                             if (error != null) {
-                              MessageService.showErrorSnack(error);
+                              MessageService.showErrorSnack(error.getMessage(context));
                             } else {
                               Navigator.pop(context);
                             }
@@ -140,7 +140,7 @@ class _AddDocumentScreenState extends State<AddDocumentScreen> {
                       color: colorScheme.onSurface,
                     ),
                 decoration: InputDecoration(
-                  hintText: "enterDocumentName",
+                  hintText: context.l10n.documentName,
                   hintStyle: TextStyle(
                     color: colorScheme.onSurface.withValues(alpha: 0.4),
                   ),
@@ -172,7 +172,7 @@ class _AddDocumentScreenState extends State<AddDocumentScreen> {
                       color: colorScheme.onSurface,
                     ),
                 decoration: InputDecoration(
-                  hintText: "enterCommentOptional",
+                  hintText:context.l10n.comment,
                   hintStyle: TextStyle(
                     color: colorScheme.onSurface.withValues(alpha: 0.4),
                   ),

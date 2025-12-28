@@ -1,10 +1,10 @@
 import 'dart:io' show File;
 
 import 'package:equatable/equatable.dart';
-import 'package:flutter/foundation.dart' show kDebugMode, debugPrint;
+import 'package:flutter/foundation.dart' show debugPrint;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_documents/src/utils/sevices/file_service.dart';
-import 'package:my_documents/src/utils/sevices/message_service.dart';
+import '../../../core/model/errors.dart';
 import '../../../data/data_sourse.dart';
 
 import 'package:my_documents/src/features/documents/model/document.dart';
@@ -27,9 +27,6 @@ class DocumentsCubit extends Cubit<DocumentsState> {
     try {
       final documents = await dataSource.getAllDocuments();
       emit(DocumentsLoaded(documents: documents));
-      if (kDebugMode) {
-        MessageService.showSuccessSnack("Documents loaded successfully");
-      }
     } catch (e) {
       emit(DocumentsError(e.toString()));
     }
@@ -101,7 +98,7 @@ class DocumentsCubit extends Cubit<DocumentsState> {
     int? versionId,
   }) {
     final document = getDocumentById(documentId);
-    if (document == null) throw Exception("Document not found");
+    if (document == null) return null;
     if (versionId == null) return document.versions.first;
     return document.versions.where((e) => e.id == versionId).firstOrNull ??
         document.versions.firstOrNull;
@@ -111,7 +108,7 @@ class DocumentsCubit extends Cubit<DocumentsState> {
     return documentsOrEmpty.where((e) => documentIds.contains(e.id)).toList();
   }
 
-  Future<String?> saveDocument({
+  Future<ErrorKeys?> saveDocument({
     required String title,
     required String? originalPath,
     bool isFavorite = false,
@@ -119,18 +116,14 @@ class DocumentsCubit extends Cubit<DocumentsState> {
     String? comment,
     DateTime? expirationDate,
   }) async {
-    if (title.isEmpty || originalPath == null) {
-     return "Please enter title and choose a file";
-    }
+    if (title.isEmpty) return ErrorKeys.enterTitle;
 
-    if (documentsOrEmpty.any((element) => element.title == title)) {
-      return "Document with this title already exists";
-    }
+    if (originalPath == null) return ErrorKeys.selectFile;
+
+    if (documentsOrEmpty.any((element) => element.title == title)) return ErrorKeys.documentTitleExists;
 
     final isValidSize = await FileService.validateFileSize(originalPath);
-    if (!isValidSize) {
-      return "File is too large (max 50 MB)";
-    }
+    if (!isValidSize) return ErrorKeys.reachedMaxSize;
 
     try {
       final safePath = await FileService.saveFileToAppDir(originalPath);
@@ -159,7 +152,7 @@ class DocumentsCubit extends Cubit<DocumentsState> {
       return null;
     } catch (e) {
       debugPrint("Error saving file: $e");
-      return "Error saving file: $e";
+      return ErrorKeys.errorSavingFile;
     }
   }
 

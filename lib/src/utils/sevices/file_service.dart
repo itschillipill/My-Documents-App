@@ -4,6 +4,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:my_documents/src/core/extensions/extensions.dart';
+import 'package:my_documents/src/core/model/errors.dart';
 import 'package:my_documents/src/utils/sevices/message_service.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
@@ -15,9 +16,6 @@ class FileService {
   static const int maxFileSize = 50 * 1024 * 1024; // 50 MB
   static bool get isMobile => Platform.isAndroid || Platform.isIOS;
 
-  /// Сохраняет файл в директорию приложения.
-  /// Если файл с таким содержимым уже есть — возвращает его путь.
-  /// Если файл с таким именем, но другим содержимым — сохраняет с новым именем.
   static Future<String> saveFileToAppDir(String originalPath) async {
     final appDir = await getApplicationSupportDirectory();
     final fileName = p.basename(originalPath);
@@ -25,7 +23,6 @@ class FileService {
 
     final newFile = File(newPath);
 
-    // Проверка размера
     final isValid = await validateFileSize(originalPath);
     if (!isValid) {
       throw Exception(
@@ -33,21 +30,17 @@ class FileService {
       );
     }
 
-    // Если файл уже есть
     if (await newFile.exists()) {
       final existingHash = await calculateFileHash(newFile);
       final incomingHash = await calculateFileHash(File(originalPath));
 
       if (existingHash == incomingHash) {
-        // Содержимое совпадает → используем существующий
         return newFile.path;
       } else {
-        // Разное содержимое → генерируем новое имя
         newPath = await _generateUniqueFilePath(appDir.path, fileName);
       }
     }
 
-    // Копируем файл в папку приложения
     return (await File(originalPath).copy(newPath)).path;
   }
 
@@ -85,7 +78,6 @@ class FileService {
     }
   }
 
-  /// Удаляет файл
   static Future<void> deleteFile(String path) async {
     final file = File(path);
     if (await file.exists()) {
@@ -96,14 +88,6 @@ class FileService {
         debugPrint("Failed to delete $path, error: $e");
       }
     }
-  }
-
-  static Future<void> deleteFiles(List<String> paths) async {
-    await Future.wait(
-      paths.map((path) async {
-        await deleteFile(path);
-      }),
-    );
   }
 
   static Future<void> deleteDocumentsFiles(
@@ -147,20 +131,17 @@ class FileService {
     }
   }
 
-  /// Проверяет размер файла
   static Future<bool> validateFileSize(String path) async {
     final file = File(path);
     final size = await file.length();
     return size <= maxFileSize;
   }
 
-  /// Считает SHA256 хэш файла
   static Future<String> calculateFileHash(File file) async {
     final bytes = await file.readAsBytes();
     return sha256.convert(bytes).toString();
   }
 
-  /// Генерация уникального имени для файла
   static Future<String> _generateUniqueFilePath(
     String dir,
     String fileName,
@@ -180,26 +161,11 @@ class FileService {
     return newPath;
   }
 
-  static Future<void> shareFile(String path) async {
-    try {
-      final file = File(path);
-      if (await file.exists()) {
-        await SharePlus.instance.share(ShareParams(files: [XFile(path)]));
-      } else {
-        debugPrint("File not found: $path");
-        MessageService.showErrorSnack("File not found: $path");
-      }
-    } catch (e) {
-      MessageService.showErrorSnack(e.toString());
-    }
-  }
-
-  static Future<void> shareFiles(
+  static Future<ErrorKeys?> shareFiles(
     List<String> paths,
-    BuildContext context,
   ) async {
     debugPrint("Share files: $paths");
-    if (paths.isEmpty) return;
+    if (paths.isEmpty) return ErrorKeys.filesNotFound;
     try {
       final files =
           paths.toSet()
@@ -208,26 +174,23 @@ class FileService {
               .map((file) => XFile(file.path))
               .toList();
 
-      if (files.isEmpty) {
-        MessageService.showErrorSnack(context.l10n.filesNotFound);
-        return;
-      }
+      if (files.isEmpty) return ErrorKeys.filesNotFound;
 
       await SharePlus.instance.share(ShareParams(files: files));
+      return null;
     } catch (e) {
       debugPrint("Share files error: $e");
-      if (context.mounted)MessageService.showErrorSnack(context.l10n.failedToShare);
+      return ErrorKeys.failedToShare;
     }
   }
 
-  static Future<void> importData(BuildContext context) async {
-    MessageService.showErrorToast(context.l10n.notImplemented);
+  static Future<ErrorKeys?> importData() async {
+    return ErrorKeys.notImplemented;
   }
 
-  static Future<void> exportData(
-    BuildContext context, {
+  static Future<ErrorKeys?> exportData({
     List<Document> documents = const [],
   }) async {
-    MessageService.showErrorToast(context.l10n.notImplemented);
+    return ErrorKeys.notImplemented;
   }
 }

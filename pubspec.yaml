@@ -58,6 +58,8 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   smooth_page_indicator: ^1.0.0
+  rxdart: ^0.28.0
+  jailbreak_root_detection: ^1.2.0+1
 
 dev_dependencies:
   flutter_test:

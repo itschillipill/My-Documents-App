@@ -52,8 +52,8 @@ class AddFolderPage extends StatelessWidget {
                       Folder(id: 0, name: _nameController.text.trim()),
                     );
                     if(context.mounted){
-                      if (error != null) {
-                        MessageService.showErrorSnack(error);
+                      if (error != null&& context.mounted) {
+                        MessageService.showErrorSnack(error.getMessage(context));
                       }
                       else{
                         Navigator.pop(context);

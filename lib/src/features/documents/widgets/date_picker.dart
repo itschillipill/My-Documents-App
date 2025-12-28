@@ -60,7 +60,7 @@ class DatePicker extends StatelessWidget {
                   child: Text(
                     expirationDate != null
                         ? expirationDate!.formatted(context)
-                        : "setExpirationDate",
+                        : context.l10n.setExpirationDate,
                     style: theme.textTheme.bodyMedium?.copyWith(
                       color: expirationDate != null
                           ? colorScheme.onSurface

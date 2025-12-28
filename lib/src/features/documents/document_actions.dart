@@ -84,8 +84,7 @@ class Delete$DocumentAction extends DocumentAction {
     try {
       final confirm = await MessageService.$confirmAction(
         title: context.l10n.delete,
-        message:
-            "This will delete the documents permanently. Including all versions.",
+        message:context.l10n.willDeleteAllVersions,
       );
       if (!confirm) return;
       debugPrint("Deleting ${documentsIds.length} documents");
@@ -110,6 +109,9 @@ class Share$DocumentAction extends DocumentAction {
   Future<void> call() async {
     final paths = documents.map((doc) => doc.currentVersion.filePath).toList();
     debugPrint("Sharing $paths");
-    await FileService.shareFiles(paths,context);
+   final err= await FileService.shareFiles(paths);
+   if(err!=null&&context.mounted){
+    MessageService.showErrorSnack(err.getMessage(context));
+   }
   }
 }

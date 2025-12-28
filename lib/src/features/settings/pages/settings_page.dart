@@ -345,14 +345,24 @@ class _SettingsPageState extends State<SettingsPage> {
                       icon: Icons.file_upload_rounded,
                       title: context.l10n.exportData,
                       subtitle: context.l10n.backupDocuments,
-                      onTap: () async => await FileService.exportData(context),
+                      onTap: ()  async {
+                        final err=await FileService.exportData();
+                        if(err!=null&&context.mounted){
+                          MessageService.showErrorSnack(err.getMessage(context));
+                        }
+                      },
                     ),
                     _buildDivider(),
                     BuildTile(
                       icon: Icons.file_download_rounded,
                       title: context.l10n.importData,
                       subtitle: context.l10n.restoreFromBackup,
-                      onTap: () async => await FileService.importData(context),
+                      onTap: () async {
+                        final err=await FileService.importData();
+                        if(err!=null&&context.mounted){
+                          MessageService.showErrorSnack(err.getMessage(context));
+                        }
+                        },
                     ),
                   ],
                 ),

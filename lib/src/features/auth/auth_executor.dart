@@ -1,7 +1,10 @@
-import 'package:flutter/services.dart';
+import 'dart:convert';
+import 'dart:io' show Platform;
 import 'package:flutter/widgets.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:jailbreak_root_detection/jailbreak_root_detection.dart';
 import 'package:local_auth/local_auth.dart';
+import 'package:crypto/crypto.dart';
 
 class AuthenticationExecutor {
   AuthenticationExecutor(this._prefs) {
@@ -13,31 +16,61 @@ class AuthenticationExecutor {
 
   static const _storageKey = 'auth_key';
 
-  /// Есть ли сохранённый PIN
+  final ValueNotifier<String> securityLogNotifier = ValueNotifier<String>('');
+
   final ValueNotifier<bool> hasPasswordNotifier = ValueNotifier<bool>(false);
 
-  /// Пользователь аутентифицирован
   final ValueNotifier<bool> authenticatedNotifier = ValueNotifier<bool>(false);
 
   bool get hasPassword => hasPasswordNotifier.value;
   bool get authenticated => authenticatedNotifier.value;
-
-  /// ================= INIT =================
 
   Future<void> _init() async {
     final exists = await _prefs.containsKey(key: _storageKey);
     hasPasswordNotifier.value = exists;
   }
 
-  /// ================= AUTH =================
-
-  /// ЧИСТАЯ проверка PIN (НЕ меняет состояние)
-  Future<bool> verifyPin(String pin) async {
-    final savedPin = await _prefs.read(key: _storageKey);
-    return savedPin == pin;
+  String _hashPin(String pin) {
+    final bytes = utf8.encode(pin);
+    final digest = sha256.convert(bytes);
+    return digest.toString();
   }
 
-  /// Проверка PIN + изменение состояния
+  bool _verifyPinHash(String pin, String hashed) {
+    return _hashPin(pin) == hashed;
+  }
+
+  Future<bool> _isDeviceSecure() async {
+    if(!(Platform.isAndroid || Platform.isIOS)) return true;
+    if (await JailbreakRootDetection.instance.isJailBroken) {
+      _log('Device is jailbroken/rooted');
+      return false;
+    }
+    return true;
+  }
+
+  void _log(String message) {
+    securityLogNotifier.value += '${DateTime.now()}: $message\n';
+    debugPrint('[SECURITY] $message');
+  }
+
+  Future<bool> verifyPin(String pin) async {
+    if (!await _isDeviceSecure()) {
+      _log('PIN verification blocked on insecure device');
+      return false;
+    }
+
+    final savedHashedPin = await _prefs.read(key: _storageKey);
+    if (savedHashedPin == null) {
+      _log('No PIN set');
+      return false;
+    }
+
+    final success = _verifyPinHash(pin, savedHashedPin);
+    if (!success) _log('Invalid PIN attempt');
+    return success;
+  }
+
   Future<bool> authenticateByPIN(String pin) async {
     final success = await verifyPin(pin);
     authenticatedNotifier.value = success;
@@ -47,8 +80,12 @@ class AuthenticationExecutor {
   Future<bool> authenticateByBiometrics({
     String reason = 'Please authenticate',
   }) async {
-    bool result = false;
+    if (!await _isDeviceSecure()) {
+      _log('Biometric auth blocked on insecure device');
+      return false;
+    }
 
+    bool result = false;
     try {
       result = await _auth.authenticate(
         localizedReason: reason,
@@ -57,8 +94,9 @@ class AuthenticationExecutor {
           stickyAuth: true,
         ),
       );
+      if (!result) _log('Biometric authentication failed');
     } catch (e) {
-      Clipboard.setData(ClipboardData(text: e.toString()));
+      _log('Biometric error: $e');
     }
 
     authenticatedNotifier.value = result;
@@ -67,10 +105,13 @@ class AuthenticationExecutor {
 
   Future<bool> get canCheckBiometrics async => await _auth.canCheckBiometrics;
 
-  /// ================= PIN =================
-
   Future<void> createOrChangePin(String pin) async {
-    await _prefs.write(key: _storageKey, value: pin);
+    if (!await _isDeviceSecure()) {
+      _log('Cannot set PIN on insecure device');
+      return;
+    }
+    final hashed = _hashPin(pin);
+    await _prefs.write(key: _storageKey, value: hashed);
     authenticatedNotifier.value = true;
     await _updateHasPassword();
   }
@@ -81,17 +122,14 @@ class AuthenticationExecutor {
     await _updateHasPassword();
   }
 
-  /// ================= HELPERS =================
-
   Future<void> _updateHasPassword() async {
     final exists = await _prefs.containsKey(key: _storageKey);
     hasPasswordNotifier.value = exists;
   }
 
-  /// ================= DISPOSE =================
-
   void dispose() {
     hasPasswordNotifier.dispose();
     authenticatedNotifier.dispose();
+    securityLogNotifier.dispose();
   }
 }
