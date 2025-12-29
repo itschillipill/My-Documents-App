@@ -47,8 +47,10 @@ class FolderTile extends StatelessWidget {
     );
   }
 }
-Widget _getCount(BuildContext context, Folder folder){
+
+Widget _getCount(BuildContext context, Folder folder) {
   return Text(
-              "${context.l10n.documents}: ${folder.getDocuments(context.watch<DocumentsCubit>().documentsOrEmpty) .length}",
-              style: Theme.of(context).textTheme.bodySmall);
+    "${context.l10n.documents}: ${folder.getDocuments(context.watch<DocumentsCubit>().documentsOrEmpty).length}",
+    style: Theme.of(context).textTheme.bodySmall,
+  );
 }

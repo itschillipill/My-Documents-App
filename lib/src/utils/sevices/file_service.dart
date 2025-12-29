@@ -161,14 +161,13 @@ class FileService {
     return newPath;
   }
 
-  static Future<ErrorKeys?> shareFiles(
-    List<String> paths,
-  ) async {
+  static Future<ErrorKeys?> shareFiles(List<String> paths) async {
     debugPrint("Share files: $paths");
     if (paths.isEmpty) return ErrorKeys.filesNotFound;
     try {
       final files =
-          paths.toSet()
+          paths
+              .toSet()
               .map((path) => File(path))
               .where((file) => file.existsSync())
               .map((file) => XFile(file.path))

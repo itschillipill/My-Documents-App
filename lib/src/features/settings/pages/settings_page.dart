@@ -345,10 +345,12 @@ class _SettingsPageState extends State<SettingsPage> {
                       icon: Icons.file_upload_rounded,
                       title: context.l10n.exportData,
                       subtitle: context.l10n.backupDocuments,
-                      onTap: ()  async {
-                        final err=await FileService.exportData();
-                        if(err!=null&&context.mounted){
-                          MessageService.showErrorSnack(err.getMessage(context));
+                      onTap: () async {
+                        final err = await FileService.exportData();
+                        if (err != null && context.mounted) {
+                          MessageService.showErrorSnack(
+                            err.getMessage(context),
+                          );
                         }
                       },
                     ),
@@ -358,11 +360,13 @@ class _SettingsPageState extends State<SettingsPage> {
                       title: context.l10n.importData,
                       subtitle: context.l10n.restoreFromBackup,
                       onTap: () async {
-                        final err=await FileService.importData();
-                        if(err!=null&&context.mounted){
-                          MessageService.showErrorSnack(err.getMessage(context));
+                        final err = await FileService.importData();
+                        if (err != null && context.mounted) {
+                          MessageService.showErrorSnack(
+                            err.getMessage(context),
+                          );
                         }
-                        },
+                      },
                     ),
                   ],
                 ),
@@ -503,6 +507,7 @@ class _SettingsPageState extends State<SettingsPage> {
       ),
     );
   }
+
   Widget _buildDivider() {
     return Divider(
       height: 1,

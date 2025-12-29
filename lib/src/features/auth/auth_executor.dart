@@ -41,7 +41,7 @@ class AuthenticationExecutor {
   }
 
   Future<bool> _isDeviceSecure() async {
-    if(!(Platform.isAndroid || Platform.isIOS)) return true;
+    if (!(Platform.isAndroid || Platform.isIOS)) return true;
     if (await JailbreakRootDetection.instance.isJailBroken) {
       _log('Device is jailbroken/rooted');
       return false;

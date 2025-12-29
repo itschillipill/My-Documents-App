@@ -9,7 +9,7 @@ extension DocumentExtensions on Document {
   DocumentStatus get status => currentVersion.status;
 
   DateTime? get expirationDate => currentVersion.expirationDate;
-  
+
   DateTime get uploadDate => versions.first.uploadedAt;
 }
 

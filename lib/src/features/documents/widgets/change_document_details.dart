@@ -82,7 +82,10 @@ class _ChangeDocumentDetailsState extends State<ChangeDocumentDetails> {
               crossAxisAlignment: CrossAxisAlignment.start,
               spacing: 15,
               children: [
-                FolderPiker(onSelected: (f)=> setState(()=>_folder=f), selectedFolder: _folder,),
+                FolderPiker(
+                  onSelected: (f) => setState(() => _folder = f),
+                  selectedFolder: _folder,
+                ),
                 BuildSection(
                   title: context.l10n.documentName,
                   icon: Icons.description_rounded,

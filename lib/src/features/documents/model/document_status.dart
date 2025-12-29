@@ -27,7 +27,7 @@ enum DocumentStatus {
         return context.l10n.expiringSoon;
       case DocumentStatus.expired:
         return context.l10n.expired;
-        case DocumentStatus.archivated:
+      case DocumentStatus.archivated:
         return context.l10n.archivated;
     }
   }

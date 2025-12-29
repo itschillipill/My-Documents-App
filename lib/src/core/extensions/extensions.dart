@@ -15,4 +15,3 @@ extension DateExtension on DateTime {
   String formatted(BuildContext ctx) =>
       DateFormat('d MMMM yyyy', ctx.l10n.localeName).format(this);
 }
-

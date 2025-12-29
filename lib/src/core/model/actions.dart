@@ -1,3 +1,3 @@
 abstract class MyActions {
-   Future<void> call();
+  Future<void> call();
 }

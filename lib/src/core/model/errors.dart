@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:my_documents/src/core/extensions/extensions.dart';
 
-enum ErrorKeys{
+enum ErrorKeys {
   enterTitle,
   documentTitleExists,
   folderTitleExists,
@@ -10,10 +10,9 @@ enum ErrorKeys{
   errorSavingFile,
   filesNotFound,
   failedToShare,
-  notImplemented,
-  ;
-  String getMessage(BuildContext ctx){
+  notImplemented;
 
+  String getMessage(BuildContext ctx) {
     return switch (this) {
       ErrorKeys.enterTitle => ctx.l10n.enterTitle,
       ErrorKeys.documentTitleExists => ctx.l10n.documentTitleExists,

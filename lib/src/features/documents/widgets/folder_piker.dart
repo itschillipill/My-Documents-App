@@ -26,7 +26,7 @@ class FolderPiker extends StatelessWidget {
             );
             if (folder != null) {
               if (folder.id == Folder.noFolder.id) {
-               onSelected(null);
+                onSelected(null);
               } else {
                 onSelected(folder);
               }
@@ -47,13 +47,15 @@ class FolderPiker extends StatelessWidget {
                         ? selectedFolder!.name
                         : context.l10n.selectFolder,
                     style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                          color: selectedFolder != null
+                      color:
+                          selectedFolder != null
                               ? colorScheme.onSurface
                               : colorScheme.onSurface.withValues(alpha: 0.6),
-                          fontWeight: selectedFolder != null
+                      fontWeight:
+                          selectedFolder != null
                               ? FontWeight.w500
                               : FontWeight.normal,
-                        ),
+                    ),
                   ),
                 ),
                 Icon(

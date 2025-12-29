@@ -33,33 +33,34 @@ class AddFolderPage extends StatelessWidget {
             BuildSection(
               title: context.l10n.folderDetails,
               icon: Icons.folder_outlined,
-              children:[ TextField(
-                controller: _nameController,
-                maxLength: 20,
-                decoration: InputDecoration(
-                  hintText: context.l10n.folderName,
-                  border: InputBorder.none,
-                  contentPadding: EdgeInsets.all(8),
+              children: [
+                TextField(
+                  controller: _nameController,
+                  maxLength: 20,
+                  decoration: InputDecoration(
+                    hintText: context.l10n.folderName,
+                    border: InputBorder.none,
+                    contentPadding: EdgeInsets.all(8),
+                  ),
                 ),
-              )]
+              ],
             ),
             SizedBox(
               width: double.infinity,
               height: 50,
               child: ElevatedButton(
-                onPressed:()async{
-                      final error= await context.deps.foldersCubit.saveFolder(
-                      Folder(id: 0, name: _nameController.text.trim()),
-                    );
-                    if(context.mounted){
-                      if (error != null&& context.mounted) {
-                        MessageService.showErrorSnack(error.getMessage(context));
-                      }
-                      else{
-                        Navigator.pop(context);
-                      }
+                onPressed: () async {
+                  final error = await context.deps.foldersCubit.saveFolder(
+                    Folder(id: 0, name: _nameController.text.trim()),
+                  );
+                  if (context.mounted) {
+                    if (error != null && context.mounted) {
+                      MessageService.showErrorSnack(error.getMessage(context));
+                    } else {
+                      Navigator.pop(context);
                     }
-                    },
+                  }
+                },
                 child: Text(context.l10n.save),
               ),
             ),

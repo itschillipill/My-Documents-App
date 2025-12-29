@@ -54,32 +54,33 @@ class DocumentViewPage extends StatelessWidget {
         return Scaffold(
           appBar: _buildAppBar(document, isCurrent, context),
           body: SafeArea(
+            minimum: EdgeInsets.symmetric(horizontal: 10),
             child: SingleChildScrollView(
-              child: Padding(
-                padding: EdgeInsets.all(12.0),
-                child: Column(
-                  spacing: 20,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    if (documentVersion.comment?.isNotEmpty == true)
-                      BuildSection(
-                        title: context.l10n.comment,
-                        icon: Icons.comment_rounded,
-                        children: [
-                          BorderBox(
-                              child: SelectableText(
-                                documentVersion.comment!,
-                            ),
-                          ),
-                        ],
-                      ),
+              child: Column(
+                spacing: 10,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (documentVersion.comment?.isNotEmpty == true)
+                    BuildSection(
+                      title: context.l10n.comment,
+                      icon: Icons.comment_rounded,
+                      children: [
+                        BorderBox(
+                          child: SelectableText(documentVersion.comment!),
+                        ),
+                      ],
+                    ),
 
-                   _buidDocumentInfo(context, documentVersion, isCurrent),
-                   _buildDocumentPreview(context, documentVersion),
+                  _buidDocumentInfo(context, documentVersion, isCurrent),
+                  _buildDocumentPreview(context, documentVersion),
 
-                    _buildDocumentActions(context, document, documentVersion, isCurrent)
-                  ],
-                ),
+                  _buildDocumentActions(
+                    context,
+                    document,
+                    documentVersion,
+                    isCurrent,
+                  ),
+                ],
               ),
             ),
           ),
@@ -89,25 +90,46 @@ class DocumentViewPage extends StatelessWidget {
   }
 }
 
-PreferredSizeWidget _buildAppBar(Document document, bool isCurrent, BuildContext ctx) {
-    return AppBar(
-            title: Text(document.title),
-            centerTitle: false,
-            actions: isCurrent? [
-               MenuActions(actions: [
-                (
-                  ChangeDetails$DocumentAction(context: ctx,document: document).call,
-                  ctx.l10n.changeDetails,
-                ),
-               ]),
-            ]:null,
-          );
+PreferredSizeWidget _buildAppBar(
+  Document document,
+  bool isCurrent,
+  BuildContext ctx,
+) {
+  return AppBar(
+    title: Text(document.title),
+    centerTitle: false,
+    actions:
+        isCurrent
+            ? [
+              MenuActions(
+                actions: [
+                  (
+                    ChangeDetails$DocumentAction(
+                      context: ctx,
+                      document: document,
+                    ).call,
+                    ctx.l10n.changeDetails,
+                  ),
+                ],
+              ),
+            ]
+            : null,
+  );
 }
 
-Widget _buidDocumentInfo(BuildContext ctx, DocumentVersion documentVersion, bool isCurrent){
-  final Color iconColor = Theme.of(ctx).colorScheme.primary.withValues(alpha: 0.7);
-  final TextStyle textStyle = Theme.of(ctx).textTheme.bodyMedium!.copyWith(fontWeight: FontWeight.w500);
-  final DocumentStatus status = isCurrent? documentVersion.status:DocumentStatus.archivated;
+Widget _buidDocumentInfo(
+  BuildContext ctx,
+  DocumentVersion documentVersion,
+  bool isCurrent,
+) {
+  final Color iconColor = Theme.of(
+    ctx,
+  ).colorScheme.primary.withValues(alpha: 0.7);
+  final TextStyle textStyle = Theme.of(
+    ctx,
+  ).textTheme.bodyMedium!.copyWith(fontWeight: FontWeight.w500);
+  final DocumentStatus status =
+      isCurrent ? documentVersion.status : DocumentStatus.archivated;
   return BorderBox(
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -117,17 +139,21 @@ Widget _buidDocumentInfo(BuildContext ctx, DocumentVersion documentVersion, bool
         Row(
           spacing: 8,
           children: [
-            Icon(Icons.calendar_today, color: iconColor,),
+            Icon(Icons.calendar_today, color: iconColor),
             Expanded(child: Text(ctx.l10n.uploadDate, style: textStyle)),
             Text(documentVersion.uploadedAt.formatted(ctx), style: textStyle),
-            ],
+          ],
         ),
         Row(
           spacing: 8,
           children: [
             Icon(Icons.timer, color: iconColor),
             Expanded(child: Text(ctx.l10n.expiresAt, style: textStyle)),
-            Text(documentVersion.expirationDate?.formatted(ctx)??ctx.l10n.noExpiration, style: textStyle),
+            Text(
+              documentVersion.expirationDate?.formatted(ctx) ??
+                  ctx.l10n.noExpiration,
+              style: textStyle,
+            ),
           ],
         ),
         Row(
@@ -138,79 +164,83 @@ Widget _buidDocumentInfo(BuildContext ctx, DocumentVersion documentVersion, bool
             Label(label: status.localizedText(ctx), color: status.color),
           ],
         ),
-    
-      ]
+      ],
     ),
   );
 }
 
-Widget _buildDocumentPreview(BuildContext ctx, DocumentVersion documentVersion){
+Widget _buildDocumentPreview(
+  BuildContext ctx,
+  DocumentVersion documentVersion,
+) {
   return BorderBox(
     child: Column(
       spacing: 8,
       children: [
-    DocumentPreviewer(
-                    path: documentVersion.filePath,
-                    isImage: documentVersion.isImage,
-                  ),
-                  SizedBox(
-                    width: double.infinity,
-                    height: 50,
-                    child: ElevatedButton.icon(
-                      onPressed:
-                          () async =>
-                              await OpenFilex.open(documentVersion.filePath),
-                      label: Text(ctx.l10n.openExternal),
-                     icon: Icon(Icons.remove_red_eye_rounded),
-                    ),
-                  ),
-    ],),
+        DocumentPreviewer(
+          path: documentVersion.filePath,
+          isImage: documentVersion.isImage,
+        ),
+        SizedBox(
+          width: double.infinity,
+          height: 50,
+          child: ElevatedButton.icon(
+            onPressed:
+                () async => await OpenFilex.open(documentVersion.filePath),
+            label: Text(ctx.l10n.openExternal),
+            icon: Icon(Icons.remove_red_eye_rounded),
+          ),
+        ),
+      ],
+    ),
   );
 }
 
-Widget _buildDocumentActions(BuildContext ctx, Document document, DocumentVersion documentVersion, bool isCurrent){
-return BorderBox(
-  child: Column(
-    children: [
-      BuildTile(
-                        title: ctx.l10n.shareDocument,
-                        icon: Icons.share_rounded,
-                        onTap: Share$DocumentAction(
-                          documents: [document],
-                          context: ctx,
-                        ).call,
-                      ),
-                      if (isCurrent) ...[
-                        BuildTile(
-                          title: ctx.l10n.uploadNewVersion,
-                          icon: Icons.file_download_outlined,
-                          onTap:
-                              () async => await Navigator.push(
-                                ctx,
-                                AddNewDocumentVersion.route(document.id),
-                              ),
-                        ),
-                        BuildTile(
-                          title: ctx.l10n.manageVersions,
-                          icon: Icons.history_rounded,
-                          onTap:
-                              () => Navigator.push(
-                                ctx,
-                                DocumentVersionHistory.route(document.id),
-                              ),
-                        ),
-                        BuildTile(
-                          title: ctx.l10n.deleteDocument,
-                          icon: Icons.delete_rounded,
-                          isDanger: true,
-                          onTap: Delete$DocumentAction(
-                            documentsIds: [document.id],
-                            context: ctx,
-                          ).call,
-                        ),
-                      ],
-    ],
-  ),
-);
+Widget _buildDocumentActions(
+  BuildContext ctx,
+  Document document,
+  DocumentVersion documentVersion,
+  bool isCurrent,
+) {
+  return BorderBox(
+    child: Column(
+      children: [
+        BuildTile(
+          title: ctx.l10n.shareDocument,
+          icon: Icons.share_rounded,
+          onTap: Share$DocumentAction(documents: [document], context: ctx).call,
+        ),
+        if (isCurrent) ...[
+          BuildTile(
+            title: ctx.l10n.uploadNewVersion,
+            icon: Icons.file_download_outlined,
+            onTap:
+                () async => await Navigator.push(
+                  ctx,
+                  AddNewDocumentVersion.route(document.id),
+                ),
+          ),
+          BuildTile(
+            title: ctx.l10n.manageVersions,
+            icon: Icons.history_rounded,
+            onTap:
+                () => Navigator.push(
+                  ctx,
+                  DocumentVersionHistory.route(document.id),
+                ),
+          ),
+          BuildTile(
+            title: ctx.l10n.deleteDocument,
+            icon: Icons.delete_rounded,
+            isDanger: true,
+            onTap:
+                Delete$DocumentAction(
+                  documentsIds: [document.id],
+                  context: ctx,
+                ).call,
+          ),
+        ],
+      ],
+    ),
+  );
 }
-

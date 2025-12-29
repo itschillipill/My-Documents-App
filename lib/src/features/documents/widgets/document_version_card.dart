@@ -43,19 +43,14 @@ class DocumentVersionCard extends StatelessWidget {
                     color:
                         isCurrent
                             ? Colors.green.withValues(alpha: 0.1)
-                            : theme.colorScheme.primary.withValues(
-                              alpha: 0.08,
-                            ),
+                            : theme.colorScheme.primary.withValues(alpha: 0.08),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   padding: const EdgeInsets.all(12),
                   child: Icon(
-                    isCurrent
-                        ? Icons.verified_rounded
-                        : Icons.history_rounded,
+                    isCurrent ? Icons.verified_rounded : Icons.history_rounded,
                     size: 32,
-                    color:
-                        isCurrent ? Colors.green : theme.colorScheme.primary,
+                    color: isCurrent ? Colors.green : theme.colorScheme.primary,
                   ),
                 ),
                 Expanded(

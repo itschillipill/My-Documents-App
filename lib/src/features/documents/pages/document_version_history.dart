@@ -41,7 +41,6 @@ class DocumentVersionHistory extends StatelessWidget {
               context.l10n.versionHistory,
               style: Theme.of(context).textTheme.headlineMedium,
             ),
-           
           ),
           body: SafeArea(
             child: Padding(

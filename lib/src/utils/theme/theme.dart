@@ -11,34 +11,29 @@ class AppTheme {
       error: AppPalette.errorColor,
     ),
     switchTheme: SwitchThemeData(
-  thumbColor: WidgetStateProperty.resolveWith((states) {
-    if (states.contains(WidgetState.selected)) {
-      return Colors.white;
-    }
-    return Colors.grey.shade300;
-  }),
-  trackColor: WidgetStateProperty.resolveWith((states) {
-    if (states.contains(WidgetState.selected)) {
-      return AppPalette.secondaryColor;
-    }
-    return Colors.grey.shade400;
-  }),
-  trackOutlineColor: WidgetStateProperty.all(Colors.transparent),
-),
+      thumbColor: WidgetStateProperty.resolveWith((states) {
+        if (states.contains(WidgetState.selected)) {
+          return Colors.white;
+        }
+        return Colors.grey.shade300;
+      }),
+      trackColor: WidgetStateProperty.resolveWith((states) {
+        if (states.contains(WidgetState.selected)) {
+          return AppPalette.secondaryColor;
+        }
+        return Colors.grey.shade400;
+      }),
+      trackOutlineColor: WidgetStateProperty.all(Colors.transparent),
+    ),
     inputDecorationTheme: InputDecorationTheme(
-       enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(
-                      color: Color(0xFF79747E).withValues(alpha: 0.3),
-                    ),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(
-                      color: Color(0xFF1A1A1A),
-                      width: 2,
-                    ),
-                  ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(color: Color(0xFF79747E).withValues(alpha: 0.3)),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(color: Color(0xFF1A1A1A), width: 2),
+      ),
     ),
     dividerTheme: DividerThemeData(color: AppPalette.borderColor),
     listTileTheme: ListTileThemeData(
@@ -119,40 +114,32 @@ class AppTheme {
       subtitleTextStyle: TextStyle(color: Colors.grey),
       iconColor: Colors.grey.shade700,
     ),
-     inputDecorationTheme: InputDecorationTheme(
-       enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(
-                      color: Color(0xFF938F99).withValues(alpha: 0.3),
-                    ),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(
-                      color: Colors.white,
-                      width: 2,
-                    ),
-                  ),
-                  contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 12,
-                  ),
+    inputDecorationTheme: InputDecorationTheme(
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(color: Color(0xFF938F99).withValues(alpha: 0.3)),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(color: Colors.white, width: 2),
+      ),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
     ),
     switchTheme: SwitchThemeData(
-  thumbColor: WidgetStateProperty.resolveWith((states) {
-    if (states.contains(WidgetState.selected)) {
-      return Colors.white;
-    }
-    return Colors.grey.shade600;
-  }),
-  trackColor: WidgetStateProperty.resolveWith((states) {
-    if (states.contains(WidgetState.selected)) {
-      return AppPalette.secondaryDarkColor;
-    }
-    return Colors.grey.shade800;
-  }),
-  trackOutlineColor: WidgetStateProperty.all(Colors.transparent),
-),
+      thumbColor: WidgetStateProperty.resolveWith((states) {
+        if (states.contains(WidgetState.selected)) {
+          return Colors.white;
+        }
+        return Colors.grey.shade600;
+      }),
+      trackColor: WidgetStateProperty.resolveWith((states) {
+        if (states.contains(WidgetState.selected)) {
+          return AppPalette.secondaryDarkColor;
+        }
+        return Colors.grey.shade800;
+      }),
+      trackOutlineColor: WidgetStateProperty.all(Colors.transparent),
+    ),
 
     scaffoldBackgroundColor: const Color(0xFF121212),
     appBarTheme: AppBarTheme(

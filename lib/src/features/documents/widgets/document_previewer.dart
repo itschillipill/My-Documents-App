@@ -23,13 +23,12 @@ class DocumentPreviewer extends StatelessWidget {
         child: DecoratedBox(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(8),
-            color: Colors.blueGrey,
+            color: Colors.transparent,
             image:
                 isImage
                     ? DecorationImage(
                       image: FileImage(File(path)),
-                      fit: BoxFit.cover,
-                      alignment: Alignment.topCenter,
+                      fit: BoxFit.contain,
                       onError:
                           (exception, stackTrace) => debugPrint(
                             "coudn't load image $exception-$stackTrace",
@@ -37,7 +36,18 @@ class DocumentPreviewer extends StatelessWidget {
                     )
                     : null,
           ),
-          child: !isImage ? Center(child: Text(context.l10n.noPreview)) : null,
+          child:
+              !isImage
+                  ? Center(
+                    child: Text(
+                      context.l10n.noPreview,
+                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                        fontWeight: FontWeight.w500,
+                        color: Theme.of(context).colorScheme.secondary,
+                      ),
+                    ),
+                  )
+                  : null,
         ),
       ),
     );

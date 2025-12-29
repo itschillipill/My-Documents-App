@@ -1,15 +1,20 @@
 import 'package:flutter/material.dart';
 
 class BuildSection extends StatelessWidget {
-    final String title;
-    final IconData icon;
-    final List<Widget> children;
+  final String title;
+  final IconData icon;
+  final List<Widget> children;
 
-  const BuildSection({super.key, required this.children, required this.title, required this.icon});
+  const BuildSection({
+    super.key,
+    required this.children,
+    required this.title,
+    required this.icon,
+  });
 
   @override
   Widget build(BuildContext context) {
-     final theme = Theme.of(context);
+    final theme = Theme.of(context);
     return Container(
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,

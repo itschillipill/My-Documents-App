@@ -120,7 +120,8 @@ class DocumentsCubit extends Cubit<DocumentsState> {
 
     if (originalPath == null) return ErrorKeys.selectFile;
 
-    if (documentsOrEmpty.any((element) => element.title == title)) return ErrorKeys.documentTitleExists;
+    if (documentsOrEmpty.any((element) => element.title == title))
+      return ErrorKeys.documentTitleExists;
 
     final isValidSize = await FileService.validateFileSize(originalPath);
     if (!isValidSize) return ErrorKeys.reachedMaxSize;

@@ -5,7 +5,7 @@ import 'package:my_documents/src/utils/sevices/message_service.dart';
 
 import '../../core/model/actions.dart';
 
-typedef FolderActions = MyActions; 
+typedef FolderActions = MyActions;
 
 class Rename$FolderAction extends FolderActions {
   final BuildContext context;
@@ -15,9 +15,9 @@ class Rename$FolderAction extends FolderActions {
 
   @override
   Future<void> call() async {
-  final name = await MessageService.showDialogGlobal((ctx){
+    final name = await MessageService.showDialogGlobal((ctx) {
       final controller = TextEditingController(text: folder.name);
-       return AlertDialog(
+      return AlertDialog(
         title: Text(ctx.l10n.rename),
         content: TextField(
           maxLength: 20,
@@ -32,7 +32,7 @@ class Rename$FolderAction extends FolderActions {
           TextButton(
             onPressed: () {
               final newName = controller.text.trim();
-              if (newName.isEmpty || newName == folder.name)return;
+              if (newName.isEmpty || newName == folder.name) return;
               Navigator.pop(context, controller.text);
             },
             child: Text(ctx.l10n.save),
@@ -40,32 +40,32 @@ class Rename$FolderAction extends FolderActions {
         ],
       );
     });
-  if (name != null && context.mounted) {
-    context.deps.foldersCubit.updateFolder(folder.copyWith(name: name));
-    Navigator.pop(context);
-  }
+    if (name != null && context.mounted) {
+      context.deps.foldersCubit.updateFolder(folder.copyWith(name: name));
+      Navigator.pop(context);
+    }
   }
 }
 
 class Delete$FolderAction extends FolderActions {
-   final BuildContext context;
+  final BuildContext context;
   final Folder folder;
 
   Delete$FolderAction({required this.context, required this.folder});
 
   @override
   Future<void> call() async {
-final foldersCubit = context.deps.foldersCubit;
+    final foldersCubit = context.deps.foldersCubit;
 
-  final confirmed = await MessageService.$confirmAction(
-    title: context.l10n.delete,
-  );
+    final confirmed = await MessageService.$confirmAction(
+      title: context.l10n.delete,
+    );
 
-  if (confirmed) {
-    await foldersCubit.deleteFolder(folder.id).then((_) async {
-      await foldersCubit.loadData();
-    });
-    if (context.mounted) Navigator.pop(context);
-  }
+    if (confirmed) {
+      await foldersCubit.deleteFolder(folder.id).then((_) async {
+        await foldersCubit.loadData();
+      });
+      if (context.mounted) Navigator.pop(context);
+    }
   }
 }

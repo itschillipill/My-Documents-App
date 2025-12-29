@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:my_documents/src/core/extensions/extensions.dart';
-import 'package:my_documents/src/features/documents/widgets/date_picker.dart' as dp;
+import 'package:my_documents/src/features/documents/widgets/date_picker.dart'
+    as dp;
 import 'package:my_documents/src/features/documents/widgets/file_picker_block.dart';
 import 'package:my_documents/src/features/documents/widgets/folder_piker.dart';
 import 'package:my_documents/src/features/folders/model/folder.dart';
@@ -10,9 +11,9 @@ import 'package:my_documents/src/widgets/build_section.dart';
 
 class AddDocumentScreen extends StatefulWidget {
   static PageRoute route() => AppPageRoute.build(
-        page: const AddDocumentScreen(),
-        transition: PageTransitionType.slideFromBottom,
-      );
+    page: const AddDocumentScreen(),
+    transition: PageTransitionType.slideFromBottom,
+  );
 
   const AddDocumentScreen({super.key});
 
@@ -59,7 +60,10 @@ class _AddDocumentScreenState extends State<AddDocumentScreen> {
             spacing: 10,
             children: [
               // Folder Selection
-              FolderPiker(selectedFolder: _folder, onSelected: (f)=> setState(()=>_folder=f)),
+              FolderPiker(
+                selectedFolder: _folder,
+                onSelected: (f) => setState(() => _folder = f),
+              ),
 
               // File Picker
               FilePickerBlock(
@@ -68,7 +72,7 @@ class _AddDocumentScreenState extends State<AddDocumentScreen> {
                   setState(() => _originalPath = path);
                 },
               ),
-            
+
               // Document Details
               _buildDocumentDetails(context, colorScheme),
 
@@ -77,28 +81,31 @@ class _AddDocumentScreenState extends State<AddDocumentScreen> {
                 width: double.infinity,
                 height: 56,
                 child: ElevatedButton(
-                  onPressed: _originalPath == null
-                      ? null
-                      : () async {
-                          final error = await context.deps.documentsCubit
-                              .saveDocument(
-                            title: _titleController.text.trim(),
-                            isFavorite: isFavorite,
-                            folderId: _folder?.id,
-                            originalPath: _originalPath,
-                            comment: _commentController.text.trim(),
-                            expirationDate: _expirationDate,
-                          );
+                  onPressed:
+                      _originalPath == null
+                          ? null
+                          : () async {
+                            final error = await context.deps.documentsCubit
+                                .saveDocument(
+                                  title: _titleController.text.trim(),
+                                  isFavorite: isFavorite,
+                                  folderId: _folder?.id,
+                                  originalPath: _originalPath,
+                                  comment: _commentController.text.trim(),
+                                  expirationDate: _expirationDate,
+                                );
 
-                          if (context.mounted) {
-                            if (error != null) {
-                              MessageService.showErrorSnack(error.getMessage(context));
-                            } else {
-                              Navigator.pop(context);
+                            if (context.mounted) {
+                              if (error != null) {
+                                MessageService.showErrorSnack(
+                                  error.getMessage(context),
+                                );
+                              } else {
+                                Navigator.pop(context);
+                              }
                             }
-                          }
-                        },
-                 
+                          },
+
                   child: Text(
                     context.l10n.save.toUpperCase(),
                     style: const TextStyle(
@@ -120,76 +127,77 @@ class _AddDocumentScreenState extends State<AddDocumentScreen> {
     return BuildSection(
       title: context.l10n.documentDetails,
       icon: Icons.description_rounded,
-        children: [
-          // Title field
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            spacing: 8,
-            children: [
-              Text(
-                context.l10n.documentName,
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      fontWeight: FontWeight.w500,
-                      color: colorScheme.onSurface,
-                    ),
+      children: [
+        // Title field
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          spacing: 8,
+          children: [
+            Text(
+              context.l10n.documentName,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                fontWeight: FontWeight.w500,
+                color: colorScheme.onSurface,
               ),
-              TextField(
-                controller: _titleController,
-                maxLength: 50,
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      color: colorScheme.onSurface,
-                    ),
-                decoration: InputDecoration(
-                  hintText: context.l10n.documentName,
-                  hintStyle: TextStyle(
-                    color: colorScheme.onSurface.withValues(alpha: 0.4),
-                  ),
-                  counterText: '',
+            ),
+            TextField(
+              controller: _titleController,
+              maxLength: 50,
+              style: Theme.of(
+                context,
+              ).textTheme.bodyLarge?.copyWith(color: colorScheme.onSurface),
+              decoration: InputDecoration(
+                hintText: context.l10n.documentName,
+                hintStyle: TextStyle(
+                  color: colorScheme.onSurface.withValues(alpha: 0.4),
+                ),
+                counterText: '',
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 16),
+
+        // Comment field
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          spacing: 8,
+          children: [
+            Text(
+              context.l10n.comment,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                fontWeight: FontWeight.w500,
+                color: colorScheme.onSurface,
+              ),
+            ),
+            TextField(
+              controller: _commentController,
+              maxLength: 500,
+              maxLines: 5,
+              minLines: 3,
+              style: Theme.of(
+                context,
+              ).textTheme.bodyLarge?.copyWith(color: colorScheme.onSurface),
+              decoration: InputDecoration(
+                hintText: context.l10n.comment,
+                hintStyle: TextStyle(
+                  color: colorScheme.onSurface.withValues(alpha: 0.4),
                 ),
               ),
-            ],
-          ),
-          const SizedBox(height: 16),
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
 
-          // Comment field
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            spacing: 8,
-            children: [
-              Text(
-                context.l10n.comment,
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      fontWeight: FontWeight.w500,
-                      color: colorScheme.onSurface,
-                    ),
-              ),
-              TextField(
-                controller: _commentController,
-                maxLength: 500,
-                maxLines: 5,
-                minLines: 3,
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      color: colorScheme.onSurface,
-                    ),
-                decoration: InputDecoration(
-                  hintText:context.l10n.comment,
-                  hintStyle: TextStyle(
-                    color: colorScheme.onSurface.withValues(alpha: 0.4),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-
-          // Expiration date picker
-          dp.DatePicker(
-            onTap: (date) => setState(() {
-              _expirationDate = date;
-            }),
-            expirationDate: _expirationDate,
-          ),
-        ],
+        // Expiration date picker
+        dp.DatePicker(
+          onTap:
+              (date) => setState(() {
+                _expirationDate = date;
+              }),
+          expirationDate: _expirationDate,
+        ),
+      ],
     );
   }
 }

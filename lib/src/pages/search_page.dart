@@ -89,10 +89,7 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   PreferredSizeWidget _buildAppBar() {
-    return AppBar(
-      title: Text(context.l10n.search),
-      centerTitle: false,
-    );
+    return AppBar(title: Text(context.l10n.search), centerTitle: false);
   }
 
   Widget _buildSearchField() {

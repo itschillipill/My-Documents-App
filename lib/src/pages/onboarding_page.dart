@@ -67,7 +67,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
       ),
-      builder: (context) => PrivacyPolicyModal(),
+      builder: (context) => PrivacyPolicyModal(color: _onboardingItems(context)[currentPage].color),
     );
   }
 
@@ -76,6 +76,11 @@ class _OnboardingPageState extends State<OnboardingPage> {
     List<OnboardingItem> onboardingItems = _onboardingItems(context);
     final isLastPage = currentPage == onboardingItems.length - 1;
     final theme = Theme.of(context);
+    final settingsCubit =  context.deps.settingsCubit;
+    bool isDark = settingsCubit.state.themeMode == ThemeMode.dark 
+    || (settingsCubit.state.themeMode == ThemeMode.system 
+        && MediaQuery.of(context).platformBrightness == Brightness.dark);
+
     return Scaffold(
       body: Stack(
         children: [
@@ -87,7 +92,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
             itemBuilder: (context, index) {
               final item = onboardingItems[index];
               return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
+                padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -133,27 +138,41 @@ class _OnboardingPageState extends State<OnboardingPage> {
                         ],
                       ),
                     ),
-                    const SizedBox(height: 48),
-                    // Заголовок
+                    const SizedBox(height: 40),
                     Text(
                       item.title,
                       style: theme.textTheme.headlineMedium,
                       textAlign: TextAlign.center,
                     ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 12),
                     // Описание
                     Text(
                       item.description,
-                      style: theme.textTheme.bodyLarge?.copyWith(height: 1.5),
+                      style: theme.textTheme.bodyLarge,
                       textAlign: TextAlign.center,
                     ),
-                    const SizedBox(height: 40),
+                    const SizedBox(height: 50),
                   ],
                 ),
               );
             },
           ),
 
+          //Переключение тем
+           Positioned(
+            top: 24,
+            left: 24,
+            child: IconButton(
+              onPressed: () {
+                settingsCubit.changeThemeMode(
+                  !isDark
+                      ? ThemeMode.dark
+                      : ThemeMode.light,
+                );
+              },
+              icon: Icon(!isDark ? Icons.dark_mode : Icons.light_mode, color: onboardingItems[currentPage].color,),
+            ),
+          ),
           // Переключение языков
           Positioned(
             top: 24,
@@ -161,10 +180,10 @@ class _OnboardingPageState extends State<OnboardingPage> {
             child: TextButton(
               onPressed: () {
                 final locale =
-                    (context.deps.settingsCubit.state.locale == Locale('ru'))
+                    (settingsCubit.state.locale == Locale('ru'))
                         ? Locale('en')
                         : Locale('ru');
-                context.deps.settingsCubit.changeLocale(locale);
+                settingsCubit.changeLocale(locale);
               },
               child: Text(context.l10n.langText),
             ),
@@ -204,7 +223,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                       expansionFactor: 3,
                     ),
                   ),
-                  const SizedBox(height: 32),
+                  const SizedBox(height: 20),
                   // Кнопка Privacy Policy
                   TextButton(
                     onPressed: () => _showPrivacyPolicy(context),
@@ -244,7 +263,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                             child: Text(
                               context.l10n.skip,
                               style: TextStyle(
-                                color: Colors.grey.shade700,
+                                color: onboardingItems[currentPage].color,
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
@@ -328,7 +347,8 @@ class OnboardingItem {
 }
 
 class PrivacyPolicyModal extends StatelessWidget {
-  const PrivacyPolicyModal({super.key});
+  final Color color;
+  const PrivacyPolicyModal({super.key, this.color =Colors.blueAccent});
 
   @override
   Widget build(BuildContext context) {
@@ -355,8 +375,9 @@ class PrivacyPolicyModal extends StatelessWidget {
             children: [
               // Заголовок
               Padding(
-                padding: const EdgeInsets.all(24),
+                padding: const EdgeInsets.all(12),
                 child: Column(
+                  spacing: 15,
                   children: [
                     Container(
                       width: 40,
@@ -366,15 +387,14 @@ class PrivacyPolicyModal extends StatelessWidget {
                         borderRadius: BorderRadius.circular(2),
                       ),
                     ),
-                    const SizedBox(height: 20),
                     Row(
+                      spacing: 10,
                       children: [
                         Icon(
                           Icons.privacy_tip_rounded,
-                          color: Colors.blueAccent,
+                          color: color,
                           size: 20,
                         ),
-                        const SizedBox(width: 12),
                         Text(
                           context.l10n.privacyPolicy,
                           style: theme.textTheme.titleMedium?.copyWith(
@@ -392,7 +412,7 @@ class PrivacyPolicyModal extends StatelessWidget {
                   controller: scrollController,
                   padding: const EdgeInsets.symmetric(horizontal: 24),
                   child: Column(
-                    spacing: 22,
+                    spacing: 20,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       _buildSection(
@@ -428,22 +448,22 @@ class PrivacyPolicyModal extends StatelessWidget {
                       Container(
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
-                          color: Colors.blue.shade50,
+                          color: color.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: Colors.blue.shade100),
+                          border: Border.all(color: color.withValues(alpha: 0.2)),
                         ),
                         child: Row(
                           spacing: 12,
                           children: [
                             Icon(
                               Icons.security_rounded,
-                              color: Colors.blue.shade700,
+                              color: color,
                             ),
                             Expanded(
                               child: Text(
                                 context.l10n.moto,
                                 style: TextStyle(
-                                  color: Colors.blue.shade800,
+                                  color: color,
                                   fontSize: 14,
                                 ),
                               ),
@@ -461,7 +481,7 @@ class PrivacyPolicyModal extends StatelessWidget {
                 child: ElevatedButton(
                   onPressed: () => Navigator.pop(context),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blueAccent,
+                    backgroundColor: color,
                     foregroundColor: Colors.white,
                     minimumSize: const Size(double.infinity, 56),
                     shape: RoundedRectangleBorder(
@@ -470,7 +490,7 @@ class PrivacyPolicyModal extends StatelessWidget {
                   ),
                   child: Text(
                     context.l10n.gotIt,
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                    style: TextStyle(fontWeight: FontWeight.w600),
                   ),
                 ),
               ),
@@ -483,6 +503,7 @@ class PrivacyPolicyModal extends StatelessWidget {
 
   Widget _buildSection(BuildContext context, String title, String content) {
     return Column(
+      spacing: 5,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
@@ -491,7 +512,6 @@ class PrivacyPolicyModal extends StatelessWidget {
             context,
           ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
         ),
-        const SizedBox(height: 8),
         Text(
           content,
           style: Theme.of(context).textTheme.bodyMedium?.copyWith(height: 1.5),

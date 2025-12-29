@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_documents/src/core/extensions/extensions.dart';
 import 'package:my_documents/src/features/documents/model/document.dart';
-import 'package:my_documents/src/features/documents/widgets/date_picker.dart'as dp;
+import 'package:my_documents/src/features/documents/widgets/date_picker.dart'
+    as dp;
 import 'package:my_documents/src/features/documents/widgets/file_picker_block.dart';
 import 'package:my_documents/src/utils/page_transition/app_page_route.dart';
 import 'package:my_documents/src/utils/sevices/file_service.dart';
@@ -65,7 +66,8 @@ class _AddNewDocumentVersionState extends State<AddNewDocumentVersion> {
 
       await cubit.addNewVersion(widget.documentId, docVersion);
     } catch (e) {
-      if (context.mounted)MessageService.showSnackBar("${context.l10n.errorSavirgFile}: $e");
+      if (context.mounted)
+        MessageService.showSnackBar("${context.l10n.errorSavirgFile}: $e");
     }
     if (context.mounted) Navigator.pop(context);
   }
@@ -73,9 +75,7 @@ class _AddNewDocumentVersionState extends State<AddNewDocumentVersion> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(context.l10n.addVersion),
-      ),
+      appBar: AppBar(title: Text(context.l10n.addVersion)),
       body: SafeArea(
         minimum: const EdgeInsets.symmetric(horizontal: 8),
         child: SingleChildScrollView(
@@ -111,10 +111,10 @@ class _AddNewDocumentVersionState extends State<AddNewDocumentVersion> {
                 width: double.infinity,
                 height: 50,
                 child: ElevatedButton(
-              onPressed: () => _saveDocument(context),
-              child: Text(context.l10n.save),
-            ),
-              )
+                  onPressed: () => _saveDocument(context),
+                  child: Text(context.l10n.save),
+                ),
+              ),
             ],
           ),
         ),

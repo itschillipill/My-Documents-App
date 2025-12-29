@@ -18,5 +18,5 @@ enum SortOptions {
       case SortOptions.none:
         return ctx.l10n.noFilter;
     }
+  }
 }
-} 

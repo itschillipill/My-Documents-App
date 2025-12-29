@@ -7,8 +7,14 @@ class BuildTile extends StatelessWidget {
   final VoidCallback? onTap;
   final bool isDanger;
 
-
-  const BuildTile({super.key, required this.icon, required this.title, this.subtitle, this.onTap, this.isDanger = false});
+  const BuildTile({
+    super.key,
+    required this.icon,
+    required this.title,
+    this.subtitle,
+    this.onTap,
+    this.isDanger = false,
+  });
 
   @override
   Widget build(BuildContext context) {

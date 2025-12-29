@@ -5,11 +5,7 @@ class DatePicker extends StatelessWidget {
   final Function(DateTime?) onTap;
   final DateTime? expirationDate;
 
-  const DatePicker({
-    super.key,
-    required this.onTap,
-    this.expirationDate,
-  });
+  const DatePicker({super.key, required this.onTap, this.expirationDate});
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +31,7 @@ class DatePicker extends StatelessWidget {
               firstDate: DateTime.now(),
               lastDate: DateTime(3000),
             );
-           if(selectedDate != null) onTap(selectedDate);
+            if (selectedDate != null) onTap(selectedDate);
           },
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
@@ -51,9 +47,10 @@ class DatePicker extends StatelessWidget {
               children: [
                 Icon(
                   Icons.calendar_today_rounded,
-                  color: expirationDate != null
-                      ? colorScheme.primary
-                      : colorScheme.onSurface.withValues(alpha: 0.6),
+                  color:
+                      expirationDate != null
+                          ? colorScheme.primary
+                          : colorScheme.onSurface.withValues(alpha: 0.6),
                   size: 20,
                 ),
                 Expanded(
@@ -62,12 +59,14 @@ class DatePicker extends StatelessWidget {
                         ? expirationDate!.formatted(context)
                         : context.l10n.setExpirationDate,
                     style: theme.textTheme.bodyMedium?.copyWith(
-                      color: expirationDate != null
-                          ? colorScheme.onSurface
-                          : colorScheme.onSurface.withValues(alpha: 0.6),
-                      fontWeight: expirationDate != null
-                          ? FontWeight.w500
-                          : FontWeight.normal,
+                      color:
+                          expirationDate != null
+                              ? colorScheme.onSurface
+                              : colorScheme.onSurface.withValues(alpha: 0.6),
+                      fontWeight:
+                          expirationDate != null
+                              ? FontWeight.w500
+                              : FontWeight.normal,
                     ),
                   ),
                 ),

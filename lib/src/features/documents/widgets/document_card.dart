@@ -29,7 +29,8 @@ class DocumentCard extends StatelessWidget {
           onLongPress: onLongPress,
           onTap:
               onTap ??
-              () => Navigator.push(context, DocumentViewPage.route(document.id)),
+              () =>
+                  Navigator.push(context, DocumentViewPage.route(document.id)),
           child: BorderBox(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
             child: Row(

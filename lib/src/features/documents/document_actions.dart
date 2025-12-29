@@ -51,9 +51,7 @@ class Rename$DocumentAction extends DocumentAction {
     final newName = await MessageService.showDialogGlobal<String>(
       (ctx) => AlertDialog(
         title: Text(ctx.l10n.rename),
-        content: TextField(
-          controller: controller,
-        ),
+        content: TextField(controller: controller),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
@@ -84,7 +82,7 @@ class Delete$DocumentAction extends DocumentAction {
     try {
       final confirm = await MessageService.$confirmAction(
         title: context.l10n.delete,
-        message:context.l10n.willDeleteAllVersions,
+        message: context.l10n.willDeleteAllVersions,
       );
       if (!confirm) return;
       debugPrint("Deleting ${documentsIds.length} documents");
@@ -102,16 +100,15 @@ class Share$DocumentAction extends DocumentAction {
   final List<Document> documents;
   final BuildContext context;
 
-
   Share$DocumentAction({required this.documents, required this.context});
 
   @override
   Future<void> call() async {
     final paths = documents.map((doc) => doc.currentVersion.filePath).toList();
     debugPrint("Sharing $paths");
-   final err= await FileService.shareFiles(paths);
-   if(err!=null&&context.mounted){
-    MessageService.showErrorSnack(err.getMessage(context));
-   }
+    final err = await FileService.shareFiles(paths);
+    if (err != null && context.mounted) {
+      MessageService.showErrorSnack(err.getMessage(context));
+    }
   }
 }

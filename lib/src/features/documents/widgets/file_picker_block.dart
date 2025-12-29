@@ -63,8 +63,8 @@ class FilePickerBlock extends StatelessWidget {
             _buildSelectedFile(context, path!, colorScheme),
             const SizedBox(height: 12),
             _buildRemoveButton(context, colorScheme),
-          ] else  _buildSelectionGrid(context, colorScheme),
-          
+          ] else
+            _buildSelectionGrid(context, colorScheme),
         ],
       ),
     );
@@ -77,8 +77,13 @@ class FilePickerBlock extends StatelessWidget {
   ) {
     final fileName = p.basename(path);
     final fileExtension = p.extension(path).toLowerCase();
-    final isImage = ['.jpg', '.jpeg', '.png', '.gif', '.bmp']
-        .contains(fileExtension);
+    final isImage = [
+      '.jpg',
+      '.jpeg',
+      '.png',
+      '.gif',
+      '.bmp',
+    ].contains(fileExtension);
 
     return Material(
       color: Colors.transparent,
@@ -87,9 +92,7 @@ class FilePickerBlock extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
-          border: Border.all(
-            color: colorScheme.primary.withValues(alpha: 0.2),
-          ),
+          border: Border.all(color: colorScheme.primary.withValues(alpha: 0.2)),
         ),
         child: Row(
           children: [
@@ -114,9 +117,9 @@ class FilePickerBlock extends StatelessWidget {
                   Text(
                     fileName,
                     style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                          fontWeight: FontWeight.w500,
-                          color: colorScheme.onSurface,
-                        ),
+                      fontWeight: FontWeight.w500,
+                      color: colorScheme.onSurface,
+                    ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -124,17 +127,13 @@ class FilePickerBlock extends StatelessWidget {
                   Text(
                     _formatFileSize(path),
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: colorScheme.onSurface.withValues(alpha: 0.6),
-                        ),
+                      color: colorScheme.onSurface.withValues(alpha: 0.6),
+                    ),
                   ),
                 ],
               ),
             ),
-            Icon(
-              Icons.check_circle_rounded,
-              color: Colors.green,
-              size: 20,
-            ),
+            Icon(Icons.check_circle_rounded, color: Colors.green, size: 20),
           ],
         ),
       ),
@@ -171,11 +170,12 @@ class FilePickerBlock extends StatelessWidget {
                 icon: Icons.camera_alt_rounded,
                 label: context.l10n.takePhoto,
                 colorScheme: colorScheme,
-                onTap: () => FileService.pickFile(
-                  context,
-                  imageSource: ImageSource.camera,
-                  onSelected: onSelected,
-                ),
+                onTap:
+                    () => FileService.pickFile(
+                      context,
+                      imageSource: ImageSource.camera,
+                      onSelected: onSelected,
+                    ),
               ),
             ),
             const SizedBox(width: 12),
@@ -185,11 +185,12 @@ class FilePickerBlock extends StatelessWidget {
                 icon: Icons.photo_library_rounded,
                 label: context.l10n.fromGallery,
                 colorScheme: colorScheme,
-                onTap: () => FileService.pickFile(
-                  context,
-                  imageSource: ImageSource.gallery,
-                  onSelected: onSelected,
-                ),
+                onTap:
+                    () => FileService.pickFile(
+                      context,
+                      imageSource: ImageSource.gallery,
+                      onSelected: onSelected,
+                    ),
               ),
             ),
           ],
@@ -201,10 +202,7 @@ class FilePickerBlock extends StatelessWidget {
           icon: Icons.folder_open_rounded,
           label: context.l10n.chooseFile,
           colorScheme: colorScheme,
-          onTap: () => FileService.pickFile(
-            context,
-            onSelected: onSelected,
-          ),
+          onTap: () => FileService.pickFile(context, onSelected: onSelected),
           isFullWidth: true,
         ),
       ],
@@ -245,19 +243,15 @@ class FilePickerBlock extends StatelessWidget {
                   color: colorScheme.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: Icon(
-                  icon,
-                  size: 24,
-                  color: colorScheme.primary,
-                ),
+                child: Icon(icon, size: 24, color: colorScheme.primary),
               ),
               const SizedBox(height: 8),
               Text(
                 label,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      fontWeight: FontWeight.w500,
-                      color: colorScheme.onSurface,
-                    ),
+                  fontWeight: FontWeight.w500,
+                  color: colorScheme.onSurface,
+                ),
                 textAlign: TextAlign.center,
                 maxLines: 2,
               ),

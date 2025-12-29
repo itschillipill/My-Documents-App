@@ -58,7 +58,8 @@ class FoldersCubit extends Cubit<FoldersState> {
 
   Future<ErrorKeys?> saveFolder(Folder folder) async {
     if (folder.name.isEmpty) return ErrorKeys.enterTitle;
-    if (foldersOrEmpty.any((element) => element.name == folder.name)) return ErrorKeys.folderTitleExists;
+    if (foldersOrEmpty.any((element) => element.name == folder.name))
+      return ErrorKeys.folderTitleExists;
     await addFolder(folder);
     return null;
   }
