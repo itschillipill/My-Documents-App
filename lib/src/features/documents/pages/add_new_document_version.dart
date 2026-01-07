@@ -66,8 +66,9 @@ class _AddNewDocumentVersionState extends State<AddNewDocumentVersion> {
 
       await cubit.addNewVersion(widget.documentId, docVersion);
     } catch (e) {
-      if (context.mounted)
+      if (context.mounted) {
         MessageService.showSnackBar("${context.l10n.errorSavirgFile}: $e");
+      }
     }
     if (context.mounted) Navigator.pop(context);
   }

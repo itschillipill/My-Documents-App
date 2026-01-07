@@ -67,7 +67,10 @@ class _OnboardingPageState extends State<OnboardingPage> {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
       ),
-      builder: (context) => PrivacyPolicyModal(color: _onboardingItems(context)[currentPage].color),
+      builder:
+          (context) => PrivacyPolicyModal(
+            color: _onboardingItems(context)[currentPage].color,
+          ),
     );
   }
 
@@ -76,10 +79,11 @@ class _OnboardingPageState extends State<OnboardingPage> {
     List<OnboardingItem> onboardingItems = _onboardingItems(context);
     final isLastPage = currentPage == onboardingItems.length - 1;
     final theme = Theme.of(context);
-    final settingsCubit =  context.deps.settingsCubit;
-    bool isDark = settingsCubit.state.themeMode == ThemeMode.dark 
-    || (settingsCubit.state.themeMode == ThemeMode.system 
-        && MediaQuery.of(context).platformBrightness == Brightness.dark);
+    final settingsCubit = context.deps.settingsCubit;
+    bool isDark =
+        settingsCubit.state.themeMode == ThemeMode.dark ||
+        (settingsCubit.state.themeMode == ThemeMode.system &&
+            MediaQuery.of(context).platformBrightness == Brightness.dark);
 
     return Scaffold(
       body: Stack(
@@ -159,18 +163,19 @@ class _OnboardingPageState extends State<OnboardingPage> {
           ),
 
           //Переключение тем
-           Positioned(
+          Positioned(
             top: 24,
             left: 24,
             child: IconButton(
               onPressed: () {
                 settingsCubit.changeThemeMode(
-                  !isDark
-                      ? ThemeMode.dark
-                      : ThemeMode.light,
+                  !isDark ? ThemeMode.dark : ThemeMode.light,
                 );
               },
-              icon: Icon(!isDark ? Icons.dark_mode : Icons.light_mode, color: onboardingItems[currentPage].color,),
+              icon: Icon(
+                !isDark ? Icons.dark_mode : Icons.light_mode,
+                color: onboardingItems[currentPage].color,
+              ),
             ),
           ),
           // Переключение языков
@@ -348,7 +353,7 @@ class OnboardingItem {
 
 class PrivacyPolicyModal extends StatelessWidget {
   final Color color;
-  const PrivacyPolicyModal({super.key, this.color =Colors.blueAccent});
+  const PrivacyPolicyModal({super.key, this.color = Colors.blueAccent});
 
   @override
   Widget build(BuildContext context) {
@@ -390,11 +395,7 @@ class PrivacyPolicyModal extends StatelessWidget {
                     Row(
                       spacing: 10,
                       children: [
-                        Icon(
-                          Icons.privacy_tip_rounded,
-                          color: color,
-                          size: 20,
-                        ),
+                        Icon(Icons.privacy_tip_rounded, color: color, size: 20),
                         Text(
                           context.l10n.privacyPolicy,
                           style: theme.textTheme.titleMedium?.copyWith(
@@ -450,22 +451,18 @@ class PrivacyPolicyModal extends StatelessWidget {
                         decoration: BoxDecoration(
                           color: color.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: color.withValues(alpha: 0.2)),
+                          border: Border.all(
+                            color: color.withValues(alpha: 0.2),
+                          ),
                         ),
                         child: Row(
                           spacing: 12,
                           children: [
-                            Icon(
-                              Icons.security_rounded,
-                              color: color,
-                            ),
+                            Icon(Icons.security_rounded, color: color),
                             Expanded(
                               child: Text(
                                 context.l10n.moto,
-                                style: TextStyle(
-                                  color: color,
-                                  fontSize: 14,
-                                ),
+                                style: TextStyle(color: color, fontSize: 14),
                               ),
                             ),
                           ],

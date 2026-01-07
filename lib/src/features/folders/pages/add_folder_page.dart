@@ -50,16 +50,16 @@ class AddFolderPage extends StatelessWidget {
               height: 50,
               child: ElevatedButton(
                 onPressed: () async {
-                  final error = await context.deps.foldersCubit.saveFolder(
+                  final result = await context.deps.foldersCubit.saveFolder(
                     Folder(id: 0, name: _nameController.text.trim()),
                   );
-                  if (context.mounted) {
-                    if (error != null && context.mounted) {
-                      MessageService.showErrorSnack(error.getMessage(context));
-                    } else {
-                      Navigator.pop(context);
-                    }
-                  }
+                  result(
+                    onSuccess: (_) => Navigator.pop(context),
+                    onError:
+                        (error) => MessageService.showErrorSnack(
+                          error.getMessage(context),
+                        ),
+                  );
                 },
                 child: Text(context.l10n.save),
               ),

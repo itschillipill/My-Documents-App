@@ -106,9 +106,10 @@ class Share$DocumentAction extends DocumentAction {
   Future<void> call() async {
     final paths = documents.map((doc) => doc.currentVersion.filePath).toList();
     debugPrint("Sharing $paths");
-    final err = await FileService.shareFiles(paths);
-    if (err != null && context.mounted) {
-      MessageService.showErrorSnack(err.getMessage(context));
-    }
+    final result = await FileService.shareFiles(paths);
+    result(
+      onSuccess: (_) => (),
+      onError: (err) => MessageService.showErrorSnack(err.getMessage(context)),
+    );
   }
 }

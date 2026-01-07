@@ -3,13 +3,12 @@ import 'package:crypto/crypto.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:my_documents/src/core/extensions/extensions.dart';
 import 'package:my_documents/src/core/model/errors.dart';
-import 'package:my_documents/src/utils/sevices/message_service.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 
+import '../../core/result_or.dart';
 import '../../features/documents/model/document.dart' show Document;
 
 class FileService {
@@ -44,16 +43,11 @@ class FileService {
     return (await File(originalPath).copy(newPath)).path;
   }
 
-  static Future<String?> pickFile(
-    BuildContext context, {
-    ImageSource? imageSource,
-    Function(String?)? onSelected,
-  }) async {
+  static Future<ResultOr<String?>> pickFile({ImageSource? imageSource}) async {
     String? path;
     if (imageSource != null) {
       if (imageSource == ImageSource.camera && !isMobile) {
-        MessageService.showToast(context.l10n.notAvailableOnDesktop);
-        return null;
+        return ResultOr.error(ErrorKeys.notAvailableOnDesktop);
       }
       final image = await ImagePicker().pickImage(source: imageSource);
       if (image != null) {
@@ -65,8 +59,7 @@ class FileService {
         path = result.files.single.path!;
       }
     }
-    onSelected?.call(path);
-    return path;
+    return ResultOr.success(path);
   }
 
   static int getFileSize(String path) {
@@ -161,9 +154,9 @@ class FileService {
     return newPath;
   }
 
-  static Future<ErrorKeys?> shareFiles(List<String> paths) async {
+  static Future<ResultOr<void>> shareFiles(List<String> paths) async {
     debugPrint("Share files: $paths");
-    if (paths.isEmpty) return ErrorKeys.filesNotFound;
+    if (paths.isEmpty) return ResultOr.error(ErrorKeys.filesNotFound);
     try {
       final files =
           paths
@@ -173,13 +166,13 @@ class FileService {
               .map((file) => XFile(file.path))
               .toList();
 
-      if (files.isEmpty) return ErrorKeys.filesNotFound;
+      if (files.isEmpty) return ResultOr.error(ErrorKeys.filesNotFound);
 
       await SharePlus.instance.share(ShareParams(files: files));
-      return null;
+      return ResultOr<void>.success(null);
     } catch (e) {
       debugPrint("Share files error: $e");
-      return ErrorKeys.failedToShare;
+      return ResultOr.error(ErrorKeys.failedToShare);
     }
   }
 

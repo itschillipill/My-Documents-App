@@ -3,6 +3,7 @@ import 'dart:io' show File;
 import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart' show debugPrint;
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:my_documents/src/core/result_or.dart';
 import 'package:my_documents/src/utils/sevices/file_service.dart';
 import '../../../core/model/errors.dart';
 import '../../../data/data_sourse.dart';
@@ -108,7 +109,7 @@ class DocumentsCubit extends Cubit<DocumentsState> {
     return documentsOrEmpty.where((e) => documentIds.contains(e.id)).toList();
   }
 
-  Future<ErrorKeys?> saveDocument({
+  Future<ResultOr<String>> saveDocument({
     required String title,
     required String? originalPath,
     bool isFavorite = false,
@@ -116,15 +117,16 @@ class DocumentsCubit extends Cubit<DocumentsState> {
     String? comment,
     DateTime? expirationDate,
   }) async {
-    if (title.isEmpty) return ErrorKeys.enterTitle;
+    if (title.isEmpty) return ResultOr.error(ErrorKeys.enterTitle);
 
-    if (originalPath == null) return ErrorKeys.selectFile;
+    if (originalPath == null) return ResultOr.error(ErrorKeys.selectFile);
 
-    if (documentsOrEmpty.any((element) => element.title == title))
-      return ErrorKeys.documentTitleExists;
+    if (documentsOrEmpty.any((element) => element.title == title)) {
+      return ResultOr.error(ErrorKeys.documentTitleExists);
+    }
 
     final isValidSize = await FileService.validateFileSize(originalPath);
-    if (!isValidSize) return ErrorKeys.reachedMaxSize;
+    if (!isValidSize) return ResultOr.error(ErrorKeys.reachedMaxSize);
 
     try {
       final safePath = await FileService.saveFileToAppDir(originalPath);
@@ -150,10 +152,10 @@ class DocumentsCubit extends Cubit<DocumentsState> {
 
       await addDocument(doc);
 
-      return null;
+      return ResultOr.success(safePath);
     } catch (e) {
       debugPrint("Error saving file: $e");
-      return ErrorKeys.errorSavingFile;
+      return ResultOr.error(ErrorKeys.errorSavingFile);
     }
   }
 

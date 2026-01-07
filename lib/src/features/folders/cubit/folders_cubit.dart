@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_documents/src/core/model/errors.dart';
+import 'package:my_documents/src/core/result_or.dart';
 import '../../../data/data_sourse.dart';
 
 import 'package:my_documents/src/features/folders/model/folder.dart';
@@ -56,12 +57,13 @@ class FoldersCubit extends Cubit<FoldersState> {
     }
   }
 
-  Future<ErrorKeys?> saveFolder(Folder folder) async {
-    if (folder.name.isEmpty) return ErrorKeys.enterTitle;
-    if (foldersOrEmpty.any((element) => element.name == folder.name))
-      return ErrorKeys.folderTitleExists;
+  Future<ResultOr<void>> saveFolder(Folder folder) async {
+    if (folder.name.isEmpty) return ResultOr.error(ErrorKeys.enterTitle);
+    if (foldersOrEmpty.any((element) => element.name == folder.name)) {
+      return ResultOr.error(ErrorKeys.folderTitleExists);
+    }
     await addFolder(folder);
-    return null;
+    return ResultOr.success(null);
   }
 
   Folder? getFolderById(int? id) =>

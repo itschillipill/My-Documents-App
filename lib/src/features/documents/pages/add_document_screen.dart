@@ -59,13 +59,11 @@ class _AddDocumentScreenState extends State<AddDocumentScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             spacing: 10,
             children: [
-              // Folder Selection
               FolderPiker(
                 selectedFolder: _folder,
                 onSelected: (f) => setState(() => _folder = f),
               ),
 
-              // File Picker
               FilePickerBlock(
                 path: _originalPath,
                 onSelected: (path) {
@@ -85,7 +83,7 @@ class _AddDocumentScreenState extends State<AddDocumentScreen> {
                       _originalPath == null
                           ? null
                           : () async {
-                            final error = await context.deps.documentsCubit
+                            final result = await context.deps.documentsCubit
                                 .saveDocument(
                                   title: _titleController.text.trim(),
                                   isFavorite: isFavorite,
@@ -95,15 +93,13 @@ class _AddDocumentScreenState extends State<AddDocumentScreen> {
                                   expirationDate: _expirationDate,
                                 );
 
-                            if (context.mounted) {
-                              if (error != null) {
-                                MessageService.showErrorSnack(
-                                  error.getMessage(context),
-                                );
-                              } else {
-                                Navigator.pop(context);
-                              }
-                            }
+                            result(
+                              onSuccess: (_) => Navigator.pop(context),
+                              onError:
+                                  (error) => MessageService.showErrorSnack(
+                                    error.getMessage(context),
+                                  ),
+                            );
                           },
 
                   child: Text(

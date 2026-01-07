@@ -1,15 +1,21 @@
 part of 'package:my_documents/main.dart';
 
-void _$initializationErrorHandler(Object error, StackTrace stackTrace) {
+void _$initializationErrorHandler(Object error, StackTrace stackTrace) async {
   debugPrint("Initialization error: $error");
   debugPrintStack(stackTrace: stackTrace);
+  ThemeMode themeMode =
+      ThemeMode.values[(await SharedPreferences.getInstance()).getInt(
+            Constants.themeModeKey,
+          ) ??
+          0];
+  debugPrint("Theme mode: ${themeMode.name}");
   runApp(
     MaterialApp(
       title: Constants.appName,
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
-      themeMode: ThemeMode.system,
+      themeMode: themeMode,
       home: InitializationErrorScreen(
         error: error,
         stackTrace: stackTrace,

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:my_documents/src/core/extensions/extensions.dart';
 import 'package:my_documents/src/utils/sevices/file_service.dart';
+import 'package:my_documents/src/utils/sevices/message_service.dart';
 import 'package:path/path.dart' as p;
 
 class FilePickerBlock extends StatelessWidget {
@@ -160,9 +161,10 @@ class FilePickerBlock extends StatelessWidget {
 
   Widget _buildSelectionGrid(BuildContext context, ColorScheme colorScheme) {
     return Column(
+      spacing: 10,
       children: [
-        // Camera and Gallery row
         Row(
+          spacing: 10,
           children: [
             Expanded(
               child: _buildSelectionOption(
@@ -170,39 +172,58 @@ class FilePickerBlock extends StatelessWidget {
                 icon: Icons.camera_alt_rounded,
                 label: context.l10n.takePhoto,
                 colorScheme: colorScheme,
-                onTap:
-                    () => FileService.pickFile(
-                      context,
-                      imageSource: ImageSource.camera,
-                      onSelected: onSelected,
-                    ),
+                onTap: () async {
+                  final result = await FileService.pickFile(
+                    imageSource: ImageSource.camera,
+                  );
+                  result(
+                    onSuccess: (path) => onSelected(path),
+                    onError:
+                        (error) => MessageService.showErrorSnack(
+                          error.getMessage(context),
+                        ),
+                  );
+                },
               ),
             ),
-            const SizedBox(width: 12),
             Expanded(
               child: _buildSelectionOption(
                 context: context,
                 icon: Icons.photo_library_rounded,
                 label: context.l10n.fromGallery,
                 colorScheme: colorScheme,
-                onTap:
-                    () => FileService.pickFile(
-                      context,
-                      imageSource: ImageSource.gallery,
-                      onSelected: onSelected,
-                    ),
+                onTap: () async {
+                  final result = await FileService.pickFile(
+                    imageSource: ImageSource.gallery,
+                  );
+                  result(
+                    onSuccess: (path) => onSelected(path),
+                    onError:
+                        (error) => MessageService.showErrorSnack(
+                          error.getMessage(context),
+                        ),
+                  );
+                },
               ),
             ),
           ],
         ),
-        const SizedBox(height: 12),
-        // File picker
         _buildSelectionOption(
           context: context,
           icon: Icons.folder_open_rounded,
           label: context.l10n.chooseFile,
           colorScheme: colorScheme,
-          onTap: () => FileService.pickFile(context, onSelected: onSelected),
+          onTap:
+              () => () async {
+                final result = await FileService.pickFile();
+                result(
+                  onSuccess: (path) => onSelected(path),
+                  onError:
+                      (error) => MessageService.showErrorSnack(
+                        error.getMessage(context),
+                      ),
+                );
+              },
           isFullWidth: true,
         ),
       ],
