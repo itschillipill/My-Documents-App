@@ -4,11 +4,8 @@ class ResultOr<T> {
   final ErrorKeys? _error;
   final T? _result;
 
-  bool get isSuccess => _result != null;
-  bool get isError => _error != null;
-
-  T get result => _result!;
-  ErrorKeys get error => _error!;
+  bool get isSuccess => _error == null;
+  bool get isError => !isSuccess;
 
   ResultOr._(this._result, this._error);
 
@@ -16,8 +13,8 @@ class ResultOr<T> {
   factory ResultOr.error(ErrorKeys error) => ResultOr._(null, error);
 
   void call({
-    required Function(T result) onSuccess,
-    required Function(ErrorKeys error) onError,
+    required void Function(T result) onSuccess,
+    required void Function(ErrorKeys error) onError,
   }) {
     if (isSuccess) {
       onSuccess(_result as T);

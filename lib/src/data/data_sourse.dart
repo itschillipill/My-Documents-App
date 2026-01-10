@@ -8,16 +8,16 @@ abstract class DataSource {
   // CRUD для документов
   Future<List<Document>> getAllDocuments();
   Future<Document?> getDocumentById(int id);
-  Future<int> insertDocument(Document document);
-  Future<void> updateDocument(Document document);
+  Future<Document> insertDocument(Document document);
+  Future<bool> updateDocument(Document document);
   Future<bool> deleteDocument(int id);
   Future<bool> deleteDocumentsByIds(List<int> ids);
-  Future<int> addNewVersion(int documentId, DocumentVersion version);
+  Future<DocumentVersion> addNewVersion(int documentId, DocumentVersion version);
   Future<DocumentVersion?> getDocumentVersionByDocumentId(int documentId);
 
   // CRUD для папок
   Future<List<Folder>> getAllFolders();
-  Future<int> insertFolder(Folder folder);
-  Future<void> updateFolder(Folder folder);
-  Future<void> deleteFolder(int id);
+  Future<Folder> insertFolder(Folder folder);
+  Future<Folder> updateFolder(Folder folder);
+  Future<bool> deleteFolder(int id);
 }

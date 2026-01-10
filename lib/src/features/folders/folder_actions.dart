@@ -62,9 +62,7 @@ class Delete$FolderAction extends FolderActions {
     );
 
     if (confirmed) {
-      await foldersCubit.deleteFolder(folder.id).then((_) async {
-        await foldersCubit.loadData();
-      });
+      await foldersCubit.deleteFolder(folder.id);
       if (context.mounted) Navigator.pop(context);
     }
   }

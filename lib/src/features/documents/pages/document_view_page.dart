@@ -31,7 +31,6 @@ class DocumentViewPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final cubit = context.read<DocumentsCubit>();
     return BlocBuilder<DocumentsCubit, DocumentsState>(
-      buildWhen: (previous, current) => current is DocumentsLoaded,
       builder: (context, state) {
         final document = cubit.getDocumentById(documentId);
         final documentVersion = document?.versions.firstWhere(

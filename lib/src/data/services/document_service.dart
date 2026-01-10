@@ -83,73 +83,102 @@ class DocumentService {
     );
   }
 
-  Future<int> insertDocument(Document document) async {
-    final documentId = await _db!.insert('documents', {
-      'title': document.title,
-      'folderId': document.folderId,
-      'isFavorite': document.isFavorite ? 1 : 0,
-      'createdAt': document.createdAt.toIso8601String(),
-      'currentVersionId': 0,
-    });
+  Future<Document> insertDocument(Document document) async {
+  // Вставляем сам документ
+  final documentId = await _db!.insert('documents', {
+    'title': document.title,
+    'folderId': document.folderId,
+    'isFavorite': document.isFavorite ? 1 : 0,
+    'createdAt': document.createdAt.toIso8601String(),
+    'currentVersionId': 0,
+  });
 
-    int? firstVersionId;
+  int? firstVersionId;
+  List<DocumentVersion> insertedVersions = [];
 
-    for (final version in document.versions) {
-      final versionId = await _db.insert('document_versions', {
-        'documentId': documentId,
-        'filePath': version.filePath,
-        'uploadedAt': version.uploadedAt.toIso8601String(),
-        'comment': version.comment,
-        'expirationDate': version.expirationDate?.toIso8601String(),
-      });
-
-      firstVersionId ??= versionId;
-    }
-
-    if (firstVersionId != null) {
-      await _db.update(
-        'documents',
-        {'currentVersionId': firstVersionId},
-        where: 'id = ?',
-        whereArgs: [documentId],
-      );
-    }
-
-    return documentId;
-  }
-
-  Future<int> addNewVersion(int documentId, DocumentVersion version) async {
-    final versionId = await _db!.insert('document_versions', {
+  // Вставляем версии документа
+  for (final version in document.versions) {
+    final versionId = await _db.insert('document_versions', {
       'documentId': documentId,
       'filePath': version.filePath,
       'uploadedAt': version.uploadedAt.toIso8601String(),
       'comment': version.comment,
       'expirationDate': version.expirationDate?.toIso8601String(),
     });
+
+    firstVersionId ??= versionId;
+
+    // Добавляем в список с новым id
+    insertedVersions.add(
+      version.copyWith(id: versionId, documentId: documentId),
+    );
+  }
+
+  // Обновляем currentVersionId
+  if (firstVersionId != null) {
     await _db.update(
       'documents',
-      {'currentVersionId': versionId},
+      {'currentVersionId': firstVersionId},
       where: 'id = ?',
       whereArgs: [documentId],
     );
-
-    return versionId;
   }
 
-  Future<void> updateDocument(Document document) async {
-    await _db!.update(
-      'documents',
-      {
-        'title': document.title,
-        'folderId': document.folderId,
-        'isFavorite': document.isFavorite ? 1 : 0,
-        'createdAt': document.createdAt.toIso8601String(),
-        'currentVersionId': document.currentVersionId,
-      },
-      where: 'id = ?',
-      whereArgs: [document.id],
-    );
+  // Возвращаем новый Document с id и версиями
+  return document.copyWith(
+    id: documentId,
+    currentVersionId: firstVersionId,
+    versions: insertedVersions,
+  );
+}
+
+
+  Future<DocumentVersion> addNewVersion(int documentId, DocumentVersion version) async {
+  if (_db == null) {
+    throw Exception("Database is null");
   }
+
+  // Вставляем версию
+  final versionId = await _db.insert('document_versions', {
+    'documentId': documentId,
+    'filePath': version.filePath,
+    'uploadedAt': version.uploadedAt.toIso8601String(),
+    'comment': version.comment,
+    'expirationDate': version.expirationDate?.toIso8601String(),
+  });
+
+  // Обновляем currentVersionId в документе
+  await _db.update(
+    'documents',
+    {'currentVersionId': versionId},
+    where: 'id = ?',
+    whereArgs: [documentId],
+  );
+
+  // Возвращаем новый объект с реальным id
+  return version.copyWith(
+    id: versionId,
+    documentId: documentId,
+  );
+}
+
+  Future<bool> updateDocument(Document document) async {
+  if (_db == null) return false;
+
+  final count = await _db.update(
+    'documents',
+    {
+      'title': document.title,
+      'folderId': document.folderId,
+      'isFavorite': document.isFavorite ? 1 : 0,
+      'createdAt': document.createdAt.toIso8601String(),
+      'currentVersionId': document.currentVersionId,
+    },
+    where: 'id = ?',
+    whereArgs: [document.id],
+  );
+  return count > 0;
+}
 
   Future<bool> deleteDocument(int id) async {
     if (_db == null) {

@@ -80,15 +80,15 @@ class LocalDataSource implements DataSource {
       _documentService.getDocumentById(id);
 
   @override
-  Future<int> insertDocument(Document document) =>
+  Future<Document> insertDocument(Document document) =>
       _documentService.insertDocument(document);
 
   @override
-  Future<int> addNewVersion(int documentId, DocumentVersion version) =>
+  Future<DocumentVersion> addNewVersion(int documentId, DocumentVersion version) =>
       _documentService.addNewVersion(documentId, version);
 
   @override
-  Future<void> updateDocument(Document document) =>
+  Future<bool> updateDocument(Document document) =>
       _documentService.updateDocument(document);
 
   @override
@@ -105,13 +105,13 @@ class LocalDataSource implements DataSource {
   Future<List<Folder>> getAllFolders() => _folderService.getAllFolders();
 
   @override
-  Future<int> insertFolder(Folder folder) =>
+  Future<Folder> insertFolder(Folder folder) =>
       _folderService.insertFolder(folder);
 
   @override
-  Future<void> updateFolder(Folder folder) =>
+  Future<Folder> updateFolder(Folder folder) =>
       _folderService.updateFolder(folder);
 
   @override
-  Future<void> deleteFolder(int id) => _folderService.deleteFolder(id);
+  Future<bool> deleteFolder(int id) => _folderService.deleteFolder(id);
 }

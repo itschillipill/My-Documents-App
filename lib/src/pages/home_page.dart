@@ -34,12 +34,12 @@ class MyHomePage extends StatelessWidget {
               ),
             ],
           ),
-          Expanded(
+        const Expanded(
             child: CustomScrollView(
               slivers: [
-                SliverToBoxAdapter(child: DocumentsBlock()),
-                const WarningBlock(),
-                FoldersBlock(),
+                 DocumentsBlock(),
+                 WarningBlock(),
+                 FoldersBlock(),
               ],
             ),
           ),

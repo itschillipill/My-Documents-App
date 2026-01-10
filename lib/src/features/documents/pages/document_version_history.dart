@@ -19,10 +19,8 @@ class DocumentVersionHistory extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<DocumentsCubit, DocumentsState>(
-      buildWhen: (previous, current) => (current is DocumentsLoaded),
       builder: (context, state) {
-        if (state is! DocumentsLoaded) return SizedBox.shrink();
-        final document = state.documents.firstWhere((d) => d.id == documentId);
+        final document = (state.documents??[]).firstWhere((d) => d.id == documentId);
         final versionsWithIndex =
             document.versions
                 .asMap()

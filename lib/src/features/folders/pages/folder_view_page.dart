@@ -138,18 +138,18 @@ class _FolderViewPageState extends State<FolderViewPage> {
         body: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8),
           child: BlocBuilder<DocumentsCubit, DocumentsState>(
-            buildWhen: (_, current) => current is DocumentsLoaded,
             builder: (context, state) {
-              if (state is! DocumentsLoaded) {
+              if (state.isProcessing) {
                 return Center(child: CircularProgressIndicator());
               }
               final documents = sorted(
-                folder.getDocuments(state.documents),
+                folder.getDocuments(state.documents??[]),
                 sortOptions,
                 isReverse,
               );
-              if (documents.isEmpty)
+              if (documents.isEmpty) {
                 return Center(child: Text(context.l10n.noDocumentsFound));
+              }
               return ListView.builder(
                 itemCount: documents.length,
                 itemBuilder: (context, index) {
@@ -171,8 +171,9 @@ class _FolderViewPageState extends State<FolderViewPage> {
                                   documents[index].id,
                                 ),
                               );
-                              if (selectedDocumentsIds.isEmpty)
+                              if (selectedDocumentsIds.isEmpty) {
                                 resetSelecting();
+                              }
                             }
                             : null,
                   );

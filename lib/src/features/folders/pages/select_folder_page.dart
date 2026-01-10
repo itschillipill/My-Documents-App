@@ -17,11 +17,9 @@ class SelectFolderPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<FoldersCubit, FoldersState>(
-      listener: (context, state) {},
-      buildWhen: (previous, current) => current is FoldersLoaded,
+    return BlocBuilder<FoldersCubit, FoldersState>(
       builder: (context, state) {
-        final folders = (state as FoldersLoaded).folders;
+        final List<Folder> folders = state.folders?? [];
         return Scaffold(
           appBar: AppBar(
             title: Text(

@@ -98,8 +98,8 @@ class _SettingsPageState extends State<SettingsPage> {
               padding: const EdgeInsets.all(24),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
+                spacing: 20,
                 children: [
-                  // Handle indicator
                   Container(
                     width: 40,
                     height: 4,
@@ -110,18 +110,12 @@ class _SettingsPageState extends State<SettingsPage> {
                       borderRadius: BorderRadius.circular(2),
                     ),
                   ),
-                  const SizedBox(height: 20),
-
-                  // Title
                   Text(
                     title,
                     style: Theme.of(ctx).textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.w600,
                     ),
                   ),
-                  const SizedBox(height: 24),
-
-                  // PIN Input
                   TextField(
                     controller: controller,
                     keyboardType: TextInputType.number,
@@ -161,9 +155,6 @@ class _SettingsPageState extends State<SettingsPage> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 24),
-
-                  // Buttons
                   Row(
                     children: [
                       Expanded(
@@ -241,7 +232,6 @@ class _SettingsPageState extends State<SettingsPage> {
             child: Column(
               spacing: 20,
               children: [
-                // Security Section
                 BuildSection(
                   title: context.l10n.security,
                   icon: Icons.security_rounded,
@@ -335,8 +325,6 @@ class _SettingsPageState extends State<SettingsPage> {
                     ),
                   ],
                 ),
-
-                // Data Management Section
                 BuildSection(
                   title: context.l10n.dataManagement,
                   icon: Icons.storage_rounded,
@@ -346,12 +334,16 @@ class _SettingsPageState extends State<SettingsPage> {
                       title: context.l10n.exportData,
                       subtitle: context.l10n.backupDocuments,
                       onTap: () async {
-                        final err = await FileService.exportData();
-                        if (err != null && context.mounted) {
-                          MessageService.showErrorSnack(
-                            err.getMessage(context),
-                          );
-                        }
+                        final result = await MessageService.showLoading(
+                          timeout: Duration(seconds: 60),
+                          message: context.l10n.exportData,
+                          fn:()=>FileService.exportData(documents: context.deps.documentsCubit.documentsOrEmpty),
+                        );
+                        result(
+                          onSuccess: (_) => (),
+                          onError: (err) =>
+                              MessageService.showErrorSnack(err.getMessage(context)),
+                        );
                       },
                     ),
                     _buildDivider(),
@@ -360,18 +352,19 @@ class _SettingsPageState extends State<SettingsPage> {
                       title: context.l10n.importData,
                       subtitle: context.l10n.restoreFromBackup,
                       onTap: () async {
-                        final err = await FileService.importData();
-                        if (err != null && context.mounted) {
-                          MessageService.showErrorSnack(
-                            err.getMessage(context),
-                          );
-                        }
+                        final result = await FileService.importData();
+                        result(
+                          onSuccess: (result) {
+                            context.deps.documentsCubit.restoreDocuments(result);
+                          },
+                          onError: (error) => MessageService.showErrorSnack(
+                            error.getMessage(context),
+                          ),
+                        );
                       },
                     ),
                   ],
                 ),
-
-                // Appearance Section
                 BuildSection(
                   title: context.l10n.appearance,
                   icon: Icons.palette_rounded,
@@ -413,8 +406,6 @@ class _SettingsPageState extends State<SettingsPage> {
                     ),
                   ],
                 ),
-
-                // About Section
                 BuildSection(
                   title: context.l10n.about,
                   icon: Icons.info_rounded,
@@ -441,8 +432,6 @@ class _SettingsPageState extends State<SettingsPage> {
                     ),
                   ],
                 ),
-
-                // Utility Buttons
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8),
                   child: Column(

@@ -48,8 +48,8 @@ class Folder {
     return Folder(id: map['id'] as int, name: map['name'] as String);
   }
 
-  Folder copyWith({String? name}) {
-    return Folder(id: id, name: name ?? this.name);
+  Folder copyWith({int? id,String? name}) {
+    return Folder(id: id??this.id, name: name ?? this.name);
   }
 
   String folderTitle(BuildContext context) {

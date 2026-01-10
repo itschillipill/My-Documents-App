@@ -213,8 +213,8 @@ class FilePickerBlock extends StatelessWidget {
           icon: Icons.folder_open_rounded,
           label: context.l10n.chooseFile,
           colorScheme: colorScheme,
-          onTap:
-              () => () async {
+          onTap: () async {
+
                 final result = await FileService.pickFile();
                 result(
                   onSuccess: (path) => onSelected(path),

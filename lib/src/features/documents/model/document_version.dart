@@ -43,11 +43,26 @@ class DocumentVersion {
         filePath: filePath,
         uploadedAt: DateTime.parse(uploadedAt),
         comment: comment,
-        expirationDate:
-            expirationDate == null ? null : DateTime.tryParse(expirationDate),
+        expirationDate: DateTime.tryParse(expirationDate??''),
       ),
     _ => throw ArgumentError('Invalid map format'),
   };
+
+  DocumentVersion copyWith({
+    int? id,
+    int? documentId,
+    String? filePath,
+    DateTime? uploadedAt,
+    String? comment,
+    DateTime? expirationDate,
+  }) => DocumentVersion(
+    id: id ?? this.id,
+    documentId: documentId ?? this.documentId,
+    filePath: filePath ?? this.filePath,
+    uploadedAt: uploadedAt ?? this.uploadedAt,
+    comment: comment ?? this.comment,
+    expirationDate: expirationDate ?? this.expirationDate,
+  );
 
   bool get isImage =>
       filePath.endsWith(".jpg") ||

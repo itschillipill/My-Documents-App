@@ -17,54 +17,49 @@ class DocumentsBlock extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final screenWidth = MediaQuery.of(context).size.width;
+    final screenWidth = MediaQuery.sizeOf(context).width;
 
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: BlocBuilder<DocumentsCubit, DocumentsState>(
-        buildWhen: (previous, current) => current is DocumentsLoaded,
-        builder: (context, state) {
-          if (state is DocumentsLoaded) {
-            final documents = state.documents;
-            if (documents.isEmpty) {
-              return _buildEmptyState(context, colorScheme, screenWidth);
+    return SliverToBoxAdapter(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8),
+        child: BlocBuilder<DocumentsCubit, DocumentsState>(
+          builder: (context, state) {
+            if (state.isIdle) {
+              final documents = state.documents ?? [];
+              if (documents.isEmpty) {
+                return _buildEmptyState(context, colorScheme, screenWidth);
+              }
+              final gridDelegate = _calculateGridDelegate(screenWidth);
+              final iconSize = _calculateIconSize(screenWidth);
+              final favorites = documents.where((e) => e.isFavorite);
+              final nonFavorites = documents.where((e) => !e.isFavorite);
+              final prioritizedDocs = [...favorites, ...nonFavorites];
+              final docsToShow = prioritizedDocs.take(3);
+              final items = [
+                ...docsToShow,
+                null,
+              ]; 
+              
+              return GridView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: items.length,
+                gridDelegate: gridDelegate,
+                itemBuilder: (context, index) {
+                  return _buildDocumentCard(
+                    doc: items[index],
+                    context: context,
+                    colorScheme: colorScheme,
+                    theme: theme,
+                    iconSize: iconSize,
+                    screenWidth: screenWidth,
+                  );
+                },
+              );
             }
-
-            // Separate favorites and non-favorites
-            final favorites = documents.where((e) => e.isFavorite);
-            final nonFavorites = documents.where((e) => !e.isFavorite);
-            final prioritizedDocs = [...favorites, ...nonFavorites];
-
-            // Take first 3 documents or less
-            final docsToShow = prioritizedDocs.take(3);
-            final items = [
-              ...docsToShow,
-              null,
-            ]; // Add "All Documents" card at the end
-
-            // Calculate responsive values based on screen width
-            final gridDelegate = _calculateGridDelegate(screenWidth);
-            final iconSize = _calculateIconSize(screenWidth);
-
-            return GridView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: items.length,
-              gridDelegate: gridDelegate,
-              itemBuilder: (context, index) {
-                return _buildDocumentCard(
-                  doc: items[index],
-                  context: context,
-                  colorScheme: colorScheme,
-                  theme: theme,
-                  iconSize: iconSize,
-                  screenWidth: screenWidth,
-                );
-              },
-            );
-          }
-          return _buildLoadingState(colorScheme, screenWidth, context);
-        },
+            return _buildLoadingState(colorScheme, screenWidth, context);
+          },
+        ),
       ),
     );
   }
@@ -72,59 +67,30 @@ class DocumentsBlock extends StatelessWidget {
   SliverGridDelegateWithFixedCrossAxisCount _calculateGridDelegate(
     double screenWidth,
   ) {
-    if (screenWidth < 400) {
-      // For very small screens (phones in portrait)
-      return const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        mainAxisSpacing: 8,
-        crossAxisSpacing: 8,
-        childAspectRatio: 1.4,
+    final (int crossAxisCount, double mainSpacing, double crossSpacing, double aspectRatio) = switch(screenWidth) {
+        < 400 => (2, 8, 8, 1.4),
+        < 500 => (2, 10, 10, 1.3),
+        < 700 => (3, 12, 12, 1.2),
+        < 900 => (4, 12, 12, 1.1),
+      _ => (5, 16, 16, 1.0),
+    };
+      return SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: crossAxisCount,
+        mainAxisSpacing: mainSpacing,
+        crossAxisSpacing: crossSpacing,
+        childAspectRatio: aspectRatio,
       );
-    } else if (screenWidth < 500) {
-      // For medium-small screens
-      return const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        mainAxisSpacing: 10,
-        crossAxisSpacing: 10,
-        childAspectRatio: 1.3,
-      );
-    } else if (screenWidth < 700) {
-      // For medium screens (tablets in portrait, large phones)
-      return const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 3,
-        mainAxisSpacing: 12,
-        crossAxisSpacing: 12,
-        childAspectRatio: 1.2,
-      );
-    } else if (screenWidth < 900) {
-      // For large screens (tablets in landscape)
-      return const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 4,
-        mainAxisSpacing: 12,
-        crossAxisSpacing: 12,
-        childAspectRatio: 1.1,
-      );
-    } else {
-      // For very large screens (desktop)
-      return const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 5,
-        mainAxisSpacing: 16,
-        crossAxisSpacing: 16,
-        childAspectRatio: 1.0,
-      );
-    }
   }
 
   double _calculateIconSize(double screenWidth) {
-    if (screenWidth < 400) {
-      return 24;
-    } else if (screenWidth < 500) {
-      return 28;
-    } else if (screenWidth < 700) {
-      return 32;
-    } else {
-      return 36;
-    }
+    final double iconSize = switch(screenWidth) {
+        < 400 => 20,
+        < 500 => 24,
+        < 700 => 28,
+        < 900 => 32,
+      _ => 36,
+    };
+    return iconSize;
   }
 
   Widget _buildDocumentCard({

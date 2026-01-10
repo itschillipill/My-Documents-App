@@ -15,30 +15,43 @@ class FolderService {
         .toList();
   }
 
-  Future<int> insertFolder(Folder folder) async {
-    return await _db!.insert('folders', {'name': folder.name});
-  }
+  Future<Folder> insertFolder(Folder folder) async {
+  final id = await _db!.insert('folders', {'name': folder.name});
+  return folder.copyWith(id: id);
+}
 
-  Future<void> updateFolder(Folder folder) async {
-    await _db!.update(
-      'folders',
-      {'name': folder.name},
-      where: 'id = ?',
-      whereArgs: [folder.id],
+
+ Future<Folder> updateFolder(Folder folder) async {
+  final count = await _db?.update(
+    'folders',
+    {'name': folder.name},
+    where: 'id = ?',
+    whereArgs: [folder.id],
+  );
+
+  if (count == 0) throw Exception('Could not update folder'); 
+  return folder; 
+}
+
+
+  Future<bool> deleteFolder(int id) async {
+  if (_db == null) return false;
+
+  try {
+    await _db.update(
+      'documents',
+      {'folderId': null},
+      where: 'folderId = ?',
+      whereArgs: [id],
     );
-  }
 
-  Future<void> deleteFolder(int id) async {
-    try {
-      await _db?.update(
-        'documents',
-        {'folderId': null},
-        where: 'folderId = ?',
-        whereArgs: [id],
-      );
-      await _db?.delete('folders', where: 'id = ?', whereArgs: [id]);
-    } catch (e) {
-      debugPrint(e.toString());
-    }
+    final count = await _db.delete('folders', where: 'id = ?', whereArgs: [id]);
+
+    return count > 0; 
+  } catch (e) {
+    debugPrint("Error deleting folder: $e");
+    return false;
   }
+}
+
 }

@@ -4,14 +4,14 @@ import 'package:my_documents/src/features/folders/cubit/folders_cubit.dart';
 import 'package:my_documents/src/features/settings/cubit/settings_cubit.dart';
 import 'package:my_documents/src/data/data_sourse.dart';
 
-abstract interface class Dependencies {
-  late DataSource dataSource;
+class Dependencies {
+  late final DataSource dataSource;
 
-  late DocumentsCubit documentsCubit;
+  late final DocumentsCubit documentsCubit;
 
-  late FoldersCubit foldersCubit;
+  late final FoldersCubit foldersCubit;
 
-  late SettingsCubit settingsCubit;
+  late final SettingsCubit settingsCubit;
 
-  late AuthenticationExecutor authExecutor;
+  late final AuthenticationExecutor authExecutor;
 }

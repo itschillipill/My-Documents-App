@@ -5,7 +5,6 @@ import 'package:my_documents/src/features/auth/auth_executor.dart';
 import 'package:my_documents/src/features/documents/cubit/documents_cubit.dart';
 import 'package:my_documents/src/features/folders/cubit/folders_cubit.dart';
 import 'package:my_documents/src/features/settings/cubit/settings_cubit.dart';
-import 'package:my_documents/src/data/data_sourse.dart';
 import 'package:my_documents/src/data/local_data_sourse.dart';
 import 'package:shared_preferences/shared_preferences.dart'
     show SharedPreferences;
@@ -18,21 +17,7 @@ import 'package:meta/meta.dart';
 import 'dependencies.dart';
 
 typedef _InitializationStep =
-    FutureOr<void> Function(MutableDependencies dependencies);
-
-class MutableDependencies implements Dependencies {
-  @override
-  late DataSource dataSource;
-  @override
-  late DocumentsCubit documentsCubit;
-  @override
-  late FoldersCubit foldersCubit;
-  @override
-  late SettingsCubit settingsCubit;
-  @override
-  late AuthenticationExecutor authExecutor;
-}
-
+    FutureOr<void> Function(Dependencies dependencies);
 @internal
 mixin InitializeDependencies {
   @protected
@@ -40,7 +25,7 @@ mixin InitializeDependencies {
     void Function(int progress, String message)? onProgress,
   }) async {
     final steps = _initializationSteps;
-    final dependencies = MutableDependencies();
+    final dependencies = Dependencies();
     final totalSteps = steps.length;
     for (var currentStep = 0; currentStep < totalSteps; currentStep++) {
       final step = steps[currentStep];
@@ -72,20 +57,26 @@ mixin InitializeDependencies {
             }
           },
         ),
-        // 3. Инициализация app dependencies
-        (
-          "Initialization",
-          (deps) async {
-            final prefs = await SharedPreferences.getInstance();
-            final passwordStorage = FlutterSecureStorage();
+        ("Password storage initialization",(deps)async{
+             final passwordStorage = FlutterSecureStorage();
             deps.authExecutor = AuthenticationExecutor(passwordStorage);
-            deps.settingsCubit = SettingsCubit(
+        }),
+        ("Local Storage initialization",(deps)async{
+           final prefs = await SharedPreferences.getInstance();
+           deps.settingsCubit = SettingsCubit(
               prefs: prefs,
               canUseBiometrics: await deps.authExecutor.canCheckBiometrics,
             );
-            deps.documentsCubit = DocumentsCubit(dataSource: deps.dataSource);
+        }),
+        ("Documents initialization",(deps)async{
+           deps.documentsCubit = DocumentsCubit(dataSource: deps.dataSource);
+        }),
+        ("Folders initialization",(deps)async{
             deps.foldersCubit = FoldersCubit(dataSource: deps.dataSource);
-
+        }),
+        (
+          "Ready to use",
+          (deps) async {
             await Future.delayed(const Duration(milliseconds: 500));
           },
         ),

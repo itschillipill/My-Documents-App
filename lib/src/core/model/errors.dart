@@ -11,7 +11,9 @@ enum ErrorKeys {
   filesNotFound,
   failedToShare,
   notImplemented,
-  notAvailableOnDesktop;
+  notAvailableOnDesktop,
+  failedToImport,
+  invalidImportFormat;
 
   String getMessage(BuildContext ctx) {
     return switch (this) {
@@ -25,6 +27,7 @@ enum ErrorKeys {
       ErrorKeys.failedToShare => ctx.l10n.failedToShare,
       ErrorKeys.notImplemented => ctx.l10n.notImplemented,
       ErrorKeys.notAvailableOnDesktop => ctx.l10n.notAvailableOnDesktop,
+      _ => name,
     };
   }
 }
