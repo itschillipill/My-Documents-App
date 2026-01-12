@@ -20,10 +20,10 @@ class DocumentsCubit extends Cubit<DocumentsState> {
     loadData();
   }
 
- String get name=>"DocumentsCubit";
+  String get name => "DocumentsCubit";
 
   @override
-  void emit(DocumentsState state){
+  void emit(DocumentsState state) {
     MyBlocObserver.instance.onTransition(name, this.state, state);
     super.emit(state);
   }
@@ -35,123 +35,199 @@ class DocumentsCubit extends Cubit<DocumentsState> {
   }
 
   @override
-  Future<void> close(){
+  Future<void> close() {
     MyBlocObserver.instance.onClose(name);
-   return super.close();
+    return super.close();
   }
 
-  List<Document> get documentsOrEmpty => state.documents??[];
+  List<Document> get documentsOrEmpty => state.documents ?? [];
 
   Future<void> loadData() async {
-    emit(DocumentsState.processing(documents: state.documents, message: "Loading data"));
+    emit(
+      DocumentsState.processing(
+        documents: state.documents,
+        message: "Loading data",
+      ),
+    );
     try {
       final documents = await dataSource.getAllDocuments();
-      emit(DocumentsState.processing(documents: documents, message: "Data loaded"));
-    } catch (e,s) {
-      emit(DocumentsState.failed(documents: state.documents, error:e, message: "Error loading data", stackTrace: s));
-    } finally{
+      emit(
+        DocumentsState.processing(documents: documents, message: "Data loaded"),
+      );
+    } catch (e, s) {
+      emit(
+        DocumentsState.failed(
+          documents: state.documents,
+          error: e,
+          message: "Error loading data",
+          stackTrace: s,
+        ),
+      );
+      MyBlocObserver.instance.onError(name, e, s);
+    } finally {
       emit(DocumentsState.idle(documents: state.documents));
     }
   }
-  Future<void> restoreDocuments(List<Document> documents) async {
-  }
 
+  Future<void> restoreDocuments(List<Document> documents) async {}
 
   Future<void> addDocument(Document document) async {
-    emit(DocumentsState.processing(documents: state.documents, message: "Adding document"));
+    emit(
+      DocumentsState.processing(
+        documents: state.documents,
+        message: "Adding document",
+      ),
+    );
     try {
-     Document newDocument = await dataSource.insertDocument(document);
-     emit(DocumentsState.processing(documents: [...?state.documents, newDocument], message: "Document added successfully"));
+      Document newDocument = await dataSource.insertDocument(document);
+      emit(
+        DocumentsState.processing(
+          documents: [...?state.documents, newDocument],
+          message: "Document added successfully",
+        ),
+      );
     } catch (e, s) {
-      emit(DocumentsState.failed(documents: state.documents, message: "Error adding document", error: e, stackTrace: s));
-    }finally{
+      emit(
+        DocumentsState.failed(
+          documents: state.documents,
+          message: "Error adding document",
+          error: e,
+          stackTrace: s,
+        ),
+      );
+      MyBlocObserver.instance.onError(name, e, s);
+    } finally {
       emit(DocumentsState.idle(documents: state.documents));
     }
   }
 
- Future<void> deleteDocuments(List<int> documentIds) async {
-  emit(DocumentsState.processing(
-      documents: state.documents, message: "Deleting documents"));
-  try {
-    final documentsToDelete = getDocumentsByIds(documentIds);
-    final res = await dataSource.deleteDocumentsByIds(documentIds);
-    if (!res) return;
-
-    await FileService.deleteDocumentsFiles(
-      documentsToDelete,
-      documentsOrEmpty,
+  Future<void> deleteDocuments(List<int> documentIds) async {
+    emit(
+      DocumentsState.processing(
+        documents: state.documents,
+        message: "Deleting documents",
+      ),
     );
+    try {
+      final documentsToDelete = getDocumentsByIds(documentIds);
+      final res = await dataSource.deleteDocumentsByIds(documentIds);
+      if (!res) return;
 
-    final updatedDocuments = state.documents
-        ?.where((d) => !documentIds.contains(d.id))
-        .toList();
+      await FileService.deleteDocumentsFiles(
+        documentsToDelete,
+        documentsOrEmpty,
+      );
 
-    emit(DocumentsState.processing(
-        documents: updatedDocuments, message: "Documents deleted successfully"));
-  } catch (e, s) {
-    emit(DocumentsState.failed(documents: state.documents, message: "Error deleting documents",error: e,stackTrace: s));
-  } finally {
-    emit(DocumentsState.idle(documents: state.documents));
+      final updatedDocuments =
+          state.documents?.where((d) => !documentIds.contains(d.id)).toList();
+
+      emit(
+        DocumentsState.processing(
+          documents: updatedDocuments,
+          message: "Documents deleted successfully",
+        ),
+      );
+    } catch (e, s) {
+      emit(
+        DocumentsState.failed(
+          documents: state.documents,
+          message: "Error deleting documents",
+          error: e,
+          stackTrace: s,
+        ),
+      );
+      MyBlocObserver.instance.onError(name, e, s);
+    } finally {
+      emit(DocumentsState.idle(documents: state.documents));
+    }
   }
-}
-
 
   Future<void> updateDocument(Document updatedDocument) async {
-    emit(DocumentsState.processing(documents: state.documents, message: "Updating document"));
-  try {
-    final res = await dataSource.updateDocument(updatedDocument);
-    if (!res) return;
-    final updatedDocuments = state.documents
-        ?.map((doc) => doc.id == updatedDocument.id ? updatedDocument : doc)
-        .toList();
+    emit(
+      DocumentsState.processing(
+        documents: state.documents,
+        message: "Updating document",
+      ),
+    );
+    try {
+      final res = await dataSource.updateDocument(updatedDocument);
+      if (!res) return;
+      final updatedDocuments =
+          state.documents
+              ?.map(
+                (doc) => doc.id == updatedDocument.id ? updatedDocument : doc,
+              )
+              .toList();
 
-    emit(DocumentsState.processing(documents: updatedDocuments, message: "Document updated successfully"));
-  } catch (e, s) {
-    emit(DocumentsState.failed(documents: state.documents, message: "Error updating document",error: e,stackTrace: s));
-  } finally {
-    emit(DocumentsState.idle(documents: state.documents));
+      emit(
+        DocumentsState.processing(
+          documents: updatedDocuments,
+          message: "Document updated successfully",
+        ),
+      );
+    } catch (e, s) {
+      emit(
+        DocumentsState.failed(
+          documents: state.documents,
+          message: "Error updating document",
+          error: e,
+          stackTrace: s,
+        ),
+      );
+      MyBlocObserver.instance.onError(name, e, s);
+    } finally {
+      emit(DocumentsState.idle(documents: state.documents));
+    }
   }
-}
 
- Future<void> addNewVersion(int documentId, DocumentVersion version) async {
-  emit(DocumentsState.processing(documents: state.documents, message: "Adding new version"));
-
-  try {
-    // Добавляем версию в базу
-    final newVersion = await dataSource.addNewVersion(documentId, version);
-
-    // Получаем текущий документ
-    final oldDocument = getDocumentById(documentId);
-    if (oldDocument == null) return;
-
-    // Создаём новый объект документа с обновлённой версией
-    final updatedDocument = oldDocument.copyWith(
-      currentVersionId: newVersion.id,
-      versions: [...oldDocument.versions, newVersion],
+  Future<void> addNewVersion(int documentId, DocumentVersion version) async {
+    emit(
+      DocumentsState.processing(
+        documents: state.documents,
+        message: "Adding new version",
+      ),
     );
 
-    // Обновляем список документов
-    final updatedDocuments = state.documents
-        ?.map((doc) => doc.id == documentId ? updatedDocument : doc)
-        .toList();
+    try {
+      // Добавляем версию в базу
+      final newVersion = await dataSource.addNewVersion(documentId, version);
 
-    emit(DocumentsState.processing(
-      documents: updatedDocuments,
-      message: "New version added successfully",
-    ));
+      // Получаем текущий документ
+      final oldDocument = getDocumentById(documentId);
+      if (oldDocument == null) return;
 
-  } catch (e, s) {
-    emit(DocumentsState.failed(
-      documents: state.documents,
-      message: "Error adding new version",
-      error: e,
-      stackTrace: s,
-    ));
-  } finally {
-    emit(DocumentsState.idle(documents: state.documents));
+      // Создаём новый объект документа с обновлённой версией
+      final updatedDocument = oldDocument.copyWith(
+        currentVersionId: newVersion.id,
+        versions: [...oldDocument.versions, newVersion],
+      );
+
+      // Обновляем список документов
+      final updatedDocuments =
+          state.documents
+              ?.map((doc) => doc.id == documentId ? updatedDocument : doc)
+              .toList();
+
+      emit(
+        DocumentsState.processing(
+          documents: updatedDocuments,
+          message: "New version added successfully",
+        ),
+      );
+    } catch (e, s) {
+      emit(
+        DocumentsState.failed(
+          documents: state.documents,
+          message: "Error adding new version",
+          error: e,
+          stackTrace: s,
+        ),
+      );
+      MyBlocObserver.instance.onError(name, e, s);
+    } finally {
+      emit(DocumentsState.idle(documents: state.documents));
+    }
   }
-}
-
 
   Document? getDocumentById(int documentId) =>
       documentsOrEmpty.where((e) => e.id == documentId).firstOrNull;
@@ -199,7 +275,7 @@ class DocumentsCubit extends Cubit<DocumentsState> {
         folderId: folderId,
         isFavorite: isFavorite,
         createdAt: DateTime.now(),
-        currentVersionId: 1,
+        currentVersionId: null,
         versions: [
           DocumentVersion(
             id: 0,
@@ -215,8 +291,8 @@ class DocumentsCubit extends Cubit<DocumentsState> {
       await addDocument(doc);
 
       return ResultOr.success(safePath);
-    } catch (e) {
-      debugPrint("Error saving file: $e");
+    } catch (e, s) {
+      MyBlocObserver.instance.onError(name, e, s, message: "Error saving file");
       return ResultOr.error(ErrorKeys.errorSavingFile);
     }
   }
@@ -241,8 +317,13 @@ class DocumentsCubit extends Cubit<DocumentsState> {
       final totalSize = sizes.fold<int>(0, (sum, size) => sum + size);
 
       return totalSize;
-    } catch (e) {
-      debugPrint("Error getting all documents size: $e");
+    } catch (e, s) {
+      MyBlocObserver.instance.onError(
+        name,
+        e,
+        s,
+        message: "Error getting all documents size",
+      );
       return 0;
     }
   }
@@ -262,5 +343,11 @@ class DocumentsCubit extends Cubit<DocumentsState> {
     }
   }
 
-  void throwError(String message) => emit(DocumentsState.failed(documents: state.documents,message: message, error:Exception(message)));
+  void throwError(String message) => emit(
+    DocumentsState.failed(
+      documents: state.documents,
+      message: message,
+      error: Exception(message),
+    ),
+  );
 }

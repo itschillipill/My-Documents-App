@@ -113,8 +113,11 @@ class MessageService {
   static void showErrorToast(String message) =>
       showToast(message, background: Colors.red.shade600);
 
-  static Future<T?> showDialogGlobal<T>(Function(BuildContext context) dialog) {
-    final context = navigatorKey.currentContext;
+  static Future<T?> showDialogGlobal<T>(
+    Function(BuildContext context) dialog, {
+    BuildContext? ctx,
+  }) {
+    final context = ctx ?? navigatorKey.currentContext;
     if (context == null) {
       debugPrint("Context is null");
       return Future.value(null);

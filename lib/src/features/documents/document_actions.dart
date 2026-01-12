@@ -67,7 +67,6 @@ class Rename$DocumentAction extends DocumentAction {
     controller.dispose();
     if (newName == null) return;
     debugPrint("Renaming ${document.title} to $newName");
-    // await context.read<DocumentsCubit>().renameDocument(document.id, newName);
   }
 }
 

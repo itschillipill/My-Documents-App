@@ -19,7 +19,7 @@ class SelectFolderPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<FoldersCubit, FoldersState>(
       builder: (context, state) {
-        final List<Folder> folders = state.folders?? [];
+        final List<Folder> folders = state.folders ?? [];
         return Scaffold(
           appBar: AppBar(
             title: Text(

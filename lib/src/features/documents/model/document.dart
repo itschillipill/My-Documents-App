@@ -11,7 +11,7 @@ class Document {
   final int? folderId;
   final bool isFavorite;
   final DateTime createdAt;
-  final int currentVersionId;
+  final int? currentVersionId;
   final List<DocumentVersion> versions;
 
   Document({
@@ -24,30 +24,47 @@ class Document {
     required this.versions,
   });
 
-  Map<String, dynamic> toMap() {
+  Map<String, dynamic> toMap({bool includeId = true}) {
     return {
-      'id': id,
+      if (includeId) 'id': id,
       'title': title,
       'folderId': folderId,
       'isFavorite': isFavorite ? 1 : 0,
       'createdAt': createdAt.toIso8601String(),
-      'currentVersionId': currentVersionId,
+      'currentVersionId': includeId ? null : currentVersionId,
     };
   }
 
   factory Document.fromMap(
-    Map<String, dynamic> map, {
-    List<DocumentVersion> versions = const [],
-  }) {
-    return Document(
-      id: map['id'] as int,
-      title: map['title'] as String,
-      folderId: map['folderId'] as int?,
-      isFavorite: (map['isFavorite'] as int) == 1,
-      createdAt: DateTime.parse(map['createdAt'] as String),
-      currentVersionId: map['currentVersionId'] as int,
-      versions: versions,
-    );
+    Map<String, Object?> map,
+    List<Map<String, Object?>> allVersions,
+  ) {
+    final docVersions =
+        allVersions
+            .where((v) => v['documentId'] == map['id'])
+            .map((v) => DocumentVersion.fromMap(v))
+            .toList();
+
+    return switch (map) {
+      {
+        'id': int id,
+        'title': String title,
+        'folderId': int? folderId,
+        'isFavorite': int isFavorite,
+        'createdAt': String createdAt,
+        'currentVersionId': int? currentVersionId,
+      } =>
+        Document(
+          id: id,
+          title: title,
+          folderId: folderId,
+          isFavorite: isFavorite == 1,
+          createdAt: DateTime.parse(createdAt),
+          currentVersionId: currentVersionId,
+          versions: docVersions,
+        ),
+      _ => throw FormatException('Invalid Document map: $map'),
+    };
   }
   @override
   String toString() => """
@@ -75,8 +92,7 @@ class Document {
       id: id ?? this.id,
       title: title ?? this.title,
       folderId: switch (folderId) {
-        null => this.folderId,
-        -3 => null,
+        null || -3 => this.folderId,
         _ => folderId,
       },
       isFavorite: isFavorite ?? this.isFavorite,

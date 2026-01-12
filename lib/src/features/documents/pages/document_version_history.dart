@@ -19,8 +19,11 @@ class DocumentVersionHistory extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<DocumentsCubit, DocumentsState>(
+      buildWhen: (previous, current) => current.documents != previous.documents,
       builder: (context, state) {
-        final document = (state.documents??[]).firstWhere((d) => d.id == documentId);
+        final document = (state.documents ?? []).firstWhere(
+          (d) => d.id == documentId,
+        );
         final versionsWithIndex =
             document.versions
                 .asMap()
@@ -42,26 +45,30 @@ class DocumentVersionHistory extends StatelessWidget {
           ),
           body: SafeArea(
             child: Padding(
-              padding: const EdgeInsets.all(12.0),
+              padding: const EdgeInsets.symmetric(horizontal: 12.0),
               child: Column(
-                spacing: 20,
                 children: [
-                  BorderBox(
-                    child: ListTile(
-                      title: Text(document.title),
-                      leading: Icon(Icons.description_rounded),
-                      subtitle: Text(
-                        "${versionsWithIndex.length} ${context.l10n.versions}",
-                      ),
-                    ),
-                  ),
                   Expanded(
                     child: ListView.builder(
-                      itemCount: versionsWithIndex.length,
+                      itemCount: versionsWithIndex.length + 1,
                       itemBuilder: (context, index) {
-                        final version = versionsWithIndex[index].version;
+                        if (index == 0) {
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 8.0),
+                            child: BorderBox(
+                              child: ListTile(
+                                title: Text(document.title),
+                                leading: Icon(Icons.description_rounded),
+                                subtitle: Text(
+                                  "${versionsWithIndex.length} ${context.l10n.versions}",
+                                ),
+                              ),
+                            ),
+                          );
+                        }
+                        final version = versionsWithIndex[index - 1].version;
                         return DocumentVersionCard(
-                          index: versionsWithIndex[index].index,
+                          index: versionsWithIndex[index - 1].index,
                           documentVersion: version,
                           isCurrent: version.id == document.currentVersionId,
                           onDelete: () {},

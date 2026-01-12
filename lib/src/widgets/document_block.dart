@@ -23,41 +23,37 @@ class DocumentsBlock extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 8),
         child: BlocBuilder<DocumentsCubit, DocumentsState>(
+          buildWhen:
+              (previous, current) => current.documents != previous.documents,
           builder: (context, state) {
-            if (state.isIdle) {
-              final documents = state.documents ?? [];
-              if (documents.isEmpty) {
-                return _buildEmptyState(context, colorScheme, screenWidth);
-              }
-              final gridDelegate = _calculateGridDelegate(screenWidth);
-              final iconSize = _calculateIconSize(screenWidth);
-              final favorites = documents.where((e) => e.isFavorite);
-              final nonFavorites = documents.where((e) => !e.isFavorite);
-              final prioritizedDocs = [...favorites, ...nonFavorites];
-              final docsToShow = prioritizedDocs.take(3);
-              final items = [
-                ...docsToShow,
-                null,
-              ]; 
-              
-              return GridView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: items.length,
-                gridDelegate: gridDelegate,
-                itemBuilder: (context, index) {
-                  return _buildDocumentCard(
-                    doc: items[index],
-                    context: context,
-                    colorScheme: colorScheme,
-                    theme: theme,
-                    iconSize: iconSize,
-                    screenWidth: screenWidth,
-                  );
-                },
-              );
+            final documents = state.documents ?? [];
+            if (documents.isEmpty) {
+              return _buildEmptyState(context, colorScheme, screenWidth);
             }
-            return _buildLoadingState(colorScheme, screenWidth, context);
+            final gridDelegate = _calculateGridDelegate(screenWidth);
+            final iconSize = _calculateIconSize(screenWidth);
+            final favorites = documents.where((e) => e.isFavorite);
+            final nonFavorites = documents.where((e) => !e.isFavorite);
+            final prioritizedDocs = [...favorites, ...nonFavorites];
+            final docsToShow = prioritizedDocs.take(3);
+            final items = [...docsToShow, null];
+
+            return GridView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: items.length,
+              gridDelegate: gridDelegate,
+              itemBuilder: (context, index) {
+                return _buildDocumentCard(
+                  doc: items[index],
+                  context: context,
+                  colorScheme: colorScheme,
+                  theme: theme,
+                  iconSize: iconSize,
+                  screenWidth: screenWidth,
+                );
+              },
+            );
           },
         ),
       ),
@@ -67,27 +63,32 @@ class DocumentsBlock extends StatelessWidget {
   SliverGridDelegateWithFixedCrossAxisCount _calculateGridDelegate(
     double screenWidth,
   ) {
-    final (int crossAxisCount, double mainSpacing, double crossSpacing, double aspectRatio) = switch(screenWidth) {
-        < 400 => (2, 8, 8, 1.4),
-        < 500 => (2, 10, 10, 1.3),
-        < 700 => (3, 12, 12, 1.2),
-        < 900 => (4, 12, 12, 1.1),
+    final (
+      int crossAxisCount,
+      double mainSpacing,
+      double crossSpacing,
+      double aspectRatio,
+    ) = switch (screenWidth) {
+      < 400 => (2, 8, 8, 1.4),
+      < 500 => (2, 10, 10, 1.3),
+      < 700 => (3, 12, 12, 1.2),
+      < 900 => (4, 12, 12, 1.1),
       _ => (5, 16, 16, 1.0),
     };
-      return SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: crossAxisCount,
-        mainAxisSpacing: mainSpacing,
-        crossAxisSpacing: crossSpacing,
-        childAspectRatio: aspectRatio,
-      );
+    return SliverGridDelegateWithFixedCrossAxisCount(
+      crossAxisCount: crossAxisCount,
+      mainAxisSpacing: mainSpacing,
+      crossAxisSpacing: crossSpacing,
+      childAspectRatio: aspectRatio,
+    );
   }
 
   double _calculateIconSize(double screenWidth) {
-    final double iconSize = switch(screenWidth) {
-        < 400 => 20,
-        < 500 => 24,
-        < 700 => 28,
-        < 900 => 32,
+    final double iconSize = switch (screenWidth) {
+      < 400 => 20,
+      < 500 => 24,
+      < 700 => 28,
+      < 900 => 32,
       _ => 36,
     };
     return iconSize;
@@ -180,29 +181,6 @@ class DocumentsBlock extends StatelessWidget {
               label: Text(context.l10n.addDocument),
             ),
           ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildLoadingState(
-    ColorScheme colorScheme,
-    double screenWidth,
-    BuildContext context,
-  ) {
-    final isSmallScreen = screenWidth < 400;
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: isSmallScreen ? 20 : 32),
-      child: Column(
-        spacing: 10,
-        children: [
-          Center(
-            child: CircularProgressIndicator(
-              color: colorScheme.primary,
-              strokeWidth: isSmallScreen ? 2.5 : 3,
-            ),
-          ),
-          Text(context.l10n.loadingDocuments),
         ],
       ),
     );

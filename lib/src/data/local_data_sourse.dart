@@ -1,9 +1,11 @@
 import 'dart:io' show Platform;
 
+import 'package:flutter/foundation.dart' show kDebugMode;
+import 'package:my_documents/src/core/constants.dart';
 import 'package:my_documents/src/data/services/document_service.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:path/path.dart';
+import 'package:path/path.dart' show join;
 import 'package:my_documents/src/features/documents/model/document.dart';
 import 'package:my_documents/src/features/folders/model/folder.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart'
@@ -13,8 +15,8 @@ import 'services/folder_service.dart';
 
 class LocalDataSource implements DataSource {
   static Database? _db;
-  late DocumentService _documentService;
-  late FolderService _folderService;
+  late final DocumentService _documentService;
+  late final FolderService _folderService;
 
   @override
   Future<void> init() async {
@@ -24,45 +26,71 @@ class LocalDataSource implements DataSource {
     }
 
     final dbPath = await getApplicationDocumentsDirectory();
-    final path = join(dbPath.path, 'my_documents.db');
+    final path = join(
+      dbPath.path,
+      kDebugMode ? 'my_documents_debug.db' : 'documents.db',
+    );
 
-    _db = await openDatabase(path, version: 1, onCreate: _onCreate);
+    _db = await openDatabase(
+      path,
+      version: Constants.currentDatabaseVersion,
+      onCreate: _onCreate,
+      onConfigure: (db) async => await db.execute('PRAGMA foreign_keys = ON'),
+      onDowngrade: _onDowngrade,
+      onUpgrade: _onUpgrade,
+    );
 
     _documentService = DocumentService(_db);
     _folderService = FolderService(_db);
   }
 
-  static Future<void> _onCreate(Database db, int version) async {
-    await db.execute('''
-      CREATE TABLE folders(
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT NOT NULL
-      )
-    ''');
+  static Future<void> _onDowngrade(
+    Database db,
+    int oldVersion,
+    int newVersion,
+  ) async {}
 
-    await db.execute('''
-      CREATE TABLE documents(
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        title TEXT NOT NULL,
-        folderId INTEGER,
-        isFavorite INTEGER NOT NULL,
-        createdAt TEXT NOT NULL,
-        currentVersionId INTEGER NOT NULL,
-        FOREIGN KEY(folderId) REFERENCES folders(id)
-      )
-    ''');
+  static Future<void> _onUpgrade(
+    Database db,
+    int oldVersion,
+    int newVersion,
+  ) async {}
 
-    await db.execute('''
-      CREATE TABLE document_versions(
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        documentId INTEGER NOT NULL,
-        filePath TEXT NOT NULL,
-        uploadedAt TEXT NOT NULL,
-        comment TEXT,
-        expirationDate TEXT,
-        FOREIGN KEY(documentId) REFERENCES documents(id)
-      )
-    ''');
+  static Future<void> _onCreate(Database db, int _) async {
+    final batch = db.batch();
+
+    batch.execute('''
+    CREATE TABLE folders(
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      name TEXT NOT NULL
+    )
+  ''');
+
+    batch.execute('''
+    CREATE TABLE documents(
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      title TEXT NOT NULL,
+      folderId INTEGER,
+      isFavorite INTEGER NOT NULL,
+      createdAt TEXT NOT NULL,
+      currentVersionId INTEGER,
+      FOREIGN KEY(folderId) REFERENCES folders(id) ON DELETE SET NULL
+    )
+  ''');
+
+    batch.execute('''
+    CREATE TABLE document_versions(
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      documentId INTEGER NOT NULL,
+      filePath TEXT NOT NULL,
+      uploadedAt TEXT NOT NULL,
+      comment TEXT,
+      expirationDate TEXT,
+      FOREIGN KEY(documentId) REFERENCES documents(id) ON DELETE CASCADE
+    )
+  ''');
+
+    await batch.commit();
   }
 
   @override
@@ -84,8 +112,10 @@ class LocalDataSource implements DataSource {
       _documentService.insertDocument(document);
 
   @override
-  Future<DocumentVersion> addNewVersion(int documentId, DocumentVersion version) =>
-      _documentService.addNewVersion(documentId, version);
+  Future<DocumentVersion> addNewVersion(
+    int documentId,
+    DocumentVersion version,
+  ) => _documentService.addNewVersion(documentId, version);
 
   @override
   Future<bool> updateDocument(Document document) =>
@@ -96,10 +126,6 @@ class LocalDataSource implements DataSource {
   @override
   Future<bool> deleteDocumentsByIds(List<int> ids) =>
       _documentService.deleteDocumentsByIds(ids);
-
-  @override
-  Future<DocumentVersion?> getDocumentVersionByDocumentId(int documentId) =>
-      _documentService.getDocumentVersionByDocumentId(documentId);
 
   @override
   Future<List<Folder>> getAllFolders() => _folderService.getAllFolders();

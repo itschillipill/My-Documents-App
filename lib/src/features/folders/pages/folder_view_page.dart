@@ -138,12 +138,14 @@ class _FolderViewPageState extends State<FolderViewPage> {
         body: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8),
           child: BlocBuilder<DocumentsCubit, DocumentsState>(
+            buildWhen:
+                (previous, current) => current.documents != previous.documents,
             builder: (context, state) {
               if (state.isProcessing) {
                 return Center(child: CircularProgressIndicator());
               }
               final documents = sorted(
-                folder.getDocuments(state.documents??[]),
+                folder.getDocuments(state.documents ?? []),
                 sortOptions,
                 isReverse,
               );

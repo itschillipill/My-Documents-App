@@ -17,9 +17,9 @@ class DocumentVersion {
     this.expirationDate,
   });
 
-  Map<String, dynamic> toMap() {
+  Map<String, dynamic> toMap({bool includeId = true}) {
     return {
-      'id': id,
+      if (includeId) 'id': id,
       'documentId': documentId,
       'filePath': filePath,
       'uploadedAt': uploadedAt.toIso8601String(),
@@ -43,7 +43,7 @@ class DocumentVersion {
         filePath: filePath,
         uploadedAt: DateTime.parse(uploadedAt),
         comment: comment,
-        expirationDate: DateTime.tryParse(expirationDate??''),
+        expirationDate: DateTime.tryParse(expirationDate ?? ''),
       ),
     _ => throw ArgumentError('Invalid map format'),
   };

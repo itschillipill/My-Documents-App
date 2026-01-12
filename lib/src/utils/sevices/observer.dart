@@ -8,11 +8,15 @@ final class MyBlocObserver {
     debugPrint("|$name| $oldState -> $newState");
   }
 
-  void onError(String name, Object error, StackTrace stackTrace) {
-    debugPrint(
-      "[ERROR] |$name| -> $error\n$stackTrace",
-    );
+  void onError(
+    String name,
+    Object error,
+    StackTrace stackTrace, {
+    String? message,
+  }) {
+    debugPrint("[ERROR] |$name| $message -> $error\n$stackTrace");
   }
+
   void onCreate(String name) {
     debugPrint("[CREATE] |$name|");
   }

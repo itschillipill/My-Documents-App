@@ -214,16 +214,14 @@ class FilePickerBlock extends StatelessWidget {
           label: context.l10n.chooseFile,
           colorScheme: colorScheme,
           onTap: () async {
-
-                final result = await FileService.pickFile();
-                result(
-                  onSuccess: (path) => onSelected(path),
-                  onError:
-                      (error) => MessageService.showErrorSnack(
-                        error.getMessage(context),
-                      ),
-                );
-              },
+            final result = await FileService.pickFile();
+            result(
+              onSuccess: (path) => onSelected(path),
+              onError:
+                  (error) =>
+                      MessageService.showErrorSnack(error.getMessage(context)),
+            );
+          },
           isFullWidth: true,
         ),
       ],

@@ -20,12 +20,12 @@ class ExportDocument {
   });
 
   Map<String, dynamic> toJson() => {
-        'uuid': uuid,
-        'title': title,
-        'folderId': folderId,
-        'isFavorite': isFavorite,
-        'createdAt': createdAt.toIso8601String(),
-        'currentVersionIndex': currentVersionIndex,
-        'versions': versions.map((v) => v.toJson()).toList(),
-      };
+    'uuid': uuid,
+    'title': title,
+    'folderId': folderId,
+    'isFavorite': isFavorite,
+    'createdAt': createdAt.toIso8601String(),
+    'currentVersionIndex': currentVersionIndex,
+    'versions': versions.map((v) => v.toJson()).toList(),
+  };
 }

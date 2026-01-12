@@ -57,23 +57,35 @@ mixin InitializeDependencies {
             }
           },
         ),
-        ("Password storage initialization",(deps)async{
-             final passwordStorage = FlutterSecureStorage();
+        (
+          "Password storage initialization",
+          (deps) async {
+            final passwordStorage = FlutterSecureStorage();
             deps.authExecutor = AuthenticationExecutor(passwordStorage);
-        }),
-        ("Local Storage initialization",(deps)async{
-           final prefs = await SharedPreferences.getInstance();
-           deps.settingsCubit = SettingsCubit(
+          },
+        ),
+        (
+          "Local Storage initialization",
+          (deps) async {
+            final prefs = await SharedPreferences.getInstance();
+            deps.settingsCubit = SettingsCubit(
               prefs: prefs,
               canUseBiometrics: await deps.authExecutor.canCheckBiometrics,
             );
-        }),
-        ("Documents initialization",(deps)async{
-           deps.documentsCubit = DocumentsCubit(dataSource: deps.dataSource);
-        }),
-        ("Folders initialization",(deps)async{
+          },
+        ),
+        (
+          "Documents initialization",
+          (deps) async {
+            deps.documentsCubit = DocumentsCubit(dataSource: deps.dataSource);
+          },
+        ),
+        (
+          "Folders initialization",
+          (deps) async {
             deps.foldersCubit = FoldersCubit(dataSource: deps.dataSource);
-        }),
+          },
+        ),
         (
           "Ready to use",
           (deps) async {

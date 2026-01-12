@@ -34,13 +34,9 @@ class MyHomePage extends StatelessWidget {
               ),
             ],
           ),
-        const Expanded(
+          const Expanded(
             child: CustomScrollView(
-              slivers: [
-                 DocumentsBlock(),
-                 WarningBlock(),
-                 FoldersBlock(),
-              ],
+              slivers: [DocumentsBlock(), WarningBlock(), FoldersBlock()],
             ),
           ),
         ],

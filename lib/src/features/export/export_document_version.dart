@@ -14,10 +14,10 @@ class ExportDocumentVersion {
   });
 
   Map<String, dynamic> toJson() => {
-        'file': file,
-        'hash': hash,
-        'uploadedAt': uploadedAt.toIso8601String(),
-        'comment': comment,
-        'expirationDate': expirationDate?.toIso8601String(),
-      };
+    'file': file,
+    'hash': hash,
+    'uploadedAt': uploadedAt.toIso8601String(),
+    'comment': comment,
+    'expirationDate': expirationDate?.toIso8601String(),
+  };
 }

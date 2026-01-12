@@ -337,12 +337,21 @@ class _SettingsPageState extends State<SettingsPage> {
                         final result = await MessageService.showLoading(
                           timeout: Duration(seconds: 60),
                           message: context.l10n.exportData,
-                          fn:()=>FileService.exportData(documents: context.deps.documentsCubit.documentsOrEmpty),
+                          fn:
+                              () => FileService.exportData(
+                                documents:
+                                    context
+                                        .deps
+                                        .documentsCubit
+                                        .documentsOrEmpty,
+                              ),
                         );
                         result(
                           onSuccess: (_) => (),
-                          onError: (err) =>
-                              MessageService.showErrorSnack(err.getMessage(context)),
+                          onError:
+                              (err) => MessageService.showErrorSnack(
+                                err.getMessage(context),
+                              ),
                         );
                       },
                     ),
@@ -355,11 +364,14 @@ class _SettingsPageState extends State<SettingsPage> {
                         final result = await FileService.importData();
                         result(
                           onSuccess: (result) {
-                            context.deps.documentsCubit.restoreDocuments(result);
+                            context.deps.documentsCubit.restoreDocuments(
+                              result,
+                            );
                           },
-                          onError: (error) => MessageService.showErrorSnack(
-                            error.getMessage(context),
-                          ),
+                          onError:
+                              (error) => MessageService.showErrorSnack(
+                                error.getMessage(context),
+                              ),
                         );
                       },
                     ),

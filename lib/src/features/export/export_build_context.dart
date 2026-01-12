@@ -2,7 +2,6 @@ import 'dart:io';
 import 'package:my_documents/src/utils/sevices/file_service.dart';
 import 'package:path/path.dart' as p;
 
-
 class ExportBuildContext {
   final Map<String, String> hashToFileName = {};
   final Directory filesDir;
@@ -20,5 +19,4 @@ class ExportBuildContext {
       return name;
     });
   }
-  
 }
