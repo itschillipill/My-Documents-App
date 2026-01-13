@@ -28,7 +28,7 @@ class LocalDataSource implements DataSource {
     final dbPath = await getApplicationDocumentsDirectory();
     final path = join(
       dbPath.path,
-      kDebugMode ? 'my_documents_debug.db' : 'documents.db',
+      kDebugMode ? 'my_documents_debug.db' : 'my_documents.db',
     );
 
     _db = await openDatabase(
@@ -54,7 +54,68 @@ class LocalDataSource implements DataSource {
     Database db,
     int oldVersion,
     int newVersion,
-  ) async {}
+  ) async {
+    if (oldVersion < 2) {
+      await _migrateV1ToV2(db);
+    }
+  }
+
+  static Future<void> _migrateV1ToV2(Database db) async {
+    await db.transaction((txn) async {
+      final batch = txn.batch();
+
+      batch.execute('ALTER TABLE documents RENAME TO documents_old;');
+      batch.execute(
+        'ALTER TABLE document_versions RENAME TO document_versions_old;',
+      );
+
+      batch.execute('''
+      CREATE TABLE documents(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        title TEXT NOT NULL,
+        folderId INTEGER,
+        isFavorite INTEGER NOT NULL,
+        createdAt TEXT NOT NULL,
+        currentVersionId INTEGER,
+        FOREIGN KEY(folderId) REFERENCES folders(id) ON DELETE SET NULL
+      )
+    ''');
+
+      batch.execute('''
+      CREATE TABLE document_versions(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        documentId INTEGER NOT NULL,
+        filePath TEXT NOT NULL,
+        uploadedAt TEXT NOT NULL,
+        comment TEXT,
+        expirationDate TEXT,
+        FOREIGN KEY(documentId) REFERENCES documents(id) ON DELETE CASCADE
+      )
+    ''');
+
+      // чистим битые ссылки
+      batch.execute('''
+      UPDATE documents_old SET currentVersionId = NULL WHERE currentVersionId = 0;
+    ''');
+
+      batch.execute('''
+      INSERT INTO documents (id, title, folderId, isFavorite, createdAt, currentVersionId)
+      SELECT id, title, folderId, isFavorite, createdAt, currentVersionId
+      FROM documents_old;
+    ''');
+
+      batch.execute('''
+      INSERT INTO document_versions (id, documentId, filePath, uploadedAt, comment, expirationDate)
+      SELECT id, documentId, filePath, uploadedAt, comment, expirationDate
+      FROM document_versions_old;
+    ''');
+
+      batch.execute('DROP TABLE document_versions_old;');
+      batch.execute('DROP TABLE documents_old;');
+
+      await batch.commit(noResult: true, continueOnError: false);
+    });
+  }
 
   static Future<void> _onCreate(Database db, int _) async {
     final batch = db.batch();

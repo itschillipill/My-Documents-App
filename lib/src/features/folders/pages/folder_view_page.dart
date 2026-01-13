@@ -141,9 +141,6 @@ class _FolderViewPageState extends State<FolderViewPage> {
             buildWhen:
                 (previous, current) => current.documents != previous.documents,
             builder: (context, state) {
-              if (state.isProcessing) {
-                return Center(child: CircularProgressIndicator());
-              }
               final documents = sorted(
                 folder.getDocuments(state.documents ?? []),
                 sortOptions,

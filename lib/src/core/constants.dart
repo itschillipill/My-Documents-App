@@ -6,7 +6,7 @@ class Constants {
   static const String appRuStoreLink = "";
   static const supportedLocales = [Locale('en'), Locale('ru')];
   static const defaultLocale = Locale('en');
-  static const currentDatabaseVersion = 1;
+  static const currentDatabaseVersion = 2;
 
   // keys
   static const localeKey = "language_code";

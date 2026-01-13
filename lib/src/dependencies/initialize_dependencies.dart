@@ -9,6 +9,7 @@ import 'package:my_documents/src/data/local_data_sourse.dart';
 import 'package:shared_preferences/shared_preferences.dart'
     show SharedPreferences;
 
+import '../utils/sevices/notification/notification_service_singleton.dart';
 import 'platform/initialization_vm.dart'
     // ignore: uri_does_not_exist
     if (dart.library.html) 'platform/initialization_js.dart';
@@ -72,6 +73,12 @@ mixin InitializeDependencies {
               prefs: prefs,
               canUseBiometrics: await deps.authExecutor.canCheckBiometrics,
             );
+          },
+        ),
+        (
+          "Notification initialization",
+          (_) async {
+            await NotificationServiceSingleton.instance.init();
           },
         ),
         (
