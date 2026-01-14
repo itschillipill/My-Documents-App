@@ -47,10 +47,10 @@ class DocumentViewPage extends StatelessWidget {
           );
         }
         bool isCurrent = document.currentVersionId == documentVersion.id;
-        debugPrint("Document: $document");
-        debugPrint(
-          "Current Document Version: ${documentVersion.id}, serched for: ${versionId ?? document.currentVersionId}",
-        );
+        // debugPrint("Document: $document");
+        // debugPrint(
+        //   "Current Document Version: ${documentVersion.id}, serched for: ${versionId ?? document.currentVersionId}",
+        // );
         return Scaffold(
           appBar: _buildAppBar(document, isCurrent, context),
           body: SafeArea(

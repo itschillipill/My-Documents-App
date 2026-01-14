@@ -44,14 +44,14 @@ class SettingsCubit extends Cubit<SettingsState> {
   final bool canUseBiometrics;
   SettingsCubit({required this.canUseBiometrics, required this.prefs})
     : super(SettingsState.initial()) {
-    MyBlocObserver.instance.onCreate(name);
+    MyClassObserver.instance.onCreate(name);
     loadSettings();
   }
   static const name = 'SettingsCubit';
 
   @override
   Future<void> close() {
-    MyBlocObserver.instance.onClose(name);
+    MyClassObserver.instance.onClose(name);
     return super.close();
   }
 

@@ -5,11 +5,18 @@ abstract class NotificationService {
   Future<void> scheduleNotification({
     required int id,
     required String title,
-    required String body,
+    String? body = "Your document is expired",
     required DateTime date,
   });
 
-  Future<void> cancelNotification(int id);
+  Future<void> updateNotification({
+    required int id,
+    required String title,
+    String? body = "Your document is expired",
+    required DateTime date,
+  });
+
+  Future<void> cancelNotification(List<int> ids);
 
   Future<void> cancelAll();
 }

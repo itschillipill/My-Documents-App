@@ -13,7 +13,7 @@ class FoldersCubit extends Cubit<FoldersState> {
   final DataSource dataSource;
 
   FoldersCubit({required this.dataSource}) : super(FoldersState.initial()) {
-    MyBlocObserver.instance.onCreate(name);
+    MyClassObserver.instance.onCreate(name);
     loadData();
   }
 
@@ -21,19 +21,19 @@ class FoldersCubit extends Cubit<FoldersState> {
 
   @override
   void emit(FoldersState state) {
-    MyBlocObserver.instance.onTransition(name, this.state, state);
+    MyClassObserver.instance.onTransition(name, this.state, state);
     super.emit(state);
   }
 
   @override
   void onError(Object error, StackTrace stackTrace) {
     super.onError(error, stackTrace);
-    MyBlocObserver.instance.onError(name, error, stackTrace);
+    MyClassObserver.instance.onError(name, error, stackTrace);
   }
 
   @override
   Future<void> close() {
-    MyBlocObserver.instance.onClose(name);
+    MyClassObserver.instance.onClose(name);
     return super.close();
   }
 

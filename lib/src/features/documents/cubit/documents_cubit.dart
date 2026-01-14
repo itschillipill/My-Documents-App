@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:my_documents/src/core/result_or.dart';
 import 'package:my_documents/src/utils/sevices/file_service.dart';
+import 'package:my_documents/src/utils/sevices/notification/notification_service_singleton.dart';
 import 'package:my_documents/src/utils/sevices/observer.dart';
 import '../../../core/model/errors.dart';
 import '../../../data/data_sourse.dart';
@@ -16,7 +17,7 @@ class DocumentsCubit extends Cubit<DocumentsState> {
   final DataSource dataSource;
 
   DocumentsCubit({required this.dataSource}) : super(DocumentsState.initial()) {
-    MyBlocObserver.instance.onCreate(name);
+    MyClassObserver.instance.onCreate(name);
     loadData();
   }
 
@@ -24,19 +25,19 @@ class DocumentsCubit extends Cubit<DocumentsState> {
 
   @override
   void emit(DocumentsState state) {
-    MyBlocObserver.instance.onTransition(name, this.state, state);
+    MyClassObserver.instance.onTransition(name, this.state, state);
     super.emit(state);
   }
 
   @override
   void onError(Object error, StackTrace stackTrace) {
     super.onError(error, stackTrace);
-    MyBlocObserver.instance.onError(name, error, stackTrace);
+    MyClassObserver.instance.onError(name, error, stackTrace);
   }
 
   @override
   Future<void> close() {
-    MyBlocObserver.instance.onClose(name);
+    MyClassObserver.instance.onClose(name);
     return super.close();
   }
 
@@ -63,7 +64,7 @@ class DocumentsCubit extends Cubit<DocumentsState> {
           stackTrace: s,
         ),
       );
-      MyBlocObserver.instance.onError(name, e, s);
+      MyClassObserver.instance.onError(name, e, s);
     } finally {
       emit(DocumentsState.idle(documents: state.documents));
     }
@@ -86,6 +87,12 @@ class DocumentsCubit extends Cubit<DocumentsState> {
           message: "Document added successfully",
         ),
       );
+     if(newDocument.versions.first.expirationDate != null){ 
+      NotificationServiceSingleton.instance.service.scheduleNotification(
+        id: newDocument.id, 
+        title: newDocument.title,
+        date: newDocument.versions.first.expirationDate!);
+        }
     } catch (e, s) {
       emit(
         DocumentsState.failed(
@@ -95,7 +102,7 @@ class DocumentsCubit extends Cubit<DocumentsState> {
           stackTrace: s,
         ),
       );
-      MyBlocObserver.instance.onError(name, e, s);
+      MyClassObserver.instance.onError(name, e, s);
     } finally {
       emit(DocumentsState.idle(documents: state.documents));
     }
@@ -127,6 +134,7 @@ class DocumentsCubit extends Cubit<DocumentsState> {
           message: "Documents deleted successfully",
         ),
       );
+      NotificationServiceSingleton.instance.service.cancelNotification(documentIds);
     } catch (e, s) {
       emit(
         DocumentsState.failed(
@@ -136,7 +144,7 @@ class DocumentsCubit extends Cubit<DocumentsState> {
           stackTrace: s,
         ),
       );
-      MyBlocObserver.instance.onError(name, e, s);
+      MyClassObserver.instance.onError(name, e, s);
     } finally {
       emit(DocumentsState.idle(documents: state.documents));
     }
@@ -174,7 +182,7 @@ class DocumentsCubit extends Cubit<DocumentsState> {
           stackTrace: s,
         ),
       );
-      MyBlocObserver.instance.onError(name, e, s);
+      MyClassObserver.instance.onError(name, e, s);
     } finally {
       emit(DocumentsState.idle(documents: state.documents));
     }
@@ -214,6 +222,11 @@ class DocumentsCubit extends Cubit<DocumentsState> {
           message: "New version added successfully",
         ),
       );
+
+     if(newVersion.expirationDate != null){NotificationServiceSingleton.instance.service.updateNotification(
+        id: updatedDocument.id, 
+        title: updatedDocument.title,
+        date: newVersion.expirationDate!);}
     } catch (e, s) {
       emit(
         DocumentsState.failed(
@@ -223,7 +236,7 @@ class DocumentsCubit extends Cubit<DocumentsState> {
           stackTrace: s,
         ),
       );
-      MyBlocObserver.instance.onError(name, e, s);
+      MyClassObserver.instance.onError(name, e, s);
     } finally {
       emit(DocumentsState.idle(documents: state.documents));
     }
@@ -292,7 +305,7 @@ class DocumentsCubit extends Cubit<DocumentsState> {
 
       return ResultOr.success(safePath);
     } catch (e, s) {
-      MyBlocObserver.instance.onError(name, e, s, message: "Error saving file");
+      MyClassObserver.instance.onError(name, e, s, message: "Error saving file");
       return ResultOr.error(ErrorKeys.errorSavingFile);
     }
   }
@@ -318,7 +331,7 @@ class DocumentsCubit extends Cubit<DocumentsState> {
 
       return totalSize;
     } catch (e, s) {
-      MyBlocObserver.instance.onError(
+      MyClassObserver.instance.onError(
         name,
         e,
         s,
