@@ -8,7 +8,6 @@ import 'package:my_documents/src/features/settings/cubit/settings_cubit.dart';
 import 'package:my_documents/src/data/local_data_sourse.dart';
 import 'package:shared_preferences/shared_preferences.dart'
     show SharedPreferences;
-import 'package:timezone/data/latest.dart' as tz show initializeTimeZones;
 
 import '../utils/sevices/notification/notification_service_singleton.dart';
 import 'platform/initialization_vm.dart'
@@ -79,7 +78,6 @@ mixin InitializeDependencies {
         (
           "Notification initialization",
           (_) async {
-            tz.initializeTimeZones();
             await NotificationServiceSingleton.instance.init();
           },
         ),

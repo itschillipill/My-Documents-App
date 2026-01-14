@@ -91,7 +91,7 @@ class DocumentsCubit extends Cubit<DocumentsState> {
       NotificationServiceSingleton.instance.service.scheduleNotification(
         id: newDocument.id, 
         title: newDocument.title,
-        date: newDocument.versions.first.expirationDate!);
+        date: newDocument.versions.first.expirationDate! /*DateTime.now().add(Duration(seconds: 20))*/);
         }
     } catch (e, s) {
       emit(

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart' show DateFormat;
+import 'package:my_documents/l10n/app_localizations.dart';
 import 'package:my_documents/src/dependencies/dependencies.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../dependencies/widgets/dependencies_scope.dart';
 

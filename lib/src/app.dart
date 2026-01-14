@@ -11,7 +11,7 @@ import 'package:my_documents/src/utils/sevices/message_service.dart';
 import 'dependencies/widgets/dependencies_scope.dart';
 import 'package:my_documents/src/utils/theme/theme.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:my_documents/l10n/app_localizations.dart';
 
 import 'widgets/windows_scope.dart';
 

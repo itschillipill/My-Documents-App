@@ -12,7 +12,7 @@ import 'src/dependencies/widgets/splash_screen.dart';
 import 'src/widgets/windows_scope.dart';
 import 'src/utils/theme/theme.dart';
 
-part 'src/dependencies/widgets/initialization_error_screen.dart';
+part 'src/widgets/initialization_error_screen.dart';
 
 void main() {
   runZonedGuarded(() {
