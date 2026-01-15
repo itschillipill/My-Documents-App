@@ -3,8 +3,10 @@ import 'dart:io';
 import 'dart:isolate';
 import 'package:archive/archive.dart';
 import 'package:crypto/crypto.dart';
+import 'package:cunning_document_scanner/cunning_document_scanner.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart' show BuildContext;
 import 'package:image_picker/image_picker.dart';
 import 'package:my_documents/src/core/model/errors.dart';
 import 'package:path/path.dart' as p;
@@ -49,6 +51,19 @@ class FileService {
 
     return (await File(originalPath).copy(newPath)).path;
   }
+
+
+  static Future<ResultOr<String?>> scanDocument(BuildContext context) async {
+  if(!isMobile) return ResultOr.error(ErrorKeys.notAvailableOnDesktop);
+  try {
+    final List<String>? pictures =
+        await CunningDocumentScanner.getPictures(noOfPages: 1);
+      return ResultOr.success(pictures?.first);
+    
+  } catch (e) {
+    return ResultOr.error(ErrorKeys.failedToScan);
+  }
+}
 
   static Future<ResultOr<String?>> pickFile({ImageSource? imageSource}) async {
     String? path;

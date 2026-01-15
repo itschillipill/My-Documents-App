@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:my_documents/src/utils/sevices/notification/not_supported_notification_service.dart';
 
 import 'notification_service.dart';
-import 'desktop_notification_service.dart';
+//import 'desktop_notification_service.dart';
 import 'mobile_notification_service.dart';
 
 class NotificationServiceSingleton {
@@ -26,9 +26,7 @@ class NotificationServiceSingleton {
  Future<void> init() async {
   if (_service != null) return;
 
-  if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
-    _service = DesktopNotificationService();
-  } else if (Platform.isAndroid || Platform.isIOS) { 
+ if (Platform.isAndroid || Platform.isIOS) { 
  _service = MobileNotificationService();
   } else {
     _service = NotSupportedNotificationService();

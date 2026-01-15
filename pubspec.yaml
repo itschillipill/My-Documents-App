@@ -61,6 +61,7 @@ dependencies:
   jailbreak_root_detection: ^1.2.0+1
   uuid: ^4.5.2
   awesome_notifications: ^0.10.1
+  cunning_document_scanner: ^1.4.0
 
 dev_dependencies:
   flutter_test:

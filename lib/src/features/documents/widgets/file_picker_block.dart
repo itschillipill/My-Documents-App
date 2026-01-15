@@ -208,21 +208,45 @@ class FilePickerBlock extends StatelessWidget {
             ),
           ],
         ),
-        _buildSelectionOption(
-          context: context,
-          icon: Icons.folder_open_rounded,
-          label: context.l10n.chooseFile,
-          colorScheme: colorScheme,
-          onTap: () async {
-            final result = await FileService.pickFile();
-            result(
-              onSuccess: (path) => onSelected(path),
-              onError:
-                  (error) =>
-                      MessageService.showErrorSnack(error.getMessage(context)),
-            );
-          },
-          isFullWidth: true,
+        Row(
+          spacing: 10,
+          children: [
+             Expanded(
+      child: _buildSelectionOption(
+        context: context,
+        icon: Icons.document_scanner_rounded,
+        label: 'Сканер',
+        colorScheme: colorScheme,
+        onTap: () async {
+            final result = await FileService.scanDocument(context);
+                  result(
+                    onSuccess: (path) => onSelected(path),
+                    onError:
+                        (error) =>
+                            MessageService.showErrorSnack(error.getMessage(context)),
+                  );
+        },
+      ),
+    ),
+            Expanded(
+              child: _buildSelectionOption(
+                context: context,
+                icon: Icons.folder_open_rounded,
+                label: context.l10n.chooseFile,
+                colorScheme: colorScheme,
+                onTap: () async {
+                  final result = await FileService.pickFile();
+                  result(
+                    onSuccess: (path) => onSelected(path),
+                    onError:
+                        (error) =>
+                            MessageService.showErrorSnack(error.getMessage(context)),
+                  );
+                },
+                isFullWidth: true,
+              ),
+            ),
+          ],
         ),
       ],
     );

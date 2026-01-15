@@ -13,7 +13,8 @@ enum ErrorKeys {
   notImplemented,
   notAvailableOnDesktop,
   failedToImport,
-  invalidImportFormat;
+  invalidImportFormat,
+  failedToScan;
 
   String getMessage(BuildContext ctx) {
     return switch (this) {
