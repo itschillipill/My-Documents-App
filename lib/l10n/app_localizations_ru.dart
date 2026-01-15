@@ -15,16 +15,16 @@ class AppLocalizationsRu extends AppLocalizations {
   String get ok => 'ОК';
 
   @override
-  String get scanner => 'Scanner';
+  String get scanner => 'Сканер';
 
   @override
-  String get failedToScan => 'Failed to scan';
+  String get failedToScan => 'Сканирование не удалось';
 
   @override
-  String get failedToImport => 'Failed to import';
+  String get failedToImport => 'Импорт не удалось';
 
   @override
-  String get invalidImportFormat => 'Invalid Import Format';
+  String get invalidImportFormat => 'Неверный формат импорта';
 
   @override
   String get title1 => 'Добро пожаловать в My Documents';

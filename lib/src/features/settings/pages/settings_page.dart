@@ -397,6 +397,7 @@ class _SettingsPageState extends State<SettingsPage> {
                       onChanged: (value) {
                         if (value != null) {
                           settingCubit.changeThemeMode(value);
+                          setState(() {});
                         }
                       },
                     ),
