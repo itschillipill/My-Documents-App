@@ -215,10 +215,10 @@ class FilePickerBlock extends StatelessWidget {
       child: _buildSelectionOption(
         context: context,
         icon: Icons.document_scanner_rounded,
-        label: 'Сканер',
+        label: context.l10n.scanner,
         colorScheme: colorScheme,
         onTap: () async {
-            final result = await FileService.scanDocument(context);
+            final result = await FileService.scanDocument();
                   result(
                     onSuccess: (path) => onSelected(path),
                     onError:

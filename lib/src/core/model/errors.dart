@@ -28,7 +28,9 @@ enum ErrorKeys {
       ErrorKeys.failedToShare => ctx.l10n.failedToShare,
       ErrorKeys.notImplemented => ctx.l10n.notImplemented,
       ErrorKeys.notAvailableOnDesktop => ctx.l10n.notAvailableOnDesktop,
-      _ => name,
+      ErrorKeys.failedToImport => ctx.l10n.failedToImport,
+      ErrorKeys.invalidImportFormat => ctx.l10n.invalidImportFormat,
+      ErrorKeys.failedToScan => ctx.l10n.failedToScan,
     };
   }
 }

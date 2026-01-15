@@ -107,6 +107,30 @@ abstract class AppLocalizations {
   /// **'OK'**
   String get ok;
 
+  /// No description provided for @scanner.
+  ///
+  /// In en, this message translates to:
+  /// **'Scanner'**
+  String get scanner;
+
+  /// No description provided for @failedToScan.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to scan'**
+  String get failedToScan;
+
+  /// No description provided for @failedToImport.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to import'**
+  String get failedToImport;
+
+  /// No description provided for @invalidImportFormat.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid Import Format'**
+  String get invalidImportFormat;
+
   /// No description provided for @title1.
   ///
   /// In en, this message translates to:
