@@ -25,7 +25,7 @@ jobs:
       # 3️⃣ Установка Flutter с кэшем
       - uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.38.6' 
+          flutter-version: '3.38.6'
           cache: true
 
       # 4️⃣ Кэш Gradle + Android SDK/NDK
@@ -64,14 +64,26 @@ jobs:
           storeFile=upload-keystore.jks
           EOF
 
-      # 7️⃣ Сборка release APK
-      - name: Build APK
-        run: flutter build apk --release
+      # 7️⃣ Сборка split APK + оптимизации
+      - name: Build APK (split per ABI)
+        run: |
+          flutter build apk \
+            --release \
+            --split-per-abi 
 
-      # 8️⃣ Создание GitHub Release с APK
+      # 8️⃣ Генерация уникального тега
+      - name: Generate tag
+        id: tag
+        run: |
+          TAG="build-$(date +'%Y-%m-%d-%H-%M')"
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
+
+      # 9️⃣ Создание GitHub Release
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ github.ref_name }}
-          name: Release ${{ github.ref_name }}
-          files: build/app/outputs/flutter-apk/app-release.apk
+          tag_name: ${{ steps.tag.outputs.tag }}
+          name: Release ${{ steps.tag.outputs.tag }}
+          files: |
+            build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+            build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
