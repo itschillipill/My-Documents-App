@@ -10,7 +10,6 @@ import 'package:my_documents/src/pages/onboarding_page.dart';
 import 'package:my_documents/src/utils/sevices/message_service.dart';
 import 'dependencies/widgets/dependencies_scope.dart';
 import 'package:my_documents/src/utils/theme/theme.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:my_documents/l10n/app_localizations.dart';
 
 import 'widgets/windows_scope.dart';
@@ -61,12 +60,7 @@ class App extends StatelessWidget {
                 child: child ?? const SizedBox.shrink(),
               ),
             ),
-            localizationsDelegates: const [
-              AppLocalizations.delegate,
-              GlobalMaterialLocalizations.delegate,
-              GlobalWidgetsLocalizations.delegate,
-              GlobalCupertinoLocalizations.delegate,
-            ],
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
             locale: state.locale,
             supportedLocales: Constants.supportedLocales,
           );
