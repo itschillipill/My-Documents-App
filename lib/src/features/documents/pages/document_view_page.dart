@@ -40,10 +40,9 @@ class DocumentViewPage extends StatelessWidget {
         );
         if (document == null || documentVersion == null) {
           return DocumentErrorPage(
-            getErrorInfo:
-                () => debugPrint(
-                  "state: $state, document: $document,documentVersion: $documentVersion",
-                ),
+            getErrorInfo: () => debugPrint(
+              "state: $state, document: $document,documentVersion: $documentVersion",
+            ),
           );
         }
         bool isCurrent = document.currentVersionId == documentVersion.id;
@@ -98,22 +97,21 @@ PreferredSizeWidget _buildAppBar(
   return AppBar(
     title: Text(document.title),
     centerTitle: false,
-    actions:
-        isCurrent
-            ? [
-              MenuActions(
-                actions: [
-                  (
-                    ChangeDetails$DocumentAction(
-                      context: ctx,
-                      document: document,
-                    ).call,
-                    ctx.l10n.changeDetails,
-                  ),
-                ],
-              ),
-            ]
-            : null,
+    actions: isCurrent
+        ? [
+            MenuActions(
+              actions: [
+                (
+                  ChangeDetails$DocumentAction(
+                    context: ctx,
+                    document: document,
+                  ).call,
+                  ctx.l10n.changeDetails,
+                ),
+              ],
+            ),
+          ]
+        : null,
   );
 }
 
@@ -128,8 +126,9 @@ Widget _buidDocumentInfo(
   final TextStyle textStyle = Theme.of(
     ctx,
   ).textTheme.bodyMedium!.copyWith(fontWeight: FontWeight.w500);
-  final DocumentStatus status =
-      isCurrent ? documentVersion.status : DocumentStatus.archivated;
+  final DocumentStatus status = isCurrent
+      ? documentVersion.status
+      : DocumentStatus.archivated;
   return BorderBox(
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -185,8 +184,8 @@ Widget _buildDocumentPreview(
           width: double.infinity,
           height: 50,
           child: ElevatedButton.icon(
-            onPressed:
-                () async => await OpenFilex.open(documentVersion.filePath),
+            onPressed: () async =>
+                await OpenFilex.open(documentVersion.filePath),
             label: Text(ctx.l10n.openExternal),
             icon: Icon(Icons.remove_red_eye_rounded),
           ),
@@ -214,30 +213,25 @@ Widget _buildDocumentActions(
           BuildTile(
             title: ctx.l10n.uploadNewVersion,
             icon: Icons.file_download_outlined,
-            onTap:
-                () async => await Navigator.push(
-                  ctx,
-                  AddNewDocumentVersion.route(document.id),
-                ),
+            onTap: () async => await Navigator.push(
+              ctx,
+              AddNewDocumentVersion.route(document.id),
+            ),
           ),
           BuildTile(
             title: ctx.l10n.manageVersions,
             icon: Icons.history_rounded,
-            onTap:
-                () => Navigator.push(
-                  ctx,
-                  DocumentVersionHistory.route(document.id),
-                ),
+            onTap: () =>
+                Navigator.push(ctx, DocumentVersionHistory.route(document.id)),
           ),
           BuildTile(
             title: ctx.l10n.deleteDocument,
             icon: Icons.delete_rounded,
             isDanger: true,
-            onTap:
-                Delete$DocumentAction(
-                  documentsIds: [document.id],
-                  context: ctx,
-                ).call,
+            onTap: Delete$DocumentAction(
+              documentsIds: [document.id],
+              context: ctx,
+            ).call,
           ),
         ],
       ],

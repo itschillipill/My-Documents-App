@@ -67,10 +67,9 @@ class _OnboardingPageState extends State<OnboardingPage> {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
       ),
-      builder:
-          (context) => PrivacyPolicyModal(
-            color: _onboardingItems(context)[currentPage].color,
-          ),
+      builder: (context) => PrivacyPolicyModal(
+        color: _onboardingItems(context)[currentPage].color,
+      ),
     );
   }
 
@@ -184,10 +183,9 @@ class _OnboardingPageState extends State<OnboardingPage> {
             right: 24,
             child: TextButton(
               onPressed: () {
-                final locale =
-                    (settingsCubit.state.locale == Locale('ru'))
-                        ? Locale('en')
-                        : Locale('ru');
+                final locale = (settingsCubit.state.locale == Locale('ru'))
+                    ? Locale('en')
+                    : Locale('ru');
                 settingsCubit.changeLocale(locale);
               },
               child: Text(context.l10n.langText),

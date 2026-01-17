@@ -43,38 +43,34 @@ class SelectFolderPage extends StatelessWidget {
                   ),
                 ),
                 Expanded(
-                  child:
-                      folders.isNotEmpty
-                          ? ListView.builder(
-                            itemCount: folders.length,
-                            itemBuilder: (context, index) {
-                              return Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: 8.0,
-                                ),
-                                child: BorderBox(
-                                  child: ListTile(
-                                    leading: Icon(Icons.folder_rounded),
-                                    title: Text(folders[index].name),
-                                    onTap:
-                                        () => Navigator.pop(
-                                          context,
-                                          folders[index],
-                                        ),
-                                    trailing: Icon(
-                                      Icons.arrow_forward_ios_rounded,
-                                    ),
+                  child: folders.isNotEmpty
+                      ? ListView.builder(
+                          itemCount: folders.length,
+                          itemBuilder: (context, index) {
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(
+                                vertical: 8.0,
+                              ),
+                              child: BorderBox(
+                                child: ListTile(
+                                  leading: Icon(Icons.folder_rounded),
+                                  title: Text(folders[index].name),
+                                  onTap: () =>
+                                      Navigator.pop(context, folders[index]),
+                                  trailing: Icon(
+                                    Icons.arrow_forward_ios_rounded,
                                   ),
                                 ),
-                              );
-                            },
-                          )
-                          : Center(
-                            child: Text(
-                              context.l10n.noFoldersFound,
-                              style: Theme.of(context).textTheme.bodyLarge,
-                            ),
+                              ),
+                            );
+                          },
+                        )
+                      : Center(
+                          child: Text(
+                            context.l10n.noFoldersFound,
+                            style: Theme.of(context).textTheme.bodyLarge,
                           ),
+                        ),
                 ),
               ],
             ),

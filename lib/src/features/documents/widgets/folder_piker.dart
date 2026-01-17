@@ -47,14 +47,12 @@ class FolderPiker extends StatelessWidget {
                         ? selectedFolder!.name
                         : context.l10n.selectFolder,
                     style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      color:
-                          selectedFolder != null
-                              ? colorScheme.onSurface
-                              : colorScheme.onSurface.withValues(alpha: 0.6),
-                      fontWeight:
-                          selectedFolder != null
-                              ? FontWeight.w500
-                              : FontWeight.normal,
+                      color: selectedFolder != null
+                          ? colorScheme.onSurface
+                          : colorScheme.onSurface.withValues(alpha: 0.6),
+                      fontWeight: selectedFolder != null
+                          ? FontWeight.w500
+                          : FontWeight.normal,
                     ),
                   ),
                 ),

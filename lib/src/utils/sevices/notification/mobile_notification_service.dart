@@ -37,8 +37,8 @@
 //     try {
 
 //       final androidDetails = AndroidNotificationDetails(
-//         'documents_channel', 
-//         'Documents', 
+//         'documents_channel',
+//         'Documents',
 //         channelDescription: 'Notifications for documents',
 //         importance: Importance.max,
 //         priority: Priority.high,
@@ -149,6 +149,26 @@ class MobileNotificationService implements NotificationService {
   }
 
   @override
+  Future<void> showNotification({
+    required String title,
+    required String body,
+  }) async {
+    MyClassObserver.instance.log(
+      name,
+      "Show notification | title=$title, body=$body",
+    );
+    await AwesomeNotifications().createNotification(
+      content: NotificationContent(
+        id: -1,
+        channelKey: 'documents_channel',
+        title: title,
+        body: body,
+        notificationLayout: NotificationLayout.Default,
+      ),
+    );
+  }
+
+  @override
   Future<void> scheduleNotification({
     required int id,
     required String title,
@@ -176,8 +196,12 @@ class MobileNotificationService implements NotificationService {
         "Scheduled notification id=$id title=$title date=$date",
       );
     } catch (e, s) {
-      MyClassObserver.instance.onError(name, e, s,
-          message: "Failed to schedule notification $id");
+      MyClassObserver.instance.onError(
+        name,
+        e,
+        s,
+        message: "Failed to schedule notification $id",
+      );
     }
   }
 
@@ -197,8 +221,12 @@ class MobileNotificationService implements NotificationService {
         "Updated notification id=$id title=$title date=$date",
       );
     } catch (e, s) {
-      MyClassObserver.instance.onError(name, e, s,
-          message: "Failed to update notification $id");
+      MyClassObserver.instance.onError(
+        name,
+        e,
+        s,
+        message: "Failed to update notification $id",
+      );
     }
   }
 
@@ -210,8 +238,12 @@ class MobileNotificationService implements NotificationService {
       }
       MyClassObserver.instance.log(name, "Canceled notifications $ids");
     } catch (e, s) {
-      MyClassObserver.instance.onError(name, e, s,
-          message: "Failed to cancel notifications $ids");
+      MyClassObserver.instance.onError(
+        name,
+        e,
+        s,
+        message: "Failed to cancel notifications $ids",
+      );
     }
   }
 
@@ -221,8 +253,12 @@ class MobileNotificationService implements NotificationService {
       await AwesomeNotifications().cancelAll();
       MyClassObserver.instance.log(name, "Canceled all notifications");
     } catch (e, s) {
-      MyClassObserver.instance.onError(name, e, s,
-          message: "Failed to cancel all notifications");
+      MyClassObserver.instance.onError(
+        name,
+        e,
+        s,
+        message: "Failed to cancel all notifications",
+      );
     }
   }
 }

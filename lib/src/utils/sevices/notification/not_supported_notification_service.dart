@@ -2,7 +2,7 @@ import 'package:my_documents/src/utils/sevices/observer.dart';
 
 import 'notification_service.dart';
 
-class NotSupportedNotificationService implements NotificationService{
+class NotSupportedNotificationService implements NotificationService {
   NotSupportedNotificationService() {
     init();
   }
@@ -11,8 +11,19 @@ class NotSupportedNotificationService implements NotificationService{
 
   @override
   Future<void> init() async {
-    MyClassObserver.instance.log(name, "Platform not supported for notifications");
+    MyClassObserver.instance.log(
+      name,
+      "Platform not supported for notifications",
+    );
     // Not supported, so no initialization needed
+  }
+
+  @override
+  Future<void> showNotification({
+    required String title,
+    required String body,
+  }) async {
+    // Not supported, so no action
   }
 
   @override

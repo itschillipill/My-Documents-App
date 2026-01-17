@@ -6,6 +6,8 @@
   "failedToScan":"Failed to scan",
   "failedToImport":"Failed to import",
   "invalidImportFormat":"Invalid Import Format",
+  "invalidBackupFormat":"Invalid Backup Format",
+  "corruptedBackup": "Corrupted Backup",
   "title1": "Welcome to My Documents",
   "description1": "Secure storage and organization of your personal documents in one place",
   "title2": "Deadline Tracking",

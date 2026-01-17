@@ -18,7 +18,7 @@ class DocumentsCubit extends Cubit<DocumentsState> {
 
   DocumentsCubit({required this.dataSource}) : super(DocumentsState.initial()) {
     MyClassObserver.instance.onCreate(name);
-    loadData();
+    _loadData();
   }
 
   String get name => "DocumentsCubit";
@@ -43,7 +43,10 @@ class DocumentsCubit extends Cubit<DocumentsState> {
 
   List<Document> get documentsOrEmpty => state.documents ?? [];
 
-  Future<void> loadData() async {
+  Future<void> refresh() async => await _loadData();
+
+  @protected
+  Future<void> _loadData() async {
     emit(
       DocumentsState.processing(
         documents: state.documents,
@@ -87,12 +90,16 @@ class DocumentsCubit extends Cubit<DocumentsState> {
           message: "Document added successfully",
         ),
       );
-     if(newDocument.versions.first.expirationDate != null){ 
-      NotificationServiceSingleton.instance.service.scheduleNotification(
-        id: newDocument.id, 
-        title: newDocument.title,
-        date: newDocument.versions.first.expirationDate! /*DateTime.now().add(Duration(seconds: 20))*/);
-        }
+      if (newDocument.versions.first.expirationDate != null) {
+        NotificationServiceSingleton.instance.service.scheduleNotification(
+          id: newDocument.id,
+          title: newDocument.title,
+          date: newDocument
+              .versions
+              .first
+              .expirationDate! /*DateTime.now().add(Duration(seconds: 20))*/,
+        );
+      }
     } catch (e, s) {
       emit(
         DocumentsState.failed(
@@ -125,8 +132,9 @@ class DocumentsCubit extends Cubit<DocumentsState> {
         documentsOrEmpty,
       );
 
-      final updatedDocuments =
-          state.documents?.where((d) => !documentIds.contains(d.id)).toList();
+      final updatedDocuments = state.documents
+          ?.where((d) => !documentIds.contains(d.id))
+          .toList();
 
       emit(
         DocumentsState.processing(
@@ -134,7 +142,9 @@ class DocumentsCubit extends Cubit<DocumentsState> {
           message: "Documents deleted successfully",
         ),
       );
-      NotificationServiceSingleton.instance.service.cancelNotification(documentIds);
+      NotificationServiceSingleton.instance.service.cancelNotification(
+        documentIds,
+      );
     } catch (e, s) {
       emit(
         DocumentsState.failed(
@@ -160,12 +170,9 @@ class DocumentsCubit extends Cubit<DocumentsState> {
     try {
       final res = await dataSource.updateDocument(updatedDocument);
       if (!res) return;
-      final updatedDocuments =
-          state.documents
-              ?.map(
-                (doc) => doc.id == updatedDocument.id ? updatedDocument : doc,
-              )
-              .toList();
+      final updatedDocuments = state.documents
+          ?.map((doc) => doc.id == updatedDocument.id ? updatedDocument : doc)
+          .toList();
 
       emit(
         DocumentsState.processing(
@@ -211,10 +218,9 @@ class DocumentsCubit extends Cubit<DocumentsState> {
       );
 
       // Обновляем список документов
-      final updatedDocuments =
-          state.documents
-              ?.map((doc) => doc.id == documentId ? updatedDocument : doc)
-              .toList();
+      final updatedDocuments = state.documents
+          ?.map((doc) => doc.id == documentId ? updatedDocument : doc)
+          .toList();
 
       emit(
         DocumentsState.processing(
@@ -223,10 +229,13 @@ class DocumentsCubit extends Cubit<DocumentsState> {
         ),
       );
 
-     if(newVersion.expirationDate != null){NotificationServiceSingleton.instance.service.updateNotification(
-        id: updatedDocument.id, 
-        title: updatedDocument.title,
-        date: newVersion.expirationDate!);}
+      if (newVersion.expirationDate != null) {
+        NotificationServiceSingleton.instance.service.updateNotification(
+          id: updatedDocument.id,
+          title: updatedDocument.title,
+          date: newVersion.expirationDate!,
+        );
+      }
     } catch (e, s) {
       emit(
         DocumentsState.failed(
@@ -305,17 +314,21 @@ class DocumentsCubit extends Cubit<DocumentsState> {
 
       return ResultOr.success(safePath);
     } catch (e, s) {
-      MyClassObserver.instance.onError(name, e, s, message: "Error saving file");
+      MyClassObserver.instance.onError(
+        name,
+        e,
+        s,
+        message: "Error saving file",
+      );
       return ResultOr.error(ErrorKeys.errorSavingFile);
     }
   }
 
   Future<int> getAllDocumentsSize() async {
     try {
-      final uniquePaths =
-          documentsOrEmpty
-              .expand((doc) => doc.versions.map((v) => v.filePath))
-              .toSet();
+      final uniquePaths = documentsOrEmpty
+          .expand((doc) => doc.versions.map((v) => v.filePath))
+          .toSet();
 
       final sizes = await Future.wait(
         uniquePaths.map((path) async {

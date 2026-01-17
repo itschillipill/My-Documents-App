@@ -55,10 +55,9 @@ class AddFolderPage extends StatelessWidget {
                   );
                   result(
                     onSuccess: (_) => Navigator.pop(context),
-                    onError:
-                        (error) => MessageService.showErrorSnack(
-                          error.getMessage(context),
-                        ),
+                    onError: (error) => MessageService.showErrorSnack(
+                      error.getMessage(context),
+                    ),
                   );
                 },
                 child: Text(context.l10n.save),

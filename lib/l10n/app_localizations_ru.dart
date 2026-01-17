@@ -27,28 +27,38 @@ class AppLocalizationsRu extends AppLocalizations {
   String get invalidImportFormat => 'Неверный формат импорта';
 
   @override
+  String get invalidBackupFormat => 'Неверный формат резервной копии';
+
+  @override
+  String get corruptedBackup => 'Файл резервной копии поврежден';
+
+  @override
   String get title1 => 'Добро пожаловать в My Documents';
 
   @override
-  String get description1 => 'Безопасное хранение и организация ваших личных документов в одном месте';
+  String get description1 =>
+      'Безопасное хранение и организация ваших личных документов в одном месте';
 
   @override
   String get title2 => 'Контроль сроков';
 
   @override
-  String get description2 => 'Получайте уведомления об истечении срока действия документов и важных событиях';
+  String get description2 =>
+      'Получайте уведомления об истечении срока действия документов и важных событиях';
 
   @override
   String get title3 => 'Умная организация';
 
   @override
-  String get description3 => 'Создавайте папки и пакеты документов для удобного доступа и управления документами';
+  String get description3 =>
+      'Создавайте папки и пакеты документов для удобного доступа и управления документами';
 
   @override
   String get title4 => 'Безопасность данных';
 
   @override
-  String get description4 => 'Ваши документы защищены современными методами шифрования и хранятся локально';
+  String get description4 =>
+      'Ваши документы защищены современными методами шифрования и хранятся локально';
 
   @override
   String get start => 'Начать';
@@ -66,7 +76,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get privacyPolicy => 'Политика конфиденциальности';
 
   @override
-  String get moto => 'Ваша конфиденциальность — наш приоритет. Мы продолжаем совершенствовать защиту ваших данных.';
+  String get moto =>
+      'Ваша конфиденциальность — наш приоритет. Мы продолжаем совершенствовать защиту ваших данных.';
 
   @override
   String get gotIt => 'Я понял';
@@ -75,37 +86,43 @@ class AppLocalizationsRu extends AppLocalizations {
   String get paragraph1 => '1. Сбор данных';
 
   @override
-  String get content1 => 'Приложение My Documents собирает и хранит только документы, которые вы явно загружаете в приложение. Мы не собираем ваши личные данные без вашего согласия.';
+  String get content1 =>
+      'Приложение My Documents собирает и хранит только документы, которые вы явно загружаете в приложение. Мы не собираем ваши личные данные без вашего согласия.';
 
   @override
   String get paragraph2 => '2. Локальное хранение';
 
   @override
-  String get content2 => 'Все ваши документы хранятся локально на вашем устройстве. Мы не передаем ваши файлы на внешние серверы без вашего явного разрешения.';
+  String get content2 =>
+      'Все ваши документы хранятся локально на вашем устройстве. Мы не передаем ваши файлы на внешние серверы без вашего явного разрешения.';
 
   @override
   String get paragraph3 => '3. Шифрование данных';
 
   @override
-  String get content3 => 'Для защиты ваших документов используется современное шифрование AES-256. Доступ к приложению защищен PIN-кодом или биометрической аутентификацией.';
+  String get content3 =>
+      'Для защиты ваших документов используется современное шифрование AES-256. Доступ к приложению защищен PIN-кодом или биометрической аутентификацией.';
 
   @override
   String get paragraph4 => '4. Резервные копии';
 
   @override
-  String get content4 => 'Вы можете создавать зашифрованные резервные копии в облачных хранилищах по вашему выбору. Ключи шифрования хранятся только на вашем устройстве.';
+  String get content4 =>
+      'Вы можете создавать зашифрованные резервные копии в облачных хранилищах по вашему выбору. Ключи шифрования хранятся только на вашем устройстве.';
 
   @override
   String get paragraph5 => '5. Уведомления';
 
   @override
-  String get content5 => 'Приложение использует локальные уведомления для напоминаний о сроках документов. Эти уведомления не требуют доступа к интернету.';
+  String get content5 =>
+      'Приложение использует локальные уведомления для напоминаний о сроках документов. Эти уведомления не требуют доступа к интернету.';
 
   @override
   String get paragraph6 => '6. Согласие';
 
   @override
-  String get content6 => 'Используя приложение My Documents, вы соглашаетесь с данной политикой конфиденциальности и даете разрешение на локальное хранение ваших документов.';
+  String get content6 =>
+      'Используя приложение My Documents, вы соглашаетесь с данной политикой конфиденциальности и даете разрешение на локальное хранение ваших документов.';
 
   @override
   String get cancel => 'Отмена';
@@ -183,10 +200,12 @@ class AppLocalizationsRu extends AppLocalizations {
   String get createPIN => 'Создать PIN';
 
   @override
-  String get biometricNotAvailable => 'Биометрическая аутентификация недоступна на этом устройстве';
+  String get biometricNotAvailable =>
+      'Биометрическая аутентификация недоступна на этом устройстве';
 
   @override
-  String get useBiometricsInfo => 'Использовать отпечаток пальца или распознавание лица';
+  String get useBiometricsInfo =>
+      'Использовать отпечаток пальца или распознавание лица';
 
   @override
   String get biometricAuthentication => 'Биометрическая аутентификация';
@@ -231,7 +250,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get errorSavingFile => 'Ошибка сохранения файла';
 
   @override
-  String get willDeleteAllVersions => 'Это удалит все документы permanently. Включая все версии.';
+  String get willDeleteAllVersions =>
+      'Это удалит все документы permanently. Включая все версии.';
 
   @override
   String get setExpirationDate => 'Установить срок действия';

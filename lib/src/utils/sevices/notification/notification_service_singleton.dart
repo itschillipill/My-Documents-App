@@ -23,14 +23,13 @@ class NotificationServiceSingleton {
     return _service!;
   }
 
- Future<void> init() async {
-  if (_service != null) return;
+  Future<void> init() async {
+    if (_service != null) return;
 
- if (Platform.isAndroid || Platform.isIOS) { 
- _service = MobileNotificationService();
-  } else {
-    _service = NotSupportedNotificationService();
+    if (Platform.isAndroid || Platform.isIOS) {
+      _service = MobileNotificationService();
+    } else {
+      _service = NotSupportedNotificationService();
+    }
   }
-}
-
 }

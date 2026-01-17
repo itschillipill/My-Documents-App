@@ -62,84 +62,82 @@ class _FolderViewPageState extends State<FolderViewPage> {
                 ),
               );
             },
-            child:
-                !isSelecting
-                    ? AppBar(
-                      key: const ValueKey('normal'),
-                      title: Text(folder.folderTitle(context)),
-                      actions: [
-                        _buildSortButton(
-                          context,
-                          sortOptions,
-                          isReverse,
-                          onPressed:
-                              (i, so) => setState(() {
-                                isReverse = i;
-                                sortOptions = so;
-                              }),
-                        ),
-                        if (!folder.isVirtual)
-                          MenuActions(
-                            actions: [
-                              (
-                                Rename$FolderAction(
-                                  context: context,
-                                  folder: folder,
-                                ).call,
-                                context.l10n.rename,
-                              ),
-                              (
-                                Delete$FolderAction(
-                                  context: context,
-                                  folder: folder,
-                                ).call,
-                                context.l10n.delete,
-                              ),
-                            ],
-                          ),
-                      ],
-                    )
-                    : AppBar(
-                      key: const ValueKey('select'),
-                      title: Text(selectedDocumentsIds.length.toString()),
-                      centerTitle: false,
-                      leading: IconButton(
-                        onPressed: resetSelecting,
-                        icon: const Icon(Icons.close_rounded),
+            child: !isSelecting
+                ? AppBar(
+                    key: const ValueKey('normal'),
+                    title: Text(folder.folderTitle(context)),
+                    actions: [
+                      _buildSortButton(
+                        context,
+                        sortOptions,
+                        isReverse,
+                        onPressed: (i, so) => setState(() {
+                          isReverse = i;
+                          sortOptions = so;
+                        }),
                       ),
-                      actions: [
-                        IconButton(
-                          onPressed: () {
-                            Delete$DocumentAction(
-                              documentsIds: selectedDocumentsIds.toList(),
-                              context: context,
-                            ).call();
-                            resetSelecting();
-                          },
-                          icon: Icon(Icons.delete_rounded),
+                      if (!folder.isVirtual)
+                        MenuActions(
+                          actions: [
+                            (
+                              Rename$FolderAction(
+                                context: context,
+                                folder: folder,
+                              ).call,
+                              context.l10n.rename,
+                            ),
+                            (
+                              Delete$FolderAction(
+                                context: context,
+                                folder: folder,
+                              ).call,
+                              context.l10n.delete,
+                            ),
+                          ],
                         ),
-                        IconButton(
-                          onPressed: () {
-                            Share$DocumentAction(
-                              documents: context.deps.documentsCubit
-                                  .getDocumentsByIds(
-                                    selectedDocumentsIds.toList(),
-                                  ),
-                              context: context,
-                            ).call();
-                            resetSelecting();
-                          },
-                          icon: Icon(Icons.share),
-                        ),
-                      ],
+                    ],
+                  )
+                : AppBar(
+                    key: const ValueKey('select'),
+                    title: Text(selectedDocumentsIds.length.toString()),
+                    centerTitle: false,
+                    leading: IconButton(
+                      onPressed: resetSelecting,
+                      icon: const Icon(Icons.close_rounded),
                     ),
+                    actions: [
+                      IconButton(
+                        onPressed: () {
+                          Delete$DocumentAction(
+                            documentsIds: selectedDocumentsIds.toList(),
+                            context: context,
+                          ).call();
+                          resetSelecting();
+                        },
+                        icon: Icon(Icons.delete_rounded),
+                      ),
+                      IconButton(
+                        onPressed: () {
+                          Share$DocumentAction(
+                            documents: context.deps.documentsCubit
+                                .getDocumentsByIds(
+                                  selectedDocumentsIds.toList(),
+                                ),
+                            context: context,
+                          ).call();
+                          resetSelecting();
+                        },
+                        icon: Icon(Icons.share),
+                      ),
+                    ],
+                  ),
           ),
         ),
         body: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8),
           child: BlocBuilder<DocumentsCubit, DocumentsState>(
-            buildWhen:
-                (previous, current) => current.documents != previous.documents,
+            buildWhen: (previous, current) =>
+                current.documents != previous.documents,
             builder: (context, state) {
               final documents = sorted(
                 folder.getDocuments(state.documents ?? []),
@@ -157,24 +155,22 @@ class _FolderViewPageState extends State<FolderViewPage> {
                     isSelected: selectedDocumentsIds.contains(
                       documents[index].id,
                     ),
-                    onLongPress:
-                        () => setState(() {
-                          selectedDocumentsIds.add(documents[index].id);
-                          isSelecting = true;
-                        }),
-                    onTap:
-                        isSelecting
-                            ? () {
-                              setState(
-                                () => selectedDocumentsIds.addOrRemove(
-                                  documents[index].id,
-                                ),
-                              );
-                              if (selectedDocumentsIds.isEmpty) {
-                                resetSelecting();
-                              }
+                    onLongPress: () => setState(() {
+                      selectedDocumentsIds.add(documents[index].id);
+                      isSelecting = true;
+                    }),
+                    onTap: isSelecting
+                        ? () {
+                            setState(
+                              () => selectedDocumentsIds.addOrRemove(
+                                documents[index].id,
+                              ),
+                            );
+                            if (selectedDocumentsIds.isEmpty) {
+                              resetSelecting();
                             }
-                            : null,
+                          }
+                        : null,
                   );
                 },
               );
@@ -284,13 +280,9 @@ Widget _buildSortButton(
 
                       return ListTile(
                         title: Text(e.title(context)),
-                        trailing:
-                            isSelected
-                                ? Icon(
-                                  Icons.check_rounded,
-                                  color: secondaryColor,
-                                )
-                                : null,
+                        trailing: isSelected
+                            ? Icon(Icons.check_rounded, color: secondaryColor)
+                            : null,
                         onTap: () => setModalState(() => tempSort = e),
                       );
                     }),

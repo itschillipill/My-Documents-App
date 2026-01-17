@@ -52,10 +52,9 @@ class BuildTile extends StatelessWidget {
                       title,
                       style: theme.textTheme.bodyLarge?.copyWith(
                         fontWeight: FontWeight.w500,
-                        color:
-                            isDanger
-                                ? colorScheme.error
-                                : colorScheme.onSurface,
+                        color: isDanger
+                            ? colorScheme.error
+                            : colorScheme.onSurface,
                       ),
                     ),
                     if (subtitle != null) ...[

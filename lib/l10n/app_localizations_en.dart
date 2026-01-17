@@ -27,28 +27,38 @@ class AppLocalizationsEn extends AppLocalizations {
   String get invalidImportFormat => 'Invalid Import Format';
 
   @override
+  String get invalidBackupFormat => 'Invalid Backup Format';
+
+  @override
+  String get corruptedBackup => 'Corrupted Backup';
+
+  @override
   String get title1 => 'Welcome to My Documents';
 
   @override
-  String get description1 => 'Secure storage and organization of your personal documents in one place';
+  String get description1 =>
+      'Secure storage and organization of your personal documents in one place';
 
   @override
   String get title2 => 'Deadline Tracking';
 
   @override
-  String get description2 => 'Get notifications about document expiration dates and important events';
+  String get description2 =>
+      'Get notifications about document expiration dates and important events';
 
   @override
   String get title3 => 'Smart Organization';
 
   @override
-  String get description3 => 'Create folders and document bundles for easy access and management';
+  String get description3 =>
+      'Create folders and document bundles for easy access and management';
 
   @override
   String get title4 => 'Data Security';
 
   @override
-  String get description4 => 'Your documents are protected with modern encryption methods and stored locally';
+  String get description4 =>
+      'Your documents are protected with modern encryption methods and stored locally';
 
   @override
   String get start => 'Get Started';
@@ -66,7 +76,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get privacyPolicy => 'Privacy Policy';
 
   @override
-  String get moto => 'Your privacy is our priority. We continue to improve the protection of your data.';
+  String get moto =>
+      'Your privacy is our priority. We continue to improve the protection of your data.';
 
   @override
   String get gotIt => 'Got It';
@@ -75,37 +86,43 @@ class AppLocalizationsEn extends AppLocalizations {
   String get paragraph1 => '1. Data Collection';
 
   @override
-  String get content1 => 'The My Documents app collects and stores only the documents that you explicitly upload to the app. We do not collect your personal data without your consent.';
+  String get content1 =>
+      'The My Documents app collects and stores only the documents that you explicitly upload to the app. We do not collect your personal data without your consent.';
 
   @override
   String get paragraph2 => '2. Local Storage';
 
   @override
-  String get content2 => 'All your documents are stored locally on your device. We do not transfer your files to external servers without your explicit permission.';
+  String get content2 =>
+      'All your documents are stored locally on your device. We do not transfer your files to external servers without your explicit permission.';
 
   @override
   String get paragraph3 => '3. Data Encryption';
 
   @override
-  String get content3 => 'Your documents are protected with modern AES-256 encryption. Access to the app is secured with a PIN code or biometric authentication.';
+  String get content3 =>
+      'Your documents are protected with modern AES-256 encryption. Access to the app is secured with a PIN code or biometric authentication.';
 
   @override
   String get paragraph4 => '4. Backups';
 
   @override
-  String get content4 => 'You can create encrypted backups to cloud storage of your choice. Encryption keys are stored only on your device.';
+  String get content4 =>
+      'You can create encrypted backups to cloud storage of your choice. Encryption keys are stored only on your device.';
 
   @override
   String get paragraph5 => '5. Notifications';
 
   @override
-  String get content5 => 'The app uses local notifications for document deadline reminders. These notifications do not require internet access.';
+  String get content5 =>
+      'The app uses local notifications for document deadline reminders. These notifications do not require internet access.';
 
   @override
   String get paragraph6 => '6. Consent';
 
   @override
-  String get content6 => 'By using the My Documents app, you agree to this privacy policy and give permission for local storage of your documents.';
+  String get content6 =>
+      'By using the My Documents app, you agree to this privacy policy and give permission for local storage of your documents.';
 
   @override
   String get cancel => 'Cancel';
@@ -183,7 +200,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get createPIN => 'Create PIN';
 
   @override
-  String get biometricNotAvailable => 'Biometric Authentication is not available on this device';
+  String get biometricNotAvailable =>
+      'Biometric Authentication is not available on this device';
 
   @override
   String get useBiometricsInfo => 'Use fingerprint or face ID';
@@ -231,7 +249,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get errorSavingFile => 'Error saving file';
 
   @override
-  String get willDeleteAllVersions => 'This will delete the documents permanently. Including all versions.';
+  String get willDeleteAllVersions =>
+      'This will delete the documents permanently. Including all versions.';
 
   @override
   String get setExpirationDate => 'Set Expiration Date';
@@ -354,7 +373,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get expiringDocuments => 'Expiring Documents';
 
   @override
-  String get notAvailableOnDesktop => 'This feature is not available on desktop';
+  String get notAvailableOnDesktop =>
+      'This feature is not available on desktop';
 
   @override
   String get filesNotFound => 'Selected files not found';

@@ -7,6 +7,7 @@ class Constants {
   static const supportedLocales = [Locale('en'), Locale('ru')];
   static const defaultLocale = Locale('en');
   static const currentDatabaseVersion = 2;
+  static const appLogoAsset = "assets/images/logo.png";
 
   // keys
   static const localeKey = "language_code";

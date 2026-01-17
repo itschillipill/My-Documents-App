@@ -39,11 +39,10 @@ class Document {
     Map<String, Object?> map,
     List<Map<String, Object?>> allVersions,
   ) {
-    final docVersions =
-        allVersions
-            .where((v) => v['documentId'] == map['id'])
-            .map((v) => DocumentVersion.fromMap(v))
-            .toList();
+    final docVersions = allVersions
+        .where((v) => v['documentId'] == map['id'])
+        .map((v) => DocumentVersion.fromMap(v))
+        .toList();
 
     return switch (map) {
       {
@@ -67,7 +66,8 @@ class Document {
     };
   }
   @override
-  String toString() => """
+  String toString() =>
+      """
   Document(
     id: $id,
     title: $title,

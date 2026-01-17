@@ -37,6 +37,17 @@ class DesktopNotificationService implements NotificationService {
   }
 
   @override
+  Future<void> showNotification({
+    required String title,
+    required String body,
+  }) async {
+    MyClassObserver.instance.log(
+      name,
+      "Show notification | title=$title, body=$body",
+    );
+  }
+
+  @override
   Future<void> scheduleNotification({
     required int id,
     required String title,

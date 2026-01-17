@@ -108,8 +108,9 @@ class FoldersCubit extends Cubit<FoldersState> {
     try {
       bool success = await dataSource.deleteFolder(id);
       if (!success) return;
-      final updatedFolders =
-          state.folders?.where((element) => element.id != id).toList();
+      final updatedFolders = state.folders
+          ?.where((element) => element.id != id)
+          .toList();
 
       emit(
         FoldersState.processing(
@@ -141,10 +142,9 @@ class FoldersCubit extends Cubit<FoldersState> {
     try {
       Folder updatedFolder = await dataSource.updateFolder(folder);
 
-      final updatedFolders =
-          state.folders
-              ?.map((e) => e.id == folder.id ? updatedFolder : e)
-              .toList();
+      final updatedFolders = state.folders
+          ?.map((e) => e.id == folder.id ? updatedFolder : e)
+          .toList();
 
       emit(
         FoldersState.processing(

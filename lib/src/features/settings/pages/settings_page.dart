@@ -4,9 +4,10 @@ import 'package:my_documents/src/core/constants.dart';
 import 'package:my_documents/src/core/extensions/extensions.dart';
 import 'package:my_documents/src/features/auth/auth_executor.dart';
 import 'package:my_documents/src/features/documents/widgets/build_tile.dart';
+import 'package:my_documents/src/utils/sevices/export_service.dart';
+import 'package:my_documents/src/utils/sevices/import_service.dart';
 import 'package:my_documents/src/utils/sevices/message_service.dart';
 import 'package:my_documents/src/utils/page_transition/app_page_route.dart';
-import 'package:my_documents/src/utils/sevices/file_service.dart';
 import 'package:my_documents/src/widgets/build_section.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -60,9 +61,9 @@ class _SettingsPageState extends State<SettingsPage> {
       if (verifyOldPin == null) return;
       verifyOldPin == true
           ? Future.microtask(() async {
-            await authExecutor.clearPin();
-            if (mounted) MessageService.showSnackBar(context.l10n.pinDeleted);
-          })
+              await authExecutor.clearPin();
+              if (mounted) MessageService.showSnackBar(context.l10n.pinDeleted);
+            })
           : {if (mounted) MessageService.showErrorSnack(context.l10n.wrongPIN)};
     }
   }
@@ -145,14 +146,13 @@ class _SettingsPageState extends State<SettingsPage> {
                         vertical: 18,
                       ),
                       hintText: '••••',
-                      hintStyle: Theme.of(
-                        ctx,
-                      ).textTheme.headlineSmall?.copyWith(
-                        letterSpacing: 8,
-                        color: Theme.of(
-                          ctx,
-                        ).colorScheme.onSurface.withValues(alpha: 0.3),
-                      ),
+                      hintStyle: Theme.of(ctx).textTheme.headlineSmall
+                          ?.copyWith(
+                            letterSpacing: 8,
+                            color: Theme.of(
+                              ctx,
+                            ).colorScheme.onSurface.withValues(alpha: 0.3),
+                          ),
                     ),
                   ),
                   Row(
@@ -181,8 +181,9 @@ class _SettingsPageState extends State<SettingsPage> {
                           onPressed: () => Navigator.pop(ctx, controller.text),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Theme.of(ctx).colorScheme.primary,
-                            foregroundColor:
-                                Theme.of(ctx).colorScheme.onPrimary,
+                            foregroundColor: Theme.of(
+                              ctx,
+                            ).colorScheme.onPrimary,
                             padding: const EdgeInsets.symmetric(vertical: 16),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
@@ -246,11 +247,10 @@ class _SettingsPageState extends State<SettingsPage> {
                                 icon: Icons.lock_rounded,
                                 title: context.l10n.changePIN,
                                 subtitle: context.l10n.updatePIN,
-                                onTap:
-                                    () => _createOrChangePin(
-                                      authExecutor,
-                                      verifyOld: true,
-                                    ),
+                                onTap: () => _createOrChangePin(
+                                  authExecutor,
+                                  verifyOld: true,
+                                ),
                               ),
                               _buildDivider(),
                               BuildTile(
@@ -292,10 +292,9 @@ class _SettingsPageState extends State<SettingsPage> {
                                       ),
                                     ),
                                     Switch(
-                                      value:
-                                          settingCubit.canUseBiometrics
-                                              ? state.useBiometrics
-                                              : false,
+                                      value: settingCubit.canUseBiometrics
+                                          ? state.useBiometrics
+                                          : false,
                                       onChanged: (v) {
                                         if (!settingCubit.canUseBiometrics) {
                                           MessageService.showErrorSnack(
@@ -337,21 +336,16 @@ class _SettingsPageState extends State<SettingsPage> {
                         final result = await MessageService.showLoading(
                           timeout: Duration(seconds: 60),
                           message: context.l10n.exportData,
-                          fn:
-                              () => FileService.exportData(
-                                documents:
-                                    context
-                                        .deps
-                                        .documentsCubit
-                                        .documentsOrEmpty,
-                              ),
+                          fn: () => ExportService.exportData(
+                            documents:
+                                context.deps.documentsCubit.documentsOrEmpty,
+                          ),
                         );
                         result(
                           onSuccess: (_) => (),
-                          onError:
-                              (err) => MessageService.showErrorSnack(
-                                err.getMessage(context),
-                              ),
+                          onError: (err) => MessageService.showErrorSnack(
+                            err.getMessage(context),
+                          ),
                         );
                       },
                     ),
@@ -361,17 +355,15 @@ class _SettingsPageState extends State<SettingsPage> {
                       title: context.l10n.importData,
                       subtitle: context.l10n.restoreFromBackup,
                       onTap: () async {
-                        final result = await FileService.importData();
+                        final result = await ImportService.importAndReplace(
+                          dataSource: context.deps.dataSource,
+                        );
                         result(
-                          onSuccess: (result) {
-                            context.deps.documentsCubit.restoreDocuments(
-                              result,
-                            );
-                          },
-                          onError:
-                              (error) => MessageService.showErrorSnack(
-                                error.getMessage(context),
-                              ),
+                          onSuccess: (_) =>
+                              context.deps.documentsCubit.refresh(),
+                          onError: (error) => MessageService.showErrorSnack(
+                            error.getMessage(context),
+                          ),
                         );
                       },
                     ),
@@ -388,12 +380,11 @@ class _SettingsPageState extends State<SettingsPage> {
                       subtitle: context.l10n.chooseAppTheme,
                       value: state.themeMode,
                       options: ThemeMode.values,
-                      optionBuilder:
-                          (tm) => switch (tm) {
-                            ThemeMode.light => context.l10n.themeLight,
-                            ThemeMode.dark => context.l10n.themeDark,
-                            ThemeMode.system => context.l10n.themeSystem,
-                          },
+                      optionBuilder: (tm) => switch (tm) {
+                        ThemeMode.light => context.l10n.themeLight,
+                        ThemeMode.dark => context.l10n.themeDark,
+                        ThemeMode.system => context.l10n.themeSystem,
+                      },
                       onChanged: (value) {
                         if (value != null) {
                           settingCubit.changeThemeMode(value);
@@ -409,8 +400,8 @@ class _SettingsPageState extends State<SettingsPage> {
                       subtitle: context.l10n.chooseAppLanguage,
                       value: state.locale,
                       options: Constants.supportedLocales,
-                      optionBuilder:
-                          (locale) => locale.languageCode.toUpperCase(),
+                      optionBuilder: (locale) =>
+                          locale.languageCode.toUpperCase(),
                       onChanged: (value) {
                         if (value != null) {
                           settingCubit.changeLocale(value);
@@ -453,9 +444,8 @@ class _SettingsPageState extends State<SettingsPage> {
                         width: double.infinity,
                         child: FilledButton.tonal(
                           onPressed: () async {
-                            final size =
-                                await context.deps.documentsCubit
-                                    .getAllDocumentsSize();
+                            final size = await context.deps.documentsCubit
+                                .getAllDocumentsSize();
                             if (context.mounted) {
                               MessageService.showSnackBar(
                                 "${context.l10n.allDocumentsSize}: ${(size / 1024 / 1024).toStringAsFixed(2)} MB",
@@ -577,18 +567,17 @@ class _SettingsPageState extends State<SettingsPage> {
             child: DropdownButton<T>(
               value: value,
               onChanged: onChanged,
-              items:
-                  options.map((option) {
-                    return DropdownMenuItem<T>(
-                      value: option,
-                      child: Text(
-                        optionBuilder(option),
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    );
-                  }).toList(),
+              items: options.map((option) {
+                return DropdownMenuItem<T>(
+                  value: option,
+                  child: Text(
+                    optionBuilder(option),
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                );
+              }).toList(),
               underline: const SizedBox(),
               icon: Icon(
                 Icons.arrow_drop_down_rounded,

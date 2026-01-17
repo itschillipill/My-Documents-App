@@ -2,6 +2,7 @@ import 'dart:async' show runZonedGuarded;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show DeviceOrientation;
+import 'package:my_documents/src/utils/sevices/observer.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'src/app.dart';
