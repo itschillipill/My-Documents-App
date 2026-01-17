@@ -9,8 +9,8 @@ import '../../core/constants.dart';
 
 Future<void> $platformInitialization() =>
     io.Platform.isAndroid || io.Platform.isIOS
-        ? _mobileInitialization()
-        : _desktopInitialization();
+    ? _mobileInitialization()
+    : _desktopInitialization();
 
 Future<void> _mobileInitialization() async {}
 
@@ -22,8 +22,8 @@ Future<void> _desktopInitialization() async {
     center: true,
     backgroundColor:
         PlatformDispatcher.instance.platformBrightness == Brightness.dark
-            ? AppTheme.darkTheme.colorScheme.surface
-            : AppTheme.lightTheme.colorScheme.surface,
+        ? AppTheme.darkTheme.colorScheme.surface
+        : AppTheme.lightTheme.colorScheme.surface,
     skipTaskbar: false,
     titleBarStyle: TitleBarStyle.hidden,
     /* alwaysOnTop: true, */

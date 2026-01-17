@@ -153,18 +153,16 @@ Widget _buildMenuButton(
           children: [
             Icon(
               icon,
-              color:
-                  isCancel
-                      ? colorScheme.surface.withValues(alpha: 0.6)
-                      : colorScheme.surface,
+              color: isCancel
+                  ? colorScheme.surface.withValues(alpha: 0.6)
+                  : colorScheme.surface,
             ),
             Text(
               label,
               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                color:
-                    isCancel
-                        ? colorScheme.surface.withValues(alpha: 0.6)
-                        : colorScheme.surface,
+                color: isCancel
+                    ? colorScheme.surface.withValues(alpha: 0.6)
+                    : colorScheme.surface,
                 fontWeight: FontWeight.w500,
               ),
             ),

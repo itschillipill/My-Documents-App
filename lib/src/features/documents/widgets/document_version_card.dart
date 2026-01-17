@@ -40,10 +40,9 @@ class DocumentVersionCard extends StatelessWidget {
               children: [
                 Container(
                   decoration: BoxDecoration(
-                    color:
-                        isCurrent
-                            ? Colors.green.withValues(alpha: 0.1)
-                            : theme.colorScheme.primary.withValues(alpha: 0.08),
+                    color: isCurrent
+                        ? Colors.green.withValues(alpha: 0.1)
+                        : theme.colorScheme.primary.withValues(alpha: 0.08),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   padding: const EdgeInsets.all(12),

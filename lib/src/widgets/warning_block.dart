@@ -43,11 +43,8 @@ class WarningBlock extends StatelessWidget {
             "${expiring.length} ${context.l10n.documentsExpiring}",
             style: const TextStyle(color: Colors.redAccent),
           ),
-          onTap:
-              () => Navigator.push(
-                context,
-                FolderViewPage.route(folder: _folder),
-              ),
+          onTap: () =>
+              Navigator.push(context, FolderViewPage.route(folder: _folder)),
         ),
       ),
     );

@@ -51,19 +51,17 @@ class _SearchPageState extends State<SearchPage> {
       );
     }
 
-    final List<Document> filteredDocuments =
-        _query.isEmpty
-            ? []
-            : documents
-                .where((doc) => doc.title.toLowerCase().contains(_query))
-                .toList();
+    final List<Document> filteredDocuments = _query.isEmpty
+        ? []
+        : documents
+              .where((doc) => doc.title.toLowerCase().contains(_query))
+              .toList();
 
-    final List<Folder> filteredFolders =
-        _query.isEmpty
-            ? []
-            : folders
-                .where((folder) => folder.name.toLowerCase().contains(_query))
-                .toList();
+    final List<Folder> filteredFolders = _query.isEmpty
+        ? []
+        : folders
+              .where((folder) => folder.name.toLowerCase().contains(_query))
+              .toList();
 
     return Scaffold(
       appBar: _buildAppBar(),
@@ -73,14 +71,13 @@ class _SearchPageState extends State<SearchPage> {
           children: [
             _buildSearchField(),
             Expanded(
-              child:
-                  _query.isEmpty
-                      ? _buildEmptySearchState(colorScheme)
-                      : _buildSearchResults(
-                        filteredDocuments,
-                        filteredFolders,
-                        colorScheme,
-                      ),
+              child: _query.isEmpty
+                  ? _buildEmptySearchState(colorScheme)
+                  : _buildSearchResults(
+                      filteredDocuments,
+                      filteredFolders,
+                      colorScheme,
+                    ),
             ),
           ],
         ),
@@ -103,18 +100,17 @@ class _SearchPageState extends State<SearchPage> {
           prefixIcon: Icon(Icons.search_rounded),
           hintText: context.l10n.searchDocumentsHint,
           filled: true,
-          suffixIcon:
-              _searchController.text.isNotEmpty
-                  ? IconButton(
-                    icon: Icon(Icons.clear_rounded),
-                    onPressed: () {
-                      setState(() {
-                        _searchController.clear();
-                        _query = "";
-                      });
-                    },
-                  )
-                  : null,
+          suffixIcon: _searchController.text.isNotEmpty
+              ? IconButton(
+                  icon: Icon(Icons.clear_rounded),
+                  onPressed: () {
+                    setState(() {
+                      _searchController.clear();
+                      _query = "";
+                    });
+                  },
+                )
+              : null,
         ),
         textInputAction: TextInputAction.search,
       ),

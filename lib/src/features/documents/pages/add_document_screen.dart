@@ -79,28 +79,26 @@ class _AddDocumentScreenState extends State<AddDocumentScreen> {
                 width: double.infinity,
                 height: 56,
                 child: ElevatedButton(
-                  onPressed:
-                      _originalPath == null
-                          ? null
-                          : () async {
-                            final result = await context.deps.documentsCubit
-                                .saveDocument(
-                                  title: _titleController.text.trim(),
-                                  isFavorite: isFavorite,
-                                  folderId: _folder?.id,
-                                  originalPath: _originalPath,
-                                  comment: _commentController.text.trim(),
-                                  expirationDate: _expirationDate,
-                                );
+                  onPressed: _originalPath == null
+                      ? null
+                      : () async {
+                          final result = await context.deps.documentsCubit
+                              .saveDocument(
+                                title: _titleController.text.trim(),
+                                isFavorite: isFavorite,
+                                folderId: _folder?.id,
+                                originalPath: _originalPath,
+                                comment: _commentController.text.trim(),
+                                expirationDate: _expirationDate,
+                              );
 
-                            result(
-                              onSuccess: (_) => Navigator.pop(context),
-                              onError:
-                                  (error) => MessageService.showErrorSnack(
-                                    error.getMessage(context),
-                                  ),
-                            );
-                          },
+                          result(
+                            onSuccess: (_) => Navigator.pop(context),
+                            onError: (error) => MessageService.showErrorSnack(
+                              error.getMessage(context),
+                            ),
+                          );
+                        },
 
                   child: Text(
                     context.l10n.save.toUpperCase(),
@@ -187,10 +185,9 @@ class _AddDocumentScreenState extends State<AddDocumentScreen> {
 
         // Expiration date picker
         dp.DatePicker(
-          onTap:
-              (date) => setState(() {
-                _expirationDate = date;
-              }),
+          onTap: (date) => setState(() {
+            _expirationDate = date;
+          }),
           expirationDate: _expirationDate,
         ),
       ],

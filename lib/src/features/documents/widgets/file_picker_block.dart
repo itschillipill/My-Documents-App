@@ -178,10 +178,9 @@ class FilePickerBlock extends StatelessWidget {
                   );
                   result(
                     onSuccess: (path) => onSelected(path),
-                    onError:
-                        (error) => MessageService.showErrorSnack(
-                          error.getMessage(context),
-                        ),
+                    onError: (error) => MessageService.showErrorSnack(
+                      error.getMessage(context),
+                    ),
                   );
                 },
               ),
@@ -198,10 +197,9 @@ class FilePickerBlock extends StatelessWidget {
                   );
                   result(
                     onSuccess: (path) => onSelected(path),
-                    onError:
-                        (error) => MessageService.showErrorSnack(
-                          error.getMessage(context),
-                        ),
+                    onError: (error) => MessageService.showErrorSnack(
+                      error.getMessage(context),
+                    ),
                   );
                 },
               ),
@@ -211,23 +209,23 @@ class FilePickerBlock extends StatelessWidget {
         Row(
           spacing: 10,
           children: [
-             Expanded(
-      child: _buildSelectionOption(
-        context: context,
-        icon: Icons.document_scanner_rounded,
-        label: context.l10n.scanner,
-        colorScheme: colorScheme,
-        onTap: () async {
-            final result = await FileService.scanDocument();
+            Expanded(
+              child: _buildSelectionOption(
+                context: context,
+                icon: Icons.document_scanner_rounded,
+                label: context.l10n.scanner,
+                colorScheme: colorScheme,
+                onTap: () async {
+                  final result = await FileService.scanDocument();
                   result(
                     onSuccess: (path) => onSelected(path),
-                    onError:
-                        (error) =>
-                            MessageService.showErrorSnack(error.getMessage(context)),
+                    onError: (error) => MessageService.showErrorSnack(
+                      error.getMessage(context),
+                    ),
                   );
-        },
-      ),
-    ),
+                },
+              ),
+            ),
             Expanded(
               child: _buildSelectionOption(
                 context: context,
@@ -238,9 +236,9 @@ class FilePickerBlock extends StatelessWidget {
                   final result = await FileService.pickFile();
                   result(
                     onSuccess: (path) => onSelected(path),
-                    onError:
-                        (error) =>
-                            MessageService.showErrorSnack(error.getMessage(context)),
+                    onError: (error) => MessageService.showErrorSnack(
+                      error.getMessage(context),
+                    ),
                   );
                 },
                 isFullWidth: true,

@@ -18,16 +18,16 @@ class _WindowScopeState extends State<WindowScope> {
   @override
   Widget build(BuildContext context) =>
       kIsWeb || io.Platform.isAndroid || io.Platform.isIOS
-          ? widget.child
-          : Column(
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              const _WindowTitle(),
-              Expanded(child: widget.child),
-            ],
-          );
+      ? widget.child
+      : Column(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            const _WindowTitle(),
+            Expanded(child: widget.child),
+          ],
+        );
 }
 
 class _WindowTitle extends StatefulWidget {
@@ -201,11 +201,10 @@ class _WindowButtons$Windows extends StatelessWidget {
         // Is always on top
         ValueListenableBuilder<bool>(
           valueListenable: _isAlwaysOnTop,
-          builder:
-              (context, isAlwaysOnTop, _) => _WindowButton(
-                onPressed: () => setAlwaysOnTop(!isAlwaysOnTop),
-                icon: isAlwaysOnTop ? Icons.push_pin : Icons.push_pin_outlined,
-              ),
+          builder: (context, isAlwaysOnTop, _) => _WindowButton(
+            onPressed: () => setAlwaysOnTop(!isAlwaysOnTop),
+            icon: isAlwaysOnTop ? Icons.push_pin : Icons.push_pin_outlined,
+          ),
         ),
         // Minimize
         _WindowButton(
@@ -215,14 +214,12 @@ class _WindowButtons$Windows extends StatelessWidget {
 
         ValueListenableBuilder<bool>(
           valueListenable: _isMaximaized,
-          builder:
-              (context, isMaximaized, _) => _WindowButton(
-                onPressed: setMaximaize,
-                icon:
-                    !isMaximaized
-                        ? Icons.square_rounded
-                        : Icons.crop_square_rounded,
-              ),
+          builder: (context, isMaximaized, _) => _WindowButton(
+            onPressed: setMaximaize,
+            icon: !isMaximaized
+                ? Icons.square_rounded
+                : Icons.crop_square_rounded,
+          ),
         ),
 
         // Set Full Screen

@@ -14,7 +14,9 @@ enum ErrorKeys {
   notAvailableOnDesktop,
   failedToImport,
   invalidImportFormat,
-  failedToScan;
+  failedToScan,
+  invalidBackupFormat,
+  corruptedBackup;
 
   String getMessage(BuildContext ctx) {
     return switch (this) {
@@ -31,6 +33,8 @@ enum ErrorKeys {
       ErrorKeys.failedToImport => ctx.l10n.failedToImport,
       ErrorKeys.invalidImportFormat => ctx.l10n.invalidImportFormat,
       ErrorKeys.failedToScan => ctx.l10n.failedToScan,
+      ErrorKeys.invalidBackupFormat => ctx.l10n.invalidBackupFormat,
+      ErrorKeys.corruptedBackup => ctx.l10n.corruptedBackup,
     };
   }
 }

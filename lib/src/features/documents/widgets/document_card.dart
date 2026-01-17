@@ -71,20 +71,19 @@ class DocumentCard extends StatelessWidget {
                 ),
                 AnimatedSwitcher(
                   duration: Durations.medium2,
-                  child:
-                      isSelected
-                          ? Icon(
-                            Icons.check_rounded,
-                            color: theme.colorScheme.secondary,
-                            size: 20,
-                          )
-                          : document.isFavorite
-                          ? Icon(
-                            Icons.star_rounded,
-                            color: theme.colorScheme.secondary,
-                            size: 20,
-                          )
-                          : SizedBox.shrink(),
+                  child: isSelected
+                      ? Icon(
+                          Icons.check_rounded,
+                          color: theme.colorScheme.secondary,
+                          size: 20,
+                        )
+                      : document.isFavorite
+                      ? Icon(
+                          Icons.star_rounded,
+                          color: theme.colorScheme.secondary,
+                          size: 20,
+                        )
+                      : SizedBox.shrink(),
                 ),
               ],
             ),

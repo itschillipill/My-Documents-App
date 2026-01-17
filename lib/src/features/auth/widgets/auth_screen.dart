@@ -130,16 +130,18 @@ class _VerifyPinScreenState extends State<VerifyPinScreen> {
                       width: 100,
                       height: 100,
                       decoration: BoxDecoration(
-                        color: (_showError
-                                ? colorScheme.error
-                                : colorScheme.primary)
-                            .withValues(alpha: 0.1),
+                        color:
+                            (_showError
+                                    ? colorScheme.error
+                                    : colorScheme.primary)
+                                .withValues(alpha: 0.1),
                         shape: BoxShape.circle,
                         border: Border.all(
-                          color: (_showError
-                                  ? colorScheme.error
-                                  : colorScheme.primary)
-                              .withValues(alpha: 0.3),
+                          color:
+                              (_showError
+                                      ? colorScheme.error
+                                      : colorScheme.primary)
+                                  .withValues(alpha: 0.3),
                           width: 2,
                         ),
                       ),
@@ -148,10 +150,9 @@ class _VerifyPinScreenState extends State<VerifyPinScreen> {
                             ? Icons.lock_reset_rounded
                             : Icons.lock_rounded,
                         size: 48,
-                        color:
-                            _showError
-                                ? colorScheme.error
-                                : colorScheme.primary,
+                        color: _showError
+                            ? colorScheme.error
+                            : colorScheme.primary,
                       ),
                     ),
                     const SizedBox(height: 32),
@@ -278,31 +279,30 @@ class _VerifyPinScreenState extends State<VerifyPinScreen> {
                           elevation: 0,
                           shadowColor: Colors.transparent,
                         ),
-                        child:
-                            _loading
-                                ? const SizedBox(
-                                  width: 24,
-                                  height: 24,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 3,
-                                    color: Colors.white,
-                                  ),
-                                )
-                                : Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(Icons.lock_open_rounded, size: 20),
-                                    const SizedBox(width: 12),
-                                    Text(
-                                      context.l10n.unlock.toUpperCase(),
-                                      style: const TextStyle(
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 16,
-                                        letterSpacing: 0.5,
-                                      ),
-                                    ),
-                                  ],
+                        child: _loading
+                            ? const SizedBox(
+                                width: 24,
+                                height: 24,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 3,
+                                  color: Colors.white,
                                 ),
+                              )
+                            : Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(Icons.lock_open_rounded, size: 20),
+                                  const SizedBox(width: 12),
+                                  Text(
+                                    context.l10n.unlock.toUpperCase(),
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 16,
+                                      letterSpacing: 0.5,
+                                    ),
+                                  ),
+                                ],
+                              ),
                       ),
                     ),
                   ],
@@ -413,10 +413,9 @@ class _VerifyPinScreenState extends State<VerifyPinScreen> {
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color:
-                        isDark
-                            ? colorScheme.primary.withValues(alpha: 0.1)
-                            : colorScheme.surfaceContainerHighest,
+                    color: isDark
+                        ? colorScheme.primary.withValues(alpha: 0.1)
+                        : colorScheme.surfaceContainerHighest,
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Row(

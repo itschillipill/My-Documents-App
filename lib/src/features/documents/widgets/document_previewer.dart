@@ -24,30 +24,26 @@ class DocumentPreviewer extends StatelessWidget {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(8),
             color: Colors.transparent,
-            image:
-                isImage
-                    ? DecorationImage(
-                      image: FileImage(File(path)),
-                      fit: BoxFit.contain,
-                      onError:
-                          (exception, stackTrace) => debugPrint(
-                            "coudn't load image $exception-$stackTrace",
-                          ),
-                    )
-                    : null,
-          ),
-          child:
-              !isImage
-                  ? Center(
-                    child: Text(
-                      context.l10n.noPreview,
-                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                        fontWeight: FontWeight.w500,
-                        color: Theme.of(context).colorScheme.secondary,
-                      ),
-                    ),
+            image: isImage
+                ? DecorationImage(
+                    image: FileImage(File(path)),
+                    fit: BoxFit.contain,
+                    onError: (exception, stackTrace) =>
+                        debugPrint("coudn't load image $exception-$stackTrace"),
                   )
-                  : null,
+                : null,
+          ),
+          child: !isImage
+              ? Center(
+                  child: Text(
+                    context.l10n.noPreview,
+                    style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                      fontWeight: FontWeight.w500,
+                      color: Theme.of(context).colorScheme.secondary,
+                    ),
+                  ),
+                )
+              : null,
         ),
       ),
     );
@@ -57,21 +53,18 @@ class DocumentPreviewer extends StatelessWidget {
     await Navigator.push(
       context,
       MaterialPageRoute(
-        builder:
-            (context) => Scaffold(
-              appBar: AppBar(title: Text(context.l10n.preview)),
-              body: Container(
-                color: Colors.black,
-                child: InteractiveViewer(
-                  boundaryMargin: EdgeInsets.all(20.0),
-                  minScale: 0.5,
-                  maxScale: 3.0,
-                  child: Center(
-                    child: Image.file(File(path), fit: BoxFit.contain),
-                  ),
-                ),
-              ),
+        builder: (context) => Scaffold(
+          appBar: AppBar(title: Text(context.l10n.preview)),
+          body: Container(
+            color: Colors.black,
+            child: InteractiveViewer(
+              boundaryMargin: EdgeInsets.all(20.0),
+              minScale: 0.5,
+              maxScale: 3.0,
+              child: Center(child: Image.file(File(path), fit: BoxFit.contain)),
             ),
+          ),
+        ),
       ),
     );
   }

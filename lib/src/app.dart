@@ -10,7 +10,6 @@ import 'package:my_documents/src/pages/onboarding_page.dart';
 import 'package:my_documents/src/utils/sevices/message_service.dart';
 import 'dependencies/widgets/dependencies_scope.dart';
 import 'package:my_documents/src/utils/theme/theme.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:my_documents/l10n/app_localizations.dart';
 
 import 'widgets/windows_scope.dart';
@@ -42,31 +41,26 @@ class App extends StatelessWidget {
               onboardingPage: OnboardingPage(),
               authExecutor: deps.authExecutor,
               authScreenBuilder:
-                  (executor) => VerifyPinScreen(
-                    useBiometrics:
-                        deps.settingsCubit.state.useBiometrics &&
-                        deps.settingsCubit.canUseBiometrics,
-                    onAuthByPIN: executor.authenticateByPIN,
-                    onAuthByBiometrics: executor.authenticateByBiometrics,
-                  ),
+                  (authenticateByPIN, authenticateByBiometrics) =>
+                      VerifyPinScreen(
+                        useBiometrics:
+                            deps.settingsCubit.state.useBiometrics &&
+                            deps.settingsCubit.canUseBiometrics,
+                        onAuthByPIN: authenticateByPIN,
+                        onAuthByBiometrics: authenticateByBiometrics,
+                      ),
               child: const AppGate(),
             ),
-            builder:
-                (context, child) => MediaQuery(
-                  data: MediaQuery.of(
-                    context,
-                  ).copyWith(textScaler: TextScaler.linear(1.0)),
-                  child: WindowScope(
-                    title: context.l10n.appTitle,
-                    child: child ?? const SizedBox.shrink(),
-                  ),
-                ),
-            localizationsDelegates: const [
-              AppLocalizations.delegate,
-              GlobalMaterialLocalizations.delegate,
-              GlobalWidgetsLocalizations.delegate,
-              GlobalCupertinoLocalizations.delegate,
-            ],
+            builder: (context, child) => MediaQuery(
+              data: MediaQuery.of(
+                context,
+              ).copyWith(textScaler: TextScaler.noScaling),
+              child: WindowScope(
+                title: context.l10n.appTitle,
+                child: child ?? const SizedBox.shrink(),
+              ),
+            ),
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
             locale: state.locale,
             supportedLocales: Constants.supportedLocales,
           );

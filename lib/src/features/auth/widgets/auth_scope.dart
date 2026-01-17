@@ -5,7 +5,11 @@ class AuthScope extends StatelessWidget {
   final Widget child;
   final Widget onboardingPage;
   final bool isFirstLaunch;
-  final Widget Function(AuthenticationExecutor executor) authScreenBuilder;
+  final Widget Function(
+    Future<bool> Function(String pin) authenticateByPIN,
+    Future<bool> Function() authenticateByBiometrics,
+  )
+  authScreenBuilder;
   final AuthenticationExecutor authExecutor;
 
   const AuthScope({
@@ -33,17 +37,17 @@ class AuthScope extends StatelessWidget {
           builder: (context, authenticated, _) {
             debugPrint('AuthScope → authenticated: $authenticated');
 
-            /// Если пароля нет — сразу пускаем
             if (!hasPassword) {
               return child;
             }
 
-            /// Пароль есть, но пользователь ещё не ввёл его
             if (!authenticated) {
-              return authScreenBuilder(authExecutor);
+              return authScreenBuilder(
+                authExecutor.authenticateByPIN,
+                authExecutor.authenticateByBiometrics,
+              );
             }
 
-            /// Всё ок — главная страница
             return child;
           },
         );

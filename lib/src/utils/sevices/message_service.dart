@@ -46,15 +46,14 @@ class MessageService {
     _showLoading(message: message);
 
     try {
-      final result =
-          await (timeout != null
-              ? Future.any([
-                fn(),
-                Future.delayed(timeout, () {
-                  throw TimeoutException("Operation timed out");
-                }),
-              ])
-              : fn());
+      final result = await (timeout != null
+          ? Future.any([
+              fn(),
+              Future.delayed(timeout, () {
+                throw TimeoutException("Operation timed out");
+              }),
+            ])
+          : fn());
 
       await Future.delayed(delay);
       return result;
@@ -96,8 +95,8 @@ class MessageService {
     if (overlayState == null) return;
 
     final overlayEntry = OverlayEntry(
-      builder:
-          (context) => ToastWidget(message: message, background: background),
+      builder: (context) =>
+          ToastWidget(message: message, background: background),
     );
 
     overlayState.insert(overlayEntry);

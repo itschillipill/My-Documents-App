@@ -23,8 +23,8 @@ class DocumentsBlock extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 8),
         child: BlocBuilder<DocumentsCubit, DocumentsState>(
-          buildWhen:
-              (previous, current) => current.documents != previous.documents,
+          buildWhen: (previous, current) =>
+              current.documents != previous.documents,
           builder: (context, state) {
             final documents = state.documents ?? [];
             if (documents.isEmpty) {
@@ -175,8 +175,8 @@ class DocumentsBlock extends StatelessWidget {
           SizedBox(
             width: isSmallScreen ? double.infinity : null,
             child: ElevatedButton.icon(
-              onPressed:
-                  () => Navigator.push(context, AddDocumentScreen.route()),
+              onPressed: () =>
+                  Navigator.push(context, AddDocumentScreen.route()),
               icon: const Icon(Icons.add_rounded),
               label: Text(context.l10n.addDocument),
             ),

@@ -57,10 +57,9 @@ class _AddNewDocumentVersionState extends State<AddNewDocumentVersion> {
         documentId: widget.documentId,
         filePath: safePath,
         uploadedAt: DateTime.now(),
-        comment:
-            _commentController.text.trim().isEmpty
-                ? null
-                : _commentController.text.trim(),
+        comment: _commentController.text.trim().isEmpty
+            ? null
+            : _commentController.text.trim(),
         expirationDate: _expirationDate,
       );
 

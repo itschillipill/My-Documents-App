@@ -1,14 +1,12 @@
 part of 'package:my_documents/main.dart';
 
 void _$initializationErrorHandler(Object error, StackTrace stackTrace) async {
-  debugPrint("Initialization error: $error");
-  debugPrintStack(stackTrace: stackTrace);
+  MyClassObserver.instance.onError("Initialization", error, stackTrace);
   ThemeMode themeMode =
       ThemeMode.values[(await SharedPreferences.getInstance()).getInt(
             Constants.themeModeKey,
           ) ??
           0];
-  debugPrint("Theme mode: ${themeMode.name}");
   runApp(
     MaterialApp(
       title: Constants.appName,
@@ -21,16 +19,15 @@ void _$initializationErrorHandler(Object error, StackTrace stackTrace) async {
         stackTrace: stackTrace,
         onRetry: main,
       ),
-      builder:
-          (context, child) => MediaQuery(
-            data: MediaQuery.of(
-              context,
-            ).copyWith(textScaler: TextScaler.linear(1.0)),
-            child: WindowScope(
-              title: Constants.appName,
-              child: child ?? const SizedBox.shrink(),
-            ),
-          ),
+      builder: (context, child) => MediaQuery(
+        data: MediaQuery.of(
+          context,
+        ).copyWith(textScaler: TextScaler.linear(1.0)),
+        child: WindowScope(
+          title: Constants.appName,
+          child: child ?? const SizedBox.shrink(),
+        ),
+      ),
     ),
   );
 }

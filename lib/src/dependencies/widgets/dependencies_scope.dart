@@ -23,12 +23,11 @@ class DependenciesScope extends StatelessWidget {
     _ => null,
   };
 
-  static Never _notFoundInheritedWidgetOfExactType() =>
-      throw ArgumentError(
-        'Out of scope, not found inherited widget '
-            'a DependenciesScope of the exact type',
-        'out_of_scope',
-      );
+  static Never _notFoundInheritedWidgetOfExactType() => throw ArgumentError(
+    'Out of scope, not found inherited widget '
+        'a DependenciesScope of the exact type',
+    'out_of_scope',
+  );
 
   static Dependencies of(BuildContext context) =>
       maybeOf(context) ?? _notFoundInheritedWidgetOfExactType();
@@ -44,12 +43,8 @@ class DependenciesScope extends StatelessWidget {
   @override
   Widget build(BuildContext context) => FutureBuilder<Dependencies>(
     future: initialization,
-    builder:
-        (context, snapshot) => switch ((
-          snapshot.data,
-          snapshot.error,
-          snapshot.stackTrace,
-        )) {
+    builder: (context, snapshot) =>
+        switch ((snapshot.data, snapshot.error, snapshot.stackTrace)) {
           (Dependencies dependencies, null, null) => _InheritedDependencies(
             dependencies: dependencies,
             child: child,
