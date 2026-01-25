@@ -17,14 +17,15 @@ class FolderTile extends StatelessWidget {
       padding: const EdgeInsets.only(top: 8),
       child: Material(
         color: colorScheme.surface,
+        borderRadius: BorderRadius.circular(10),
         child: InkWell(
           onTap: () {
             Navigator.push(context, FolderViewPage.route(folder: folder));
           },
           child: ListTile(
             leading: Container(
-              width: 48,
-              height: 48,
+              width: 38,
+              height: 38,
               decoration: BoxDecoration(
                 color: colorScheme.primary.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(10),
@@ -40,7 +41,6 @@ class FolderTile extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
             ),
             subtitle: _getCount(context, folder),
-            trailing: Icon(Icons.chevron_right_rounded),
           ),
         ),
       ),
@@ -49,8 +49,13 @@ class FolderTile extends StatelessWidget {
 }
 
 Widget _getCount(BuildContext context, Folder folder) {
-  return Text(
-    "${context.l10n.documents}: ${folder.getDocuments(context.watch<DocumentsCubit>().documentsOrEmpty).length}",
-    style: Theme.of(context).textTheme.bodySmall,
+  return BlocBuilder<DocumentsCubit, DocumentsState>(
+    bloc: context.deps.documentsCubit,
+    builder: (context, state) {
+      return Text(
+        "${folder.getDocuments(state.documents ?? []).length} ${context.l10n.documents}",
+        style: Theme.of(context).textTheme.bodySmall,
+      );
+    },
   );
 }

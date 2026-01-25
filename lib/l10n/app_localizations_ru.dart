@@ -15,6 +15,21 @@ class AppLocalizationsRu extends AppLocalizations {
   String get ok => 'ОК';
 
   @override
+  String get recent => 'Недавние';
+
+  @override
+  String get favorites => 'Избранное';
+
+  @override
+  String get upload => 'Загрузить';
+
+  @override
+  String get viewAll => 'Показать все';
+
+  @override
+  String get share => 'Поделиться';
+
+  @override
   String get scanner => 'Сканер';
 
   @override

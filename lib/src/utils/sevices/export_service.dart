@@ -24,10 +24,10 @@ class ExportService {
 
     try {
       if (!kDebugMode) return ResultOr.error(ErrorKeys.notImplemented);
-      final tempDir = await getTemporaryDirectory();
+      final tempDir = await _getSaveDirectory();
 
       exportDir = Directory(
-        p.join(tempDir.path, 'export_${DateTime.now().millisecondsSinceEpoch}'),
+        p.join(tempDir, 'export_${DateTime.now().millisecondsSinceEpoch}'),
       );
       await exportDir.create(recursive: true);
 
@@ -50,7 +50,7 @@ class ExportService {
 
       final zipFile = File(
         p.join(
-          tempDir.path,
+          tempDir,
           'my_documents_export_${DateTime.now().millisecondsSinceEpoch}.zip',
         ),
       );
@@ -76,6 +76,26 @@ class ExportService {
         }
       }
     }
+  }
+
+  static Future<String> _getSaveDirectory() async {
+    if (Platform.isAndroid) {
+      final dir = Directory('/storage/emulated/0/Download');
+
+      if (!await dir.exists()) {
+        await dir.create(recursive: true);
+      }
+
+      return dir.path;
+    }
+
+    if (Platform.isIOS) {
+      final dir = await getApplicationDocumentsDirectory();
+      return dir.path;
+    }
+
+    final dir = await getDownloadsDirectory() ?? await getTemporaryDirectory();
+    return dir.path;
   }
 
   static Future<ExportDocument> buildExportDocument(

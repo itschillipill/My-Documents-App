@@ -2,7 +2,6 @@ import 'dart:io' show Platform;
 
 import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:my_documents/src/core/constants.dart';
-import 'package:my_documents/src/data/services/document_service.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart' show join;
@@ -11,37 +10,40 @@ import 'package:my_documents/src/features/folders/model/folder.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart'
     show databaseFactoryFfi, sqfliteFfiInit;
 import 'data_sourse.dart';
+import 'services/document_service.dart';
 import 'services/folder_service.dart';
 
 class LocalDataSource implements DataSource {
-  static Database? _db;
+  late Database _db;
   late final DocumentService _documentService;
   late final FolderService _folderService;
 
   @override
-  Future<void> init() async {
-    if (!Platform.isAndroid && !Platform.isIOS) {
-      sqfliteFfiInit();
-      databaseFactory = databaseFactoryFfi;
+  Future<void> init({String? path}) async {
+    try {
+      if (!Platform.isAndroid && !Platform.isIOS) {
+        sqfliteFfiInit();
+        databaseFactory = databaseFactoryFfi;
+      }
+      String? $path = path;
+      $path ??= join(
+        (await getApplicationDocumentsDirectory()).path,
+        kDebugMode ? 'my_documents_debug.db' : 'my_documents.db',
+      );
+
+      _db = await openDatabase(
+        $path,
+        version: Constants.currentDatabaseVersion,
+        onCreate: _onCreate,
+        onConfigure: (db) async => await db.execute('PRAGMA foreign_keys = ON'),
+        onDowngrade: _onDowngrade,
+        onUpgrade: _onUpgrade,
+      );
+      _documentService = DocumentService(_db);
+      _folderService = FolderService(_db);
+    } catch (error, stackTrace) {
+      Error.throwWithStackTrace(error, stackTrace);
     }
-
-    final dbPath = await getApplicationDocumentsDirectory();
-    final path = join(
-      dbPath.path,
-      kDebugMode ? 'my_documents_debug.db' : 'my_documents.db',
-    );
-
-    _db = await openDatabase(
-      path,
-      version: Constants.currentDatabaseVersion,
-      onCreate: _onCreate,
-      onConfigure: (db) async => await db.execute('PRAGMA foreign_keys = ON'),
-      onDowngrade: _onDowngrade,
-      onUpgrade: _onUpgrade,
-    );
-
-    _documentService = DocumentService(_db);
-    _folderService = FolderService(_db);
   }
 
   static Future<void> _onDowngrade(
@@ -156,8 +158,7 @@ class LocalDataSource implements DataSource {
 
   @override
   Future<void> close() async {
-    await _db?.close();
-    _db = null;
+    await _db.close();
   }
 
   @override

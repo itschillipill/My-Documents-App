@@ -48,7 +48,7 @@ class AppTheme {
         ),
       ),
     ),
-    scaffoldBackgroundColor: Color(0xFFF5F5F5),
+    scaffoldBackgroundColor: Color.fromARGB(252, 245, 245, 245),
     appBarTheme: AppBarTheme(
       shape: Border(bottom: BorderSide(color: AppPalette.borderColor)),
       backgroundColor: Colors.white,

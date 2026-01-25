@@ -18,6 +18,7 @@ class SelectFolderPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<FoldersCubit, FoldersState>(
+      bloc: context.deps.foldersCubit,
       builder: (context, state) {
         final List<Folder> folders = state.folders ?? [];
         return Scaffold(
@@ -76,9 +77,8 @@ class SelectFolderPage extends StatelessWidget {
             ),
           ),
           floatingActionButton: FloatingActionButton(
-            onPressed: () async {
-              await Navigator.push(context, AddFolderPage.route());
-            },
+            onPressed: () async =>
+                await Navigator.push(context, AddFolderPage.route()),
             child: Icon(Icons.add),
           ),
         );

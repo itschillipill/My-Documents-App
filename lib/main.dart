@@ -16,17 +16,22 @@ import 'src/utils/theme/theme.dart';
 part 'src/widgets/initialization_error_screen.dart';
 
 void main() {
-  runZonedGuarded(() {
-    final initialization = InitializationExecutor();
-    runApp(
-      DependenciesScope(
-        initialization: initialization(
-          orientations: [DeviceOrientation.portraitUp],
-          onError: _$initializationErrorHandler,
+  runZonedGuarded(
+    () {
+      final initialization = InitializationExecutor();
+      runApp(
+        DependenciesScope(
+          initialization: initialization(
+            orientations: [DeviceOrientation.portraitUp],
+            onError: $initializationErrorHandler,
+          ),
+          splashScreen: InitializationSplashScreen(progress: initialization),
+          child: const App(),
         ),
-        splashScreen: InitializationSplashScreen(progress: initialization),
-        child: const App(),
-      ),
-    );
-  }, (error, stack) {});
+      );
+    },
+    (error, stack) {
+      MyClassObserver.instance.onError("Main", error, stack);
+    },
+  );
 }

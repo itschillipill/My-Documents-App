@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_documents/src/core/extensions/extensions.dart';
 import 'package:my_documents/src/features/documents/model/document.dart';
 import 'package:my_documents/src/features/documents/widgets/date_picker.dart'
@@ -9,7 +8,6 @@ import 'package:my_documents/src/utils/page_transition/app_page_route.dart';
 import 'package:my_documents/src/utils/sevices/file_service.dart';
 import 'package:my_documents/src/utils/sevices/message_service.dart';
 
-import '../cubit/documents_cubit.dart';
 import '../../../widgets/build_section.dart';
 
 class AddNewDocumentVersion extends StatefulWidget {
@@ -36,9 +34,9 @@ class _AddNewDocumentVersionState extends State<AddNewDocumentVersion> {
   }
 
   void _saveDocument(BuildContext context) async {
-    final cubit = context.read<DocumentsCubit>();
+    final cubit = context.deps.documentsCubit;
 
-    if (_originalPath == null) {
+    if (_originalPath == null || _originalPath!.isEmpty) {
       MessageService.showSnackBar(context.l10n.chooseFile);
       return;
     }
@@ -51,6 +49,7 @@ class _AddNewDocumentVersionState extends State<AddNewDocumentVersion> {
 
     try {
       final safePath = await FileService.saveFileToAppDir(_originalPath!);
+      await FileService.deleteFile(_originalPath!);
 
       final docVersion = DocumentVersion(
         id: 0,

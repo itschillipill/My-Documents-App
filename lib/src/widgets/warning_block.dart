@@ -17,64 +17,52 @@ class WarningBlock extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Слушаем только список документов
-    final documents = context.select<DocumentsCubit, List<Document>>(
-      (cubit) => cubit.documentsOrEmpty,
-    );
-
-    // Фильтруем документы, которые скоро истекают или уже истекли
-    final expiring = _folder.getDocuments(documents);
-    if (expiring.isEmpty) return _placeholder;
-
-    return SliverPersistentHeader(
-      pinned: true,
-      delegate: _WarningHeaderDelegate(
-        child: ListTile(
-          tileColor: Theme.of(context).cardColor,
-          leading: const Icon(Icons.warning),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
+    return BlocSelector<DocumentsCubit, DocumentsState, List<Document>>(
+      selector: (state) => _folder.getDocuments(state.documents ?? []),
+      bloc: context.deps.documentsCubit,
+      builder: (context, state) {
+        if (state.isEmpty) return _placeholder;
+        return SliverToBoxAdapter(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0),
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                borderRadius: BorderRadius.circular(12),
+                border: Border(
+                  left: BorderSide(
+                    color: Theme.of(context).colorScheme.secondary,
+                    width: 3,
+                  ),
+                ),
+              ),
+              child: Padding(
+                padding: EdgeInsets.symmetric(vertical: 4),
+                child: ListTile(
+                  leading: Icon(
+                    Icons.warning_rounded,
+                    color: Theme.of(context).colorScheme.secondary,
+                  ),
+                  title: Text(
+                    context.l10n.tapToView,
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                  subtitle: Text(
+                    "${state.length} ${context.l10n.documentsExpiring}",
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.secondary,
+                    ),
+                  ),
+                  onTap: () => Navigator.push(
+                    context,
+                    FolderViewPage.route(folder: _folder),
+                  ),
+                ),
+              ),
+            ),
           ),
-          title: Text(
-            context.l10n.tapToView,
-            style: Theme.of(context).textTheme.bodyLarge,
-          ),
-          subtitle: Text(
-            "${expiring.length} ${context.l10n.documentsExpiring}",
-            style: const TextStyle(color: Colors.redAccent),
-          ),
-          onTap: () =>
-              Navigator.push(context, FolderViewPage.route(folder: _folder)),
-        ),
-      ),
-    );
-  }
-}
-
-class _WarningHeaderDelegate extends SliverPersistentHeaderDelegate {
-  final Widget child;
-
-  _WarningHeaderDelegate({required this.child});
-
-  @override
-  Widget build(
-    BuildContext context,
-    double shrinkOffset,
-    bool overlapsContent,
-  ) {
-    return Material(
-      color: Theme.of(context).scaffoldBackgroundColor,
-      elevation: overlapsContent ? 4 : 0,
-      child: SizedBox(height: maxExtent, child: child),
+        );
+      },
     );
   }
-
-  @override
-  double get maxExtent => 80.0;
-
-  @override
-  double get minExtent => 80.0;
-
-  @override
-  bool shouldRebuild(_) => true;
 }

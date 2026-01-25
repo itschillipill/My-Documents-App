@@ -29,8 +29,9 @@ class DocumentViewPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cubit = context.read<DocumentsCubit>();
+    final cubit = context.deps.documentsCubit;
     return BlocBuilder<DocumentsCubit, DocumentsState>(
+      bloc: cubit,
       buildWhen: (previous, current) => current.documents != previous.documents,
       builder: (context, state) {
         final document = cubit.getDocumentById(documentId);
@@ -69,10 +70,8 @@ class DocumentViewPage extends StatelessWidget {
                         ),
                       ],
                     ),
-
                   _buidDocumentInfo(context, documentVersion, isCurrent),
                   _buildDocumentPreview(context, documentVersion),
-
                   _buildDocumentActions(
                     context,
                     document,

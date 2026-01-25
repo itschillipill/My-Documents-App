@@ -2,14 +2,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:my_documents/src/core/model/errors.dart';
 import 'package:my_documents/src/core/result_or.dart';
-import '../../../data/data_sourse.dart';
+import 'package:my_documents/src/database/database.dart';
 
 import 'package:my_documents/src/features/folders/model/folder.dart';
 
 import '../../../utils/sevices/observer.dart';
 part 'folders_state.dart';
 
-class FoldersCubit extends Cubit<FoldersState> {
+class FoldersCubit extends Cubit<FoldersState> /*with Handler*/ {
   final DataSource dataSource;
 
   FoldersCubit({required this.dataSource}) : super(FoldersState.initial()) {

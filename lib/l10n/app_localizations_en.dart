@@ -15,6 +15,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get ok => 'OK';
 
   @override
+  String get recent => 'Recent';
+
+  @override
+  String get favorites => 'Favorites';
+
+  @override
+  String get upload => 'Upload';
+
+  @override
+  String get viewAll => 'View All';
+
+  @override
+  String get share => 'Share';
+
+  @override
   String get scanner => 'Scanner';
 
   @override

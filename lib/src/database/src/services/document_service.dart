@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:sqflite/sqflite.dart';
 
-import '../../features/documents/model/document.dart';
+import '../../../features/documents/model/document.dart';
 
 class DocumentService {
   final Database _db;

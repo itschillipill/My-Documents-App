@@ -1,4 +1,4 @@
-import 'package:flutter/foundation.dart';
+import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/material.dart';
 import 'package:my_documents/src/core/constants.dart';
 import 'package:my_documents/src/core/extensions/extensions.dart';
@@ -34,10 +34,7 @@ class _SettingsPageState extends State<SettingsPage> {
   }) async {
     if (verifyOld) {
       final isValid = await _verifyOldPin(authExecutor);
-
-      if (isValid == null) return;
-
-      if (!isValid && mounted) {
+      if (isValid == false && mounted) {
         MessageService.showErrorSnack(context.l10n.wrongPIN);
         return;
       }
@@ -231,7 +228,7 @@ class _SettingsPageState extends State<SettingsPage> {
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: Column(
-              spacing: 20,
+              spacing: 10,
               children: [
                 BuildSection(
                   title: context.l10n.security,
@@ -261,54 +258,49 @@ class _SettingsPageState extends State<SettingsPage> {
                                 isDanger: true,
                               ),
                               _buildDivider(),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: 12,
-                                ),
-                                child: Row(
-                                  spacing: 10,
-                                  children: [
-                                    Container(
-                                      width: 40,
-                                      height: 40,
-                                      decoration: BoxDecoration(
-                                        color: colorScheme.primary.withValues(
-                                          alpha: 0.1,
-                                        ),
-                                        borderRadius: BorderRadius.circular(10),
+                              Row(
+                                spacing: 10,
+                                children: [
+                                  Container(
+                                    width: 40,
+                                    height: 40,
+                                    decoration: BoxDecoration(
+                                      color: colorScheme.primary.withValues(
+                                        alpha: 0.1,
                                       ),
-                                      child: Icon(
-                                        Icons.fingerprint_rounded,
-                                        color: colorScheme.primary,
-                                      ),
+                                      borderRadius: BorderRadius.circular(10),
                                     ),
-                                    Expanded(
-                                      child: Text(
-                                        context.l10n.biometricAuthentication,
-                                        style: theme.textTheme.bodyLarge
-                                            ?.copyWith(
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                      ),
+                                    child: Icon(
+                                      Icons.fingerprint_rounded,
+                                      color: colorScheme.primary,
                                     ),
-                                    Switch(
-                                      value: settingCubit.canUseBiometrics
-                                          ? state.useBiometrics
-                                          : false,
-                                      onChanged: (v) {
-                                        if (!settingCubit.canUseBiometrics) {
-                                          MessageService.showErrorSnack(
-                                            context.l10n.biometricNotAvailable,
-                                          );
-                                          return;
-                                        }
-                                        settingCubit
-                                            .changeBiometricAuthentication(v);
-                                        setState(() {});
-                                      },
+                                  ),
+                                  Expanded(
+                                    child: Text(
+                                      context.l10n.biometricAuthentication,
+                                      style: theme.textTheme.bodyLarge
+                                          ?.copyWith(
+                                            fontWeight: FontWeight.w500,
+                                          ),
                                     ),
-                                  ],
-                                ),
+                                  ),
+                                  Switch(
+                                    value: settingCubit.canUseBiometrics
+                                        ? state.useBiometrics
+                                        : false,
+                                    onChanged: (v) {
+                                      if (!settingCubit.canUseBiometrics) {
+                                        MessageService.showErrorSnack(
+                                          context.l10n.biometricNotAvailable,
+                                        );
+                                        return;
+                                      }
+                                      settingCubit
+                                          .changeBiometricAuthentication(v);
+                                      setState(() {});
+                                    },
+                                  ),
+                                ],
                               ),
                             ],
                           );
@@ -355,12 +347,16 @@ class _SettingsPageState extends State<SettingsPage> {
                       title: context.l10n.importData,
                       subtitle: context.l10n.restoreFromBackup,
                       onTap: () async {
+                        bool res = await MessageService.$confirmAction(
+                          title: context.l10n.importData,
+                        );
+                        if (!res || !context.mounted) return;
                         final result = await ImportService.importAndReplace(
-                          dataSource: context.deps.dataSource,
+                          context.deps.dataSource,
                         );
                         result(
-                          onSuccess: (_) =>
-                              context.deps.documentsCubit.refresh(),
+                          onSuccess: (docs) => context.deps.documentsCubit
+                              .restoreDocuments(docs),
                           onError: (error) => MessageService.showErrorSnack(
                             error.getMessage(context),
                           ),
@@ -436,9 +432,8 @@ class _SettingsPageState extends State<SettingsPage> {
                     ),
                   ],
                 ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8),
-                  child: Column(
+                if (kDebugMode)
+                  Column(
                     children: [
                       SizedBox(
                         width: double.infinity,
@@ -465,33 +460,29 @@ class _SettingsPageState extends State<SettingsPage> {
                           ),
                         ),
                       ),
-                      if (kDebugMode) ...[
-                        const SizedBox(height: 12),
-                        SizedBox(
-                          width: double.infinity,
-                          child: OutlinedButton(
-                            onPressed: settingCubit.resetFirstLaunch,
-                            style: OutlinedButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(vertical: 16),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              side: BorderSide(color: colorScheme.error),
+                      const SizedBox(height: 12),
+                      SizedBox(
+                        width: double.infinity,
+                        child: OutlinedButton(
+                          onPressed: settingCubit.resetFirstLaunch,
+                          style: OutlinedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
                             ),
-                            child: Text(
-                              "Reset First Launch",
-                              style: TextStyle(
-                                color: colorScheme.error,
-                                fontWeight: FontWeight.w500,
-                              ),
+                            side: BorderSide(color: colorScheme.error),
+                          ),
+                          child: Text(
+                            "Reset First Launch",
+                            style: TextStyle(
+                              color: colorScheme.error,
+                              fontWeight: FontWeight.w500,
                             ),
                           ),
                         ),
-                      ],
+                      ),
                     ],
                   ),
-                ),
-                const SizedBox(height: 5),
               ],
             ),
           ),
@@ -526,6 +517,7 @@ class _SettingsPageState extends State<SettingsPage> {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 12),
       child: Row(
+        spacing: 12,
         children: [
           Container(
             width: 40,
@@ -536,7 +528,6 @@ class _SettingsPageState extends State<SettingsPage> {
             ),
             child: Icon(icon, size: 22),
           ),
-          const SizedBox(width: 16),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -557,7 +548,7 @@ class _SettingsPageState extends State<SettingsPage> {
               ],
             ),
           ),
-          const SizedBox(width: 16),
+
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12),
             decoration: BoxDecoration(

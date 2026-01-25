@@ -11,4 +11,4 @@ Set-Content $pubspec $content
 
 Write-Host "Updated build number to $buildNumber"
 
-flutter build apk
+flutter build apk --target-platform=android-arm64

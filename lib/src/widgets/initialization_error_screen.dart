@@ -1,6 +1,6 @@
 part of 'package:my_documents/main.dart';
 
-void _$initializationErrorHandler(Object error, StackTrace stackTrace) async {
+void $initializationErrorHandler(Object error, StackTrace stackTrace) async {
   MyClassObserver.instance.onError("Initialization", error, stackTrace);
   ThemeMode themeMode =
       ThemeMode.values[(await SharedPreferences.getInstance()).getInt(

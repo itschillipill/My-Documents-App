@@ -145,7 +145,12 @@ class FilePickerBlock extends StatelessWidget {
     return SizedBox(
       height: 48,
       child: OutlinedButton.icon(
-        onPressed: () => onSelected(null),
+        onPressed: () async {
+          if (path != null) {
+            await FileService.deleteFile(path!);
+          }
+          onSelected(null);
+        },
         icon: const Icon(Icons.close_rounded),
         label: Text(context.l10n.removeFile),
         style: OutlinedButton.styleFrom(
@@ -177,7 +182,7 @@ class FilePickerBlock extends StatelessWidget {
                     imageSource: ImageSource.camera,
                   );
                   result(
-                    onSuccess: (path) => onSelected(path),
+                    onSuccess: onSelected,
                     onError: (error) => MessageService.showErrorSnack(
                       error.getMessage(context),
                     ),
@@ -196,7 +201,7 @@ class FilePickerBlock extends StatelessWidget {
                     imageSource: ImageSource.gallery,
                   );
                   result(
-                    onSuccess: (path) => onSelected(path),
+                    onSuccess: onSelected,
                     onError: (error) => MessageService.showErrorSnack(
                       error.getMessage(context),
                     ),
@@ -218,7 +223,7 @@ class FilePickerBlock extends StatelessWidget {
                 onTap: () async {
                   final result = await FileService.scanDocument();
                   result(
-                    onSuccess: (path) => onSelected(path),
+                    onSuccess: onSelected,
                     onError: (error) => MessageService.showErrorSnack(
                       error.getMessage(context),
                     ),
@@ -235,7 +240,7 @@ class FilePickerBlock extends StatelessWidget {
                 onTap: () async {
                   final result = await FileService.pickFile();
                   result(
-                    onSuccess: (path) => onSelected(path),
+                    onSuccess: onSelected,
                     onError: (error) => MessageService.showErrorSnack(
                       error.getMessage(context),
                     ),

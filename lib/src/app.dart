@@ -3,12 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_documents/src/core/constants.dart';
 import 'package:my_documents/src/core/extensions/extensions.dart';
 import 'package:my_documents/src/features/auth/widgets/auth_scope.dart';
-import 'package:my_documents/src/features/auth/widgets/auth_screen.dart';
 import 'package:my_documents/src/features/settings/cubit/settings_cubit.dart';
 import 'package:my_documents/src/pages/app_gate.dart';
-import 'package:my_documents/src/pages/onboarding_page.dart';
 import 'package:my_documents/src/utils/sevices/message_service.dart';
-import 'dependencies/widgets/dependencies_scope.dart';
 import 'package:my_documents/src/utils/theme/theme.dart';
 import 'package:my_documents/l10n/app_localizations.dart';
 
@@ -19,52 +16,29 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final deps = DependenciesScope.of(context);
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider(create: (_) => deps.documentsCubit),
-        BlocProvider(create: (_) => deps.foldersCubit),
-        BlocProvider(create: (_) => deps.settingsCubit),
-      ],
-      child: BlocBuilder<SettingsCubit, SettingsState>(
-        builder: (context, state) {
-          return MaterialApp(
-            scaffoldMessengerKey: MessageService.messengerKey,
-            navigatorKey: MessageService.navigatorKey,
-            title: Constants.appName,
-            debugShowCheckedModeBanner: false,
-            theme: AppTheme.lightTheme,
-            darkTheme: AppTheme.darkTheme,
-            themeMode: state.themeMode,
-            home: AuthScope(
-              isFirstLaunch: state.isFurstLaunch,
-              onboardingPage: OnboardingPage(),
-              authExecutor: deps.authExecutor,
-              authScreenBuilder:
-                  (authenticateByPIN, authenticateByBiometrics) =>
-                      VerifyPinScreen(
-                        useBiometrics:
-                            deps.settingsCubit.state.useBiometrics &&
-                            deps.settingsCubit.canUseBiometrics,
-                        onAuthByPIN: authenticateByPIN,
-                        onAuthByBiometrics: authenticateByBiometrics,
-                      ),
-              child: const AppGate(),
-            ),
-            builder: (context, child) => MediaQuery(
-              data: MediaQuery.of(
-                context,
-              ).copyWith(textScaler: TextScaler.noScaling),
-              child: WindowScope(
-                title: context.l10n.appTitle,
-                child: child ?? const SizedBox.shrink(),
-              ),
-            ),
-            localizationsDelegates: AppLocalizations.localizationsDelegates,
-            locale: state.locale,
-            supportedLocales: Constants.supportedLocales,
-          );
-        },
+    return BlocBuilder<SettingsCubit, SettingsState>(
+      bloc: context.deps.settingsCubit,
+      builder: (context, state) => MaterialApp(
+        scaffoldMessengerKey: MessageService.messengerKey,
+        navigatorKey: MessageService.navigatorKey,
+        title: Constants.appName,
+        debugShowCheckedModeBanner: false,
+        theme: AppTheme.lightTheme,
+        darkTheme: AppTheme.darkTheme,
+        themeMode: state.themeMode,
+        home: const AppGate(),
+        builder: (context, child) => MediaQuery(
+          data: MediaQuery.of(
+            context,
+          ).copyWith(textScaler: TextScaler.noScaling),
+          child: WindowScope(
+            title: context.l10n.appTitle,
+            child: AuthScope(child: child ?? const SizedBox.shrink()),
+          ),
+        ),
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        locale: state.locale,
+        supportedLocales: Constants.supportedLocales,
       ),
     );
   }

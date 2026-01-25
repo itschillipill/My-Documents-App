@@ -1,5 +1,5 @@
-import '../features/documents/model/document.dart';
-import '../features/folders/model/folder.dart';
+import '../../features/documents/model/document.dart';
+import '../../features/folders/model/folder.dart';
 
 abstract class DataSource {
   Future<void> init();

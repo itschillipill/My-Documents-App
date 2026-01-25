@@ -135,20 +135,20 @@ class _FolderViewPageState extends State<FolderViewPage> {
         ),
         body: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8),
-          child: BlocBuilder<DocumentsCubit, DocumentsState>(
-            buildWhen: (previous, current) =>
-                current.documents != previous.documents,
-            builder: (context, state) {
-              final documents = sorted(
-                folder.getDocuments(state.documents ?? []),
-                sortOptions,
-                isReverse,
-              );
+          child: BlocSelector<DocumentsCubit, DocumentsState, List<Document>>(
+            bloc: context.deps.documentsCubit,
+            selector: (s) => sorted(
+              folder.getDocuments(s.documents ?? []),
+              sortOptions,
+              isReverse,
+            ),
+            builder: (context, documents) {
               if (documents.isEmpty) {
                 return Center(child: Text(context.l10n.noDocumentsFound));
               }
-              return ListView.builder(
+              return ListView.separated(
                 itemCount: documents.length,
+                separatorBuilder: (context, index) => const SizedBox(height: 4),
                 itemBuilder: (context, index) {
                   return DocumentCard(
                     document: documents[index],
@@ -200,7 +200,7 @@ List<Document> sorted(
       break;
 
     case SortOptions.byUploadDate:
-      sorted.sort((a, b) => a.uploadDate.compareTo(b.uploadDate));
+      sorted.sort((a, b) => b.createdAt.compareTo(a.createdAt));
       break;
 
     case SortOptions.byExpirationDate:
@@ -208,7 +208,6 @@ List<Document> sorted(
         final aDate = a.expirationDate;
         final bDate = b.expirationDate;
 
-        // документы без даты — в конец
         if (aDate == null && bDate == null) return 0;
         if (aDate == null) return 1;
         if (bDate == null) return -1;

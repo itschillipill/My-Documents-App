@@ -5,31 +5,35 @@ import 'package:archive/archive.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:my_documents/src/core/model/errors.dart';
+import 'package:my_documents/src/database/database.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 
 import '../../core/result_or.dart';
-import '../../data/data_sourse.dart';
 import '../../features/documents/model/document.dart';
 import 'file_service.dart';
 
 class ImportService {
-  static Future<ResultOr<void>> importAndReplace({
-    required DataSource dataSource,
-  }) async {
+  static Future<ResultOr<List<Document>>> importAndReplace(
+    DataSource dataSource,
+  ) async {
     Directory? tempDir;
+
     if (!kDebugMode) return ResultOr.error(ErrorKeys.notImplemented);
 
     try {
+      // ================= 📦 ВЫБОР ZIP =================
       final result = await FilePicker.platform.pickFiles(
         allowedExtensions: ['zip'],
       );
+
       if (result == null || result.files.single.path == null) {
         return ResultOr.error(ErrorKeys.filesNotFound);
       }
+
       final zipFile = File(result.files.single.path!);
 
-      // 1️⃣ Распаковка
+      // ================= 📂 РАСПАКОВКА =================
       tempDir = await Directory(
         p.join(
           (await getTemporaryDirectory()).path,
@@ -37,8 +41,7 @@ class ImportService {
         ),
       ).create(recursive: true);
 
-      final bytes = await zipFile.readAsBytes();
-      final archive = ZipDecoder().decodeBytes(bytes);
+      final archive = ZipDecoder().decodeBytes(await zipFile.readAsBytes());
 
       for (final file in archive) {
         final outPath = p.join(tempDir.path, file.name);
@@ -49,9 +52,14 @@ class ImportService {
         }
       }
 
-      // 2️⃣ Проверка manifest
+      // ================= 📄 ПРОВЕРКИ =================
       final manifestFile = File(p.join(tempDir.path, 'manifest.json'));
-      if (!await manifestFile.exists()) {
+      final docsFile = File(p.join(tempDir.path, 'documents.json'));
+      final filesDir = Directory(p.join(tempDir.path, 'files'));
+
+      if (!await manifestFile.exists() ||
+          !await docsFile.exists() ||
+          !await filesDir.exists()) {
         return ResultOr.error(ErrorKeys.invalidBackupFormat);
       }
 
@@ -60,21 +68,10 @@ class ImportService {
         return ResultOr.error(ErrorKeys.invalidBackupFormat);
       }
 
-      // 3️⃣ Читаем documents.json
-      final docsFile = File(p.join(tempDir.path, 'documents.json'));
-      if (!await docsFile.exists()) {
-        return ResultOr.error(ErrorKeys.invalidBackupFormat);
-      }
-
       final docsJson = jsonDecode(await docsFile.readAsString());
       final List docsList = docsJson['documents'];
 
-      final filesDir = Directory(p.join(tempDir.path, 'files'));
-      if (!await filesDir.exists()) {
-        return ResultOr.error(ErrorKeys.invalidBackupFormat);
-      }
-
-      // 4️⃣ ПОЛНАЯ ВАЛИДАЦИЯ ФАЙЛОВ
+      // ================= 🔐 ВАЛИДАЦИЯ ФАЙЛОВ =================
       for (final doc in docsList) {
         for (final v in doc['versions']) {
           final fileName = v['file'];
@@ -92,9 +89,6 @@ class ImportService {
         }
       }
 
-      // ================= 💣 СНОСИМ ВСЁ =================
-
-      // 5️⃣ Удаляем все документы из БД
       final allDocs = await dataSource.getAllDocuments();
       if (allDocs.isNotEmpty) {
         await dataSource.deleteDocumentsByIds(
@@ -102,18 +96,16 @@ class ImportService {
         );
       }
 
-      // 6️⃣ Чистим папку приложения
       final appDir = await FileService.getDocumentsStorageDir();
       if (await appDir.exists()) {
         await appDir.delete(recursive: true);
       }
       await appDir.create(recursive: true);
 
-      // ================= ♻️ ВОССТАНАВЛИВАЕМ =================
+      final List<Document> restoredDocuments = [];
 
       for (final docJson in docsList) {
-        // 7️⃣ Создаём документ
-        final insertedDoc = await dataSource.insertDocument(
+        var doc = await dataSource.insertDocument(
           Document(
             id: 0,
             title: docJson['title'],
@@ -125,6 +117,7 @@ class ImportService {
           ),
         );
 
+        final List<DocumentVersion> createdVersions = [];
         int? currentVersionDbId;
 
         final versionsJson = docJson['versions'] as List;
@@ -134,15 +127,15 @@ class ImportService {
 
           final fileName = v['file'];
           final sourceFile = File(p.join(filesDir.path, fileName));
-
           final newPath = p.join(appDir.path, fileName);
+
           await sourceFile.copy(newPath);
 
-          final insertedVersion = await dataSource.addNewVersion(
-            insertedDoc.id,
+          final newVersion = await dataSource.addNewVersion(
+            doc.id,
             DocumentVersion(
               id: 0,
-              documentId: insertedDoc.id,
+              documentId: doc.id,
               filePath: newPath,
               uploadedAt: DateTime.parse(v['uploadedAt']),
               comment: v['comment'],
@@ -152,24 +145,29 @@ class ImportService {
             ),
           );
 
+          createdVersions.add(newVersion);
+
           if (i == docJson['currentVersionIndex']) {
-            currentVersionDbId = insertedVersion.id;
+            currentVersionDbId = newVersion.id;
           }
         }
 
-        // 8️⃣ Обновляем currentVersionId
-        await dataSource.updateDocument(
-          insertedDoc.copyWith(currentVersionId: currentVersionDbId),
+        doc = doc.copyWith(
+          currentVersionId: currentVersionDbId,
+          versions: createdVersions,
         );
+
+        await dataSource.updateDocument(doc);
+
+        restoredDocuments.add(doc);
       }
 
-      return ResultOr.success(null);
+      return ResultOr.success(restoredDocuments);
     } catch (e, st) {
       debugPrint('$e');
       debugPrintStack(stackTrace: st);
       return ResultOr.error(ErrorKeys.failedToImport);
     } finally {
-      // 🧹 Чистим временную папку
       if (tempDir != null && await tempDir.exists()) {
         await tempDir.delete(recursive: true);
       }

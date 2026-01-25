@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:my_documents/src/core/extensions/extensions.dart';
-import 'package:my_documents/src/features/documents/widgets/date_picker.dart'
-    as dp;
-import 'package:my_documents/src/features/documents/widgets/file_picker_block.dart';
-import 'package:my_documents/src/features/documents/widgets/folder_piker.dart';
 import 'package:my_documents/src/features/folders/model/folder.dart';
 import 'package:my_documents/src/utils/page_transition/app_page_route.dart';
 import 'package:my_documents/src/utils/sevices/message_service.dart';
 import 'package:my_documents/src/widgets/build_section.dart';
+
+import '../widgets/date_picker.dart' as dp;
+import '../widgets/file_picker_block.dart';
+import '../widgets/folder_piker.dart';
 
 class AddDocumentScreen extends StatefulWidget {
   static PageRoute route() => AppPageRoute.build(
@@ -150,12 +150,10 @@ class _AddDocumentScreenState extends State<AddDocumentScreen> {
             ),
           ],
         ),
-        const SizedBox(height: 16),
-
-        // Comment field
+        const SizedBox(height: 8),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          spacing: 8,
+          spacing: 4,
           children: [
             Text(
               context.l10n.comment,
@@ -181,9 +179,6 @@ class _AddDocumentScreenState extends State<AddDocumentScreen> {
             ),
           ],
         ),
-        const SizedBox(height: 8),
-
-        // Expiration date picker
         dp.DatePicker(
           onTap: (date) => setState(() {
             _expirationDate = date;
