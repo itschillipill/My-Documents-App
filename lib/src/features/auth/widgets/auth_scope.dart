@@ -1,57 +1,68 @@
 import 'package:flutter/material.dart';
+import 'package:my_documents/src/core/extensions/extensions.dart';
+import 'package:my_documents/src/features/auth/widgets/auth_screen.dart';
+import 'package:my_documents/src/features/settings/cubit/settings_cubit.dart';
+import 'package:my_documents/src/pages/onboarding_page.dart';
 import '../auth_executor.dart';
 
-class AuthScope extends StatelessWidget {
+class AuthScope extends StatefulWidget {
   final Widget child;
-  final Widget onboardingPage;
-  final bool isFirstLaunch;
-  final Widget Function(
-    Future<bool> Function(String pin) authenticateByPIN,
-    Future<bool> Function() authenticateByBiometrics,
-  )
-  authScreenBuilder;
-  final AuthenticationExecutor authExecutor;
 
-  const AuthScope({
-    super.key,
-    required this.child,
-    required this.authScreenBuilder,
-    required this.authExecutor,
-    required this.onboardingPage,
-    required this.isFirstLaunch,
-  });
+  const AuthScope({super.key, required this.child});
+
+  @override
+  State<AuthScope> createState() => _AuthScopeState();
+}
+
+class _AuthScopeState extends State<AuthScope> {
+  late final Listenable _listenable;
+  late final AuthenticationExecutor authExecutor;
+  late final SettingsCubit settingsCubit;
+
+  @override
+  void initState() {
+    super.initState();
+    final deps = context.deps;
+    authExecutor = deps.authExecutor;
+    settingsCubit = deps.settingsCubit;
+    _listenable = Listenable.merge([
+      authExecutor.hasPasswordNotifier,
+      authExecutor.authenticatedNotifier,
+    ]);
+
+    _listenable.addListener(_onAuthChanged);
+  }
+
+  @override
+  void dispose() {
+    _listenable.removeListener(_onAuthChanged);
+    super.dispose();
+  }
+
+  void _onAuthChanged() {
+    // пересобираем Navigator
+    setState(() {});
+  }
+
+  List<Page> get _pages => [
+    if (settingsCubit.state.isFurstLaunch)
+      const MaterialPage(child: OnboardingPage())
+    else if (authExecutor.hasPassword && !authExecutor.authenticated)
+      MaterialPage(
+        child: VerifyPinScreen(
+          useBiometrics:
+              settingsCubit.state.useBiometrics &&
+              settingsCubit.canUseBiometrics,
+          onAuthByPIN: authExecutor.authenticateByPIN,
+          onAuthByBiometrics: authExecutor.authenticateByBiometrics,
+        ),
+      )
+    else
+      MaterialPage(child: widget.child),
+  ];
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder<bool>(
-      valueListenable: authExecutor.hasPasswordNotifier,
-      builder: (context, hasPassword, _) {
-        debugPrint('AuthScope → hasPassword: $hasPassword');
-
-        if (isFirstLaunch) {
-          return onboardingPage;
-        }
-
-        return ValueListenableBuilder<bool>(
-          valueListenable: authExecutor.authenticatedNotifier,
-          builder: (context, authenticated, _) {
-            debugPrint('AuthScope → authenticated: $authenticated');
-
-            if (!hasPassword) {
-              return child;
-            }
-
-            if (!authenticated) {
-              return authScreenBuilder(
-                authExecutor.authenticateByPIN,
-                authExecutor.authenticateByBiometrics,
-              );
-            }
-
-            return child;
-          },
-        );
-      },
-    );
+    return Navigator(pages: _pages, onDidRemovePage: (_) {});
   }
 }

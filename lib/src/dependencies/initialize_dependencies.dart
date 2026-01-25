@@ -1,11 +1,11 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart' show debugPrint;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:my_documents/src/database/src/local_data_source.dart';
 import 'package:my_documents/src/features/auth/auth_executor.dart';
 import 'package:my_documents/src/features/documents/cubit/documents_cubit.dart';
 import 'package:my_documents/src/features/folders/cubit/folders_cubit.dart';
 import 'package:my_documents/src/features/settings/cubit/settings_cubit.dart';
-import 'package:my_documents/src/data/local_data_sourse.dart';
 import 'package:shared_preferences/shared_preferences.dart'
     show SharedPreferences;
 

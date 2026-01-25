@@ -102,7 +102,6 @@ class CircularProgressWithIcon extends StatelessWidget {
           child: Stack(
             alignment: Alignment.center,
             children: [
-              // Используем SizedBox, чтобы CustomPaint имел размер child + запас
               Padding(
                 padding: EdgeInsets.all(strokeWidth / 2),
                 child: SizedBox(
@@ -112,7 +111,7 @@ class CircularProgressWithIcon extends StatelessWidget {
                     painter: _CircularProgressPainter(
                       backgroundColor:
                           backgroundColor ??
-                          theme.colorScheme.primary.withOpacity(0.2),
+                          theme.colorScheme.primary.withValues(alpha: 0.2),
                       progress: progress,
                       color: progressPaintColor,
                       strokeWidth: strokeWidth,

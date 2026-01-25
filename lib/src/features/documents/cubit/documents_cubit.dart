@@ -4,16 +4,17 @@ import 'package:flutter/foundation.dart' show debugPrint;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:my_documents/src/core/result_or.dart';
+import 'package:my_documents/src/database/database.dart';
 import 'package:my_documents/src/utils/sevices/file_service.dart';
 import 'package:my_documents/src/utils/sevices/notification/notification_service_singleton.dart';
 import 'package:my_documents/src/utils/sevices/observer.dart';
+import '../../../core/handler.dart';
 import '../../../core/model/errors.dart';
-import '../../../data/data_sourse.dart';
 
 import 'package:my_documents/src/features/documents/model/document.dart';
 part 'documents_state.dart';
 
-class DocumentsCubit extends Cubit<DocumentsState> {
+class DocumentsCubit extends Cubit<DocumentsState> with Handler {
   final DataSource dataSource;
 
   DocumentsCubit({required this.dataSource}) : super(DocumentsState.initial()) {
@@ -41,232 +42,263 @@ class DocumentsCubit extends Cubit<DocumentsState> {
     return super.close();
   }
 
-  List<Document> get documentsOrEmpty => state.documents ?? [];
-
-  Future<void> refresh() async => await _loadData();
-
   @protected
-  Future<void> _loadData() async {
-    emit(
-      DocumentsState.processing(
-        documents: state.documents,
-        message: "Loading data",
-      ),
-    );
-    try {
-      final documents = await dataSource.getAllDocuments();
-      emit(
-        DocumentsState.processing(documents: documents, message: "Data loaded"),
-      );
-    } catch (e, s) {
-      emit(
-        DocumentsState.failed(
-          documents: state.documents,
-          error: e,
-          message: "Error loading data",
-          stackTrace: s,
-        ),
-      );
-      MyClassObserver.instance.onError(name, e, s);
-    } finally {
-      emit(DocumentsState.idle(documents: state.documents));
-    }
-  }
-
-  Future<void> restoreDocuments(List<Document> documents) async {}
-
-  Future<void> addDocument(Document document) async {
-    emit(
-      DocumentsState.processing(
-        documents: state.documents,
-        message: "Adding document",
-      ),
-    );
-    try {
-      Document newDocument = await dataSource.insertDocument(document);
+  Future<void> _loadData() {
+    return mutex.synchronize(() async {
       emit(
         DocumentsState.processing(
-          documents: [...?state.documents, newDocument],
-          message: "Document added successfully",
+          documents: state.documents,
+          message: "Loading data",
         ),
       );
-      if (newDocument.versions.first.expirationDate != null) {
-        NotificationServiceSingleton.instance.service.scheduleNotification(
-          id: newDocument.id,
-          title: newDocument.title,
-          date: newDocument
-              .versions
-              .first
-              .expirationDate! /*DateTime.now().add(Duration(seconds: 20))*/,
+      try {
+        final documents = await dataSource.getAllDocuments();
+        emit(
+          DocumentsState.processing(
+            documents: documents,
+            message: "Data loaded",
+          ),
         );
-      }
-    } catch (e, s) {
-      emit(
-        DocumentsState.failed(
-          documents: state.documents,
-          message: "Error adding document",
-          error: e,
-          stackTrace: s,
-        ),
-      );
-      MyClassObserver.instance.onError(name, e, s);
-    } finally {
-      emit(DocumentsState.idle(documents: state.documents));
-    }
-  }
-
-  Future<void> deleteDocuments(List<int> documentIds) async {
-    emit(
-      DocumentsState.processing(
-        documents: state.documents,
-        message: "Deleting documents",
-      ),
-    );
-    try {
-      final documentsToDelete = getDocumentsByIds(documentIds);
-      final res = await dataSource.deleteDocumentsByIds(documentIds);
-      if (!res) return;
-
-      await FileService.deleteDocumentsFiles(
-        documentsToDelete,
-        documentsOrEmpty,
-      );
-
-      final updatedDocuments = state.documents
-          ?.where((d) => !documentIds.contains(d.id))
-          .toList();
-
-      emit(
-        DocumentsState.processing(
-          documents: updatedDocuments,
-          message: "Documents deleted successfully",
-        ),
-      );
-      NotificationServiceSingleton.instance.service.cancelNotification(
-        documentIds,
-      );
-    } catch (e, s) {
-      emit(
-        DocumentsState.failed(
-          documents: state.documents,
-          message: "Error deleting documents",
-          error: e,
-          stackTrace: s,
-        ),
-      );
-      MyClassObserver.instance.onError(name, e, s);
-    } finally {
-      emit(DocumentsState.idle(documents: state.documents));
-    }
-  }
-
-  Future<void> updateDocument(Document updatedDocument) async {
-    emit(
-      DocumentsState.processing(
-        documents: state.documents,
-        message: "Updating document",
-      ),
-    );
-    try {
-      final res = await dataSource.updateDocument(updatedDocument);
-      if (!res) return;
-      final updatedDocuments = state.documents
-          ?.map((doc) => doc.id == updatedDocument.id ? updatedDocument : doc)
-          .toList();
-
-      emit(
-        DocumentsState.processing(
-          documents: updatedDocuments,
-          message: "Document updated successfully",
-        ),
-      );
-    } catch (e, s) {
-      emit(
-        DocumentsState.failed(
-          documents: state.documents,
-          message: "Error updating document",
-          error: e,
-          stackTrace: s,
-        ),
-      );
-      MyClassObserver.instance.onError(name, e, s);
-    } finally {
-      emit(DocumentsState.idle(documents: state.documents));
-    }
-  }
-
-  Future<void> addNewVersion(int documentId, DocumentVersion version) async {
-    emit(
-      DocumentsState.processing(
-        documents: state.documents,
-        message: "Adding new version",
-      ),
-    );
-
-    try {
-      // Добавляем версию в базу
-      final newVersion = await dataSource.addNewVersion(documentId, version);
-
-      // Получаем текущий документ
-      final oldDocument = getDocumentById(documentId);
-      if (oldDocument == null) return;
-
-      // Создаём новый объект документа с обновлённой версией
-      final updatedDocument = oldDocument.copyWith(
-        currentVersionId: newVersion.id,
-        versions: [...oldDocument.versions, newVersion],
-      );
-
-      // Обновляем список документов
-      final updatedDocuments = state.documents
-          ?.map((doc) => doc.id == documentId ? updatedDocument : doc)
-          .toList();
-
-      emit(
-        DocumentsState.processing(
-          documents: updatedDocuments,
-          message: "New version added successfully",
-        ),
-      );
-
-      if (newVersion.expirationDate != null) {
-        NotificationServiceSingleton.instance.service.updateNotification(
-          id: updatedDocument.id,
-          title: updatedDocument.title,
-          date: newVersion.expirationDate!,
+      } catch (e, s) {
+        emit(
+          DocumentsState.failed(
+            documents: state.documents,
+            error: e,
+            message: "Error loading data",
+            stackTrace: s,
+          ),
         );
+        MyClassObserver.instance.onError(name, e, s);
+      } finally {
+        emit(DocumentsState.idle(documents: state.documents));
       }
-    } catch (e, s) {
+    });
+  }
+
+  Future<void> restoreDocuments(List<Document> documents) => mutex.synchronize(
+    () async {
       emit(
-        DocumentsState.failed(
+        DocumentsState.processing(
           documents: state.documents,
-          message: "Error adding new version",
-          error: e,
-          stackTrace: s,
+          message: "Restoring documents",
         ),
       );
-      MyClassObserver.instance.onError(name, e, s);
-    } finally {
-      emit(DocumentsState.idle(documents: state.documents));
-    }
+
+      try {
+        emit(
+          DocumentsState.processing(
+            documents: documents,
+            message: "Documents restored",
+          ),
+        );
+
+        for (final doc in documents) {
+          final currentVersion = doc.versions.firstWhere(
+            (v) => v.id == doc.currentVersionId,
+            orElse: () => doc.versions.first,
+          );
+
+          if (currentVersion.expirationDate != null) {
+            NotificationServiceSingleton.instance.service.scheduleNotification(
+              id: doc.id,
+              title: doc.title,
+              date: currentVersion.expirationDate!,
+            );
+          }
+        }
+      } catch (e, s) {
+        emit(
+          DocumentsState.failed(
+            documents: state.documents,
+            error: e,
+            stackTrace: s,
+            message: "Error restoring documents",
+          ),
+        );
+      } finally {
+        emit(DocumentsState.idle(documents: documents));
+      }
+    },
+  );
+
+  Future<void> addDocument(Document document) {
+    return mutex.synchronize(() async {
+      emit(
+        DocumentsState.processing(
+          documents: state.documents,
+          message: "Adding document",
+        ),
+      );
+      try {
+        Document newDocument = await dataSource.insertDocument(document);
+        emit(
+          DocumentsState.processing(
+            documents: [...?state.documents, newDocument],
+            message: "Document added successfully",
+          ),
+        );
+        if (newDocument.versions.first.expirationDate != null) {
+          NotificationServiceSingleton.instance.service.scheduleNotification(
+            id: newDocument.id,
+            title: newDocument.title,
+            date: newDocument
+                .versions
+                .first
+                .expirationDate! /*DateTime.now().add(Duration(seconds: 20))*/,
+          );
+        }
+      } catch (e, s) {
+        emit(
+          DocumentsState.failed(
+            documents: state.documents,
+            message: "Error adding document",
+            error: e,
+            stackTrace: s,
+          ),
+        );
+        MyClassObserver.instance.onError(name, e, s);
+      } finally {
+        emit(DocumentsState.idle(documents: state.documents));
+      }
+    });
   }
 
-  Document? getDocumentById(int documentId) =>
-      documentsOrEmpty.where((e) => e.id == documentId).firstOrNull;
+  Future<void> deleteDocuments(List<int> documentIds) {
+    return mutex.synchronize(() async {
+      emit(
+        DocumentsState.processing(
+          documents: state.documents,
+          message: "Deleting documents",
+        ),
+      );
+      try {
+        final documentsToDelete = getDocumentsByIds(documentIds);
+        final res = await dataSource.deleteDocumentsByIds(documentIds);
+        if (!res) return;
 
-  DocumentVersion? getDocumentVersionByDocumentId({
-    required int documentId,
-    int? versionId,
-  }) {
-    final document = getDocumentById(documentId);
-    if (document == null) return null;
-    if (versionId == null) return document.versions.first;
-    return document.versions.where((e) => e.id == versionId).firstOrNull ??
-        document.versions.firstOrNull;
+        await FileService.deleteDocumentsFiles(
+          documentsToDelete,
+          documentsOrEmpty,
+        );
+
+        final updatedDocuments = state.documents
+            ?.where((d) => !documentIds.contains(d.id))
+            .toList();
+
+        emit(
+          DocumentsState.processing(
+            documents: updatedDocuments,
+            message: "Documents deleted successfully",
+          ),
+        );
+        NotificationServiceSingleton.instance.service.cancelNotification(
+          documentIds,
+        );
+      } catch (e, s) {
+        emit(
+          DocumentsState.failed(
+            documents: state.documents,
+            message: "Error deleting documents",
+            error: e,
+            stackTrace: s,
+          ),
+        );
+        MyClassObserver.instance.onError(name, e, s);
+      } finally {
+        emit(DocumentsState.idle(documents: state.documents));
+      }
+    });
   }
 
-  List<Document> getDocumentsByIds(List<int> documentIds) {
-    return documentsOrEmpty.where((e) => documentIds.contains(e.id)).toList();
+  Future<void> updateDocument(Document updatedDocument) {
+    return mutex.synchronize(() async {
+      emit(
+        DocumentsState.processing(
+          documents: state.documents,
+          message: "Updating document",
+        ),
+      );
+      try {
+        final res = await dataSource.updateDocument(updatedDocument);
+        if (!res) return;
+        final updatedDocuments = state.documents
+            ?.map((doc) => doc.id == updatedDocument.id ? updatedDocument : doc)
+            .toList();
+
+        emit(
+          DocumentsState.processing(
+            documents: updatedDocuments,
+            message: "Document updated successfully",
+          ),
+        );
+      } catch (e, s) {
+        emit(
+          DocumentsState.failed(
+            documents: state.documents,
+            message: "Error updating document",
+            error: e,
+            stackTrace: s,
+          ),
+        );
+        MyClassObserver.instance.onError(name, e, s);
+      } finally {
+        emit(DocumentsState.idle(documents: state.documents));
+      }
+    });
+  }
+
+  Future<void> addNewVersion(int documentId, DocumentVersion version) {
+    return mutex.synchronize(() async {
+      emit(
+        DocumentsState.processing(
+          documents: state.documents,
+          message: "Adding new version",
+        ),
+      );
+
+      try {
+        final newVersion = await dataSource.addNewVersion(documentId, version);
+
+        final oldDocument = getDocumentById(documentId);
+        if (oldDocument == null) return;
+
+        final updatedDocument = oldDocument.copyWith(
+          currentVersionId: newVersion.id,
+          versions: [...oldDocument.versions, newVersion],
+        );
+
+        final updatedDocuments = state.documents
+            ?.map((doc) => doc.id == documentId ? updatedDocument : doc)
+            .toList();
+
+        emit(
+          DocumentsState.processing(
+            documents: updatedDocuments,
+            message: "New version added successfully",
+          ),
+        );
+
+        if (newVersion.expirationDate != null) {
+          NotificationServiceSingleton.instance.service.updateNotification(
+            id: updatedDocument.id,
+            title: updatedDocument.title,
+            date: newVersion.expirationDate!,
+          );
+        }
+      } catch (e, s) {
+        emit(
+          DocumentsState.failed(
+            documents: state.documents,
+            message: "Error adding new version",
+            error: e,
+            stackTrace: s,
+          ),
+        );
+        MyClassObserver.instance.onError(name, e, s);
+      } finally {
+        emit(DocumentsState.idle(documents: state.documents));
+      }
+    });
   }
 
   Future<ResultOr<String>> saveDocument({
@@ -290,7 +322,7 @@ class DocumentsCubit extends Cubit<DocumentsState> {
 
     try {
       final safePath = await FileService.saveFileToAppDir(originalPath);
-
+      await FileService.deleteFile(originalPath);
       final doc = Document(
         id: 0,
         title: title,
@@ -313,11 +345,11 @@ class DocumentsCubit extends Cubit<DocumentsState> {
       await addDocument(doc);
 
       return ResultOr.success(safePath);
-    } catch (e, s) {
+    } catch (error, stackTrace) {
       MyClassObserver.instance.onError(
         name,
-        e,
-        s,
+        error,
+        stackTrace,
         message: "Error saving file",
       );
       return ResultOr.error(ErrorKeys.errorSavingFile);
@@ -329,7 +361,6 @@ class DocumentsCubit extends Cubit<DocumentsState> {
       final uniquePaths = documentsOrEmpty
           .expand((doc) => doc.versions.map((v) => v.filePath))
           .toSet();
-
       final sizes = await Future.wait(
         uniquePaths.map((path) async {
           final file = File(path);
@@ -339,10 +370,7 @@ class DocumentsCubit extends Cubit<DocumentsState> {
           return 0;
         }),
       );
-
-      final totalSize = sizes.fold<int>(0, (sum, size) => sum + size);
-
-      return totalSize;
+      return sizes.fold<int>(0, (sum, size) => sum + size);
     } catch (e, s) {
       MyClassObserver.instance.onError(
         name,
@@ -352,6 +380,28 @@ class DocumentsCubit extends Cubit<DocumentsState> {
       );
       return 0;
     }
+  }
+
+  List<Document> get documentsOrEmpty => state.documents ?? [];
+
+  Future<void> refresh() async => await _loadData();
+
+  Document? getDocumentById(int documentId) =>
+      documentsOrEmpty.where((e) => e.id == documentId).firstOrNull;
+
+  DocumentVersion? getDocumentVersionByDocumentId({
+    required int documentId,
+    int? versionId,
+  }) {
+    final document = getDocumentById(documentId);
+    if (document == null) return null;
+    if (versionId == null) return document.versions.first;
+    return document.versions.where((e) => e.id == versionId).firstOrNull ??
+        document.versions.firstOrNull;
+  }
+
+  List<Document> getDocumentsByIds(List<int> documentIds) {
+    return documentsOrEmpty.where((e) => documentIds.contains(e.id)).toList();
   }
 
   Future<void> debugAllFiles() async {

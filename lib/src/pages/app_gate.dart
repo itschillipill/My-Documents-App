@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:my_documents/src/core/extensions/extensions.dart';
-import 'package:my_documents/src/features/folders/pages/add_folder_page.dart';
+import 'package:my_documents/src/features/settings/pages/settings_page.dart';
 
-import '../features/documents/pages/add_document_screen.dart';
 import 'search_page.dart';
 import 'home_page.dart';
 
@@ -16,10 +15,14 @@ class AppGate extends StatefulWidget {
 class _AppGateState extends State<AppGate> {
   int _selectedIndex = 0;
   final PageController _controller = PageController(initialPage: 0);
-  final List<Widget> pages = [MyHomePage(), SearchPage()];
+  final List<Widget> pages = [MyHomePage(), SearchPage(), SettingsPage()];
   List<BottomNavigationBarItem> navItems(BuildContext ctx) => [
     BottomNavigationBarItem(icon: Icon(Icons.home), label: ctx.l10n.home),
     BottomNavigationBarItem(icon: Icon(Icons.search), label: ctx.l10n.search),
+    BottomNavigationBarItem(
+      icon: Icon(Icons.settings),
+      label: ctx.l10n.settings,
+    ),
   ];
 
   @override
@@ -69,106 +72,7 @@ class _AppGateState extends State<AppGate> {
           },
           items: navItems(context),
         ),
-        floatingActionButton: _buildFAB(context),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       ),
     );
   }
-
-  Widget? _buildFAB(BuildContext ctx) {
-    if (_selectedIndex != 0) return null;
-
-    return FloatingActionButton(
-      onPressed: () => _showAddMenu(context),
-      tooltip: ctx.l10n.addDocument,
-      child: Icon(Icons.add),
-    );
-  }
-}
-
-void _showAddMenu(BuildContext context) async {
-  await showModalBottomSheet(
-    context: context,
-    backgroundColor: Theme.of(context).colorScheme.surface,
-    builder: (context) {
-      return Container(
-        margin: const EdgeInsets.all(16),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          spacing: 8,
-          children: [
-            // Document button
-            _buildMenuButton(
-              context,
-              icon: Icons.description_rounded,
-              label: context.l10n.addDocument,
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.push(context, AddDocumentScreen.route());
-              },
-            ),
-            // Folder button
-            _buildMenuButton(
-              context,
-              icon: Icons.folder_rounded,
-              label: context.l10n.addFolder,
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.push(context, AddFolderPage.route());
-              },
-            ),
-            // Close button
-            _buildMenuButton(
-              context,
-              icon: Icons.close_rounded,
-              label: context.l10n.cancel,
-              onTap: () => Navigator.pop(context),
-              isCancel: true,
-            ),
-          ],
-        ),
-      );
-    },
-  );
-}
-
-Widget _buildMenuButton(
-  BuildContext context, {
-  required IconData icon,
-  required String label,
-  required VoidCallback onTap,
-  bool isCancel = false,
-}) {
-  final colorScheme = Theme.of(context).colorScheme;
-
-  return Material(
-    color: colorScheme.primary,
-    borderRadius: BorderRadius.circular(12),
-    child: InkWell(
-      onTap: onTap,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
-        child: Row(
-          spacing: 16,
-          children: [
-            Icon(
-              icon,
-              color: isCancel
-                  ? colorScheme.surface.withValues(alpha: 0.6)
-                  : colorScheme.surface,
-            ),
-            Text(
-              label,
-              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                color: isCancel
-                    ? colorScheme.surface.withValues(alpha: 0.6)
-                    : colorScheme.surface,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ],
-        ),
-      ),
-    ),
-  );
 }

@@ -32,55 +32,51 @@ class _SearchPageState extends State<SearchPage> {
     super.dispose();
   }
 
+  Iterable<Document> filterDocuments(List<Document> documents) {
+    if (_query.isEmpty) return [];
+    return documents.where((doc) => doc.title.toLowerCase().contains(_query));
+  }
+
+  Iterable<Folder> filterFolders(List<Folder> folders) {
+    if (_query.isEmpty) return [];
+    return folders.where(
+      (folder) => folder.name.toLowerCase().contains(_query),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-
-    final documents = context.select<DocumentsCubit, List<Document>?>(
-      (cubit) => cubit.documentsOrEmpty,
-    );
-
-    final folders = context.select<FoldersCubit, List<Folder>?>(
-      (cubit) => cubit.foldersOrEmpty,
-    );
-
-    if (documents == null || folders == null) {
-      return Scaffold(
-        appBar: _buildAppBar(),
-        body: const Center(child: CircularProgressIndicator()),
-      );
-    }
-
-    final List<Document> filteredDocuments = _query.isEmpty
-        ? []
-        : documents
-              .where((doc) => doc.title.toLowerCase().contains(_query))
-              .toList();
-
-    final List<Folder> filteredFolders = _query.isEmpty
-        ? []
-        : folders
-              .where((folder) => folder.name.toLowerCase().contains(_query))
-              .toList();
-
     return Scaffold(
       appBar: _buildAppBar(),
-      body: SafeArea(
-        minimum: const EdgeInsets.symmetric(horizontal: 8),
-        child: Column(
-          children: [
-            _buildSearchField(),
-            Expanded(
-              child: _query.isEmpty
-                  ? _buildEmptySearchState(colorScheme)
-                  : _buildSearchResults(
-                      filteredDocuments,
-                      filteredFolders,
-                      colorScheme,
+      body: BlocSelector<DocumentsCubit, DocumentsState, Iterable<Document>>(
+        bloc: context.deps.documentsCubit,
+        selector: (s) => filterDocuments(s.documents ?? []),
+        builder: (context, filteredDocuments) {
+          return BlocSelector<FoldersCubit, FoldersState, Iterable<Folder>>(
+            bloc: context.deps.foldersCubit,
+            selector: (s) => filterFolders(s.folders ?? []),
+            builder: (context, filteredFolders) {
+              return SafeArea(
+                minimum: const EdgeInsets.symmetric(horizontal: 8),
+                child: Column(
+                  children: [
+                    _buildSearchField(),
+                    Expanded(
+                      child: _query.isEmpty
+                          ? _buildEmptySearchState(colorScheme)
+                          : _buildSearchResults(
+                              filteredDocuments,
+                              filteredFolders,
+                              colorScheme,
+                            ),
                     ),
-            ),
-          ],
-        ),
+                  ],
+                ),
+              );
+            },
+          );
+        },
       ),
     );
   }
@@ -143,8 +139,8 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   Widget _buildSearchResults(
-    List<Document> filteredDocuments,
-    List<Folder> filteredFolders,
+    Iterable<Document> filteredDocuments,
+    Iterable<Folder> filteredFolders,
     ColorScheme colorScheme,
   ) {
     final hasDocuments = filteredDocuments.isNotEmpty;
@@ -156,7 +152,7 @@ class _SearchPageState extends State<SearchPage> {
     }
 
     return ListView(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.symmetric(horizontal: 10),
       children: [
         if (hasFolders) ...[
           _buildSectionHeader(
@@ -167,7 +163,7 @@ class _SearchPageState extends State<SearchPage> {
           ),
           const SizedBox(height: 8),
           ...filteredFolders.map((folder) => FolderTile(folder: folder)),
-          const SizedBox(height: 24),
+          const SizedBox(height: 20),
         ],
 
         if (hasDocuments) ...[
@@ -181,9 +177,8 @@ class _SearchPageState extends State<SearchPage> {
           ...filteredDocuments.map(
             (document) => DocumentCard(
               document: document,
-              onTap: () {
-                Navigator.push(context, DocumentViewPage.route(document.id));
-              },
+              onTap: () =>
+                  Navigator.push(context, DocumentViewPage.route(document.id)),
             ),
           ),
         ],

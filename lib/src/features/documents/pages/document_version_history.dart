@@ -19,6 +19,7 @@ class DocumentVersionHistory extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<DocumentsCubit, DocumentsState>(
+      bloc: context.deps.documentsCubit,
       buildWhen: (previous, current) => current.documents != previous.documents,
       builder: (context, state) {
         final document = (state.documents ?? []).firstWhere(
