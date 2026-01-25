@@ -4,12 +4,12 @@ import 'package:my_documents/src/core/constants.dart';
 import 'package:my_documents/src/core/extensions/extensions.dart';
 import 'package:my_documents/src/features/auth/widgets/auth_scope.dart';
 import 'package:my_documents/src/features/settings/cubit/settings_cubit.dart';
-import 'package:my_documents/src/pages/app_gate.dart';
+import 'package:my_documents/src/presentation/app_gate.dart';
 import 'package:my_documents/src/utils/sevices/message_service.dart';
 import 'package:my_documents/src/utils/theme/theme.dart';
 import 'package:my_documents/l10n/app_localizations.dart';
 
-import 'widgets/windows_scope.dart';
+import 'presentation/widgets/windows_scope.dart';
 
 class App extends StatelessWidget {
   const App({super.key});

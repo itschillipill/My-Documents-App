@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:my_documents/src/core/extensions/extensions.dart';
 import 'package:my_documents/src/features/documents/model/document.dart';
-import 'package:my_documents/src/features/documents/widgets/folder_piker.dart';
+import 'package:my_documents/src/features/documents/presentation/widgets/folder_piker.dart';
 import 'package:my_documents/src/features/folders/model/folder.dart';
 
 import 'package:my_documents/src/utils/page_transition/app_page_route.dart';
 import 'package:my_documents/src/utils/sevices/message_service.dart';
 
-import '../../../widgets/build_section.dart';
+import '../../../../presentation/widgets/build_section.dart';
 
 typedef Params = ({Folder? folder, String? title, bool? isFavorite});
 

@@ -3,29 +3,29 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_documents/src/features/documents/cubit/documents_cubit.dart';
 import 'package:my_documents/src/core/extensions/extensions.dart';
 import 'package:my_documents/src/features/documents/model/document.dart';
-import 'package:my_documents/src/features/documents/pages/add_new_document_version.dart';
-import 'package:my_documents/src/features/documents/widgets/build_tile.dart';
-import 'package:my_documents/src/features/documents/widgets/document_error_page.dart';
-import 'package:my_documents/src/features/documents/widgets/document_previewer.dart';
-import 'package:my_documents/src/features/documents/widgets/menu_actions.dart';
+import 'package:my_documents/src/features/documents/presentation/add_new_document_version.dart';
+import 'package:my_documents/src/features/documents/presentation/widgets/build_tile.dart';
+import 'package:my_documents/src/features/documents/presentation/widgets/document_error_page.dart';
+import 'package:my_documents/src/features/documents/presentation/widgets/document_previewer.dart';
+import 'package:my_documents/src/features/documents/presentation/widgets/menu_actions.dart';
 import 'package:my_documents/src/utils/page_transition/app_page_route.dart';
-import 'package:my_documents/src/widgets/border_box.dart';
-import 'package:my_documents/src/widgets/build_section.dart';
-import 'package:my_documents/src/widgets/label.dart';
+import 'package:my_documents/src/presentation/widgets/border_box.dart';
+import 'package:my_documents/src/presentation/widgets/build_section.dart';
+import 'package:my_documents/src/presentation/widgets/label.dart';
 import 'package:open_filex/open_filex.dart';
 
 import '../document_actions.dart';
 import 'document_version_history.dart';
 
-class DocumentViewPage extends StatelessWidget {
+class DocumentViewScreen extends StatelessWidget {
   static PageRoute route(int documentId, {int? versionId}) =>
       AppPageRoute.build(
-        page: DocumentViewPage._(documentId: documentId, versionId: versionId),
+        page: DocumentViewScreen._(documentId: documentId, versionId: versionId),
         transition: PageTransitionType.slideFromBottom,
       );
   final int documentId;
   final int? versionId;
-  const DocumentViewPage._({required this.documentId, this.versionId});
+  const DocumentViewScreen._({required this.documentId, this.versionId});
 
   @override
   Widget build(BuildContext context) {

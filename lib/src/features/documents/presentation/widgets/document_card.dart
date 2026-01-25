@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:my_documents/src/features/documents/model/document.dart';
 
-import '../pages/document_view_page.dart';
+import '../document_view_screen.dart';
 
 class DocumentCard extends StatelessWidget {
   final Document document;
@@ -27,7 +27,7 @@ class DocumentCard extends StatelessWidget {
     return InkWell(
       onTap:
           onTap ??
-          () => Navigator.push(context, DocumentViewPage.route(document.id)),
+          () => Navigator.push(context, DocumentViewScreen.route(document.id)),
       onLongPress: onLongPress,
       borderRadius: BorderRadius.circular(16),
       child: AnimatedContainer(

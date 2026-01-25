@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:my_documents/src/core/extensions/extensions.dart';
-import 'package:my_documents/src/widgets/border_box.dart';
-import 'package:my_documents/src/widgets/build_section.dart';
+import 'package:my_documents/src/presentation/widgets/border_box.dart';
+import 'package:my_documents/src/presentation/widgets/build_section.dart';
 
-import '../../folders/model/folder.dart';
-import '../../folders/pages/select_folder_page.dart';
+import '../../../folders/model/folder.dart';
+import '../../../folders/presentation/select_folder_screen.dart';
 
 class FolderPiker extends StatelessWidget {
   final Function(Folder? folder) onSelected;
@@ -22,7 +22,7 @@ class FolderPiker extends StatelessWidget {
           onTap: () async {
             final Folder? folder = await Navigator.push(
               context,
-              SelectFolderPage.route(),
+              SelectFolderScreen.route(),
             );
             if (folder != null) {
               if (folder.id == Folder.noFolder.id) {

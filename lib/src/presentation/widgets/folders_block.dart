@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_documents/src/core/extensions/extensions.dart';
 import 'package:my_documents/src/features/folders/cubit/folders_cubit.dart';
-import 'package:my_documents/src/features/folders/pages/folders_view.dart';
-import '../features/folders/model/folder.dart';
-import '../features/folders/pages/folder_view_page.dart';
+import 'package:my_documents/src/features/folders/presentation/folders_view.dart';
+import '../../features/folders/model/folder.dart';
+import '../../features/folders/presentation/folder_view_screen.dart';
 import 'package:my_documents/src/features/documents/cubit/documents_cubit.dart';
 
 class FoldersBlock extends StatelessWidget {
@@ -97,7 +97,7 @@ class EnhancedFolderCard extends StatelessWidget {
       onTap:
           onTap ??
           () {
-            Navigator.push(context, FolderViewPage.route(folder: folder));
+            Navigator.push(context, FolderViewScreen.route(folder: folder));
           },
       borderRadius: BorderRadius.circular(16),
       child: AnimatedContainer(

@@ -3,8 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_documents/src/core/extensions/extensions.dart';
 import 'package:my_documents/src/features/documents/cubit/documents_cubit.dart';
 
-import '../model/folder.dart';
-import '../pages/folder_view_page.dart';
+import '../../model/folder.dart';
+import '../folder_view_screen.dart';
 
 class FolderTile extends StatelessWidget {
   final Folder folder;
@@ -20,7 +20,7 @@ class FolderTile extends StatelessWidget {
         borderRadius: BorderRadius.circular(10),
         child: InkWell(
           onTap: () {
-            Navigator.push(context, FolderViewPage.route(folder: folder));
+            Navigator.push(context, FolderViewScreen.route(folder: folder));
           },
           child: ListTile(
             leading: Container(

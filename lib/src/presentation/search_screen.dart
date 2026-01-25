@@ -3,20 +3,20 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_documents/src/core/extensions/extensions.dart';
 import 'package:my_documents/src/features/documents/cubit/documents_cubit.dart';
 import 'package:my_documents/src/features/documents/model/document.dart';
-import 'package:my_documents/src/features/documents/pages/document_view_page.dart';
-import 'package:my_documents/src/features/documents/widgets/document_card.dart';
+import 'package:my_documents/src/features/documents/presentation/document_view_screen.dart';
+import 'package:my_documents/src/features/documents/presentation/widgets/document_card.dart';
 import 'package:my_documents/src/features/folders/cubit/folders_cubit.dart';
 import 'package:my_documents/src/features/folders/model/folder.dart';
-import 'package:my_documents/src/features/folders/widgets/folder_tile.dart';
+import 'package:my_documents/src/features/folders/presentation/widgets/folder_tile.dart';
 
-class SearchPage extends StatefulWidget {
-  const SearchPage({super.key});
+class SearchScreen extends StatefulWidget {
+  const SearchScreen({super.key});
 
   @override
-  State<SearchPage> createState() => _SearchPageState();
+  State<SearchScreen> createState() => _SearchScreenState();
 }
 
-class _SearchPageState extends State<SearchPage> {
+class _SearchScreenState extends State<SearchScreen> {
   final TextEditingController _searchController = TextEditingController();
   String _query = "";
 
@@ -178,7 +178,7 @@ class _SearchPageState extends State<SearchPage> {
             (document) => DocumentCard(
               document: document,
               onTap: () =>
-                  Navigator.push(context, DocumentViewPage.route(document.id)),
+                  Navigator.push(context, DocumentViewScreen.route(document.id)),
             ),
           ),
         ],

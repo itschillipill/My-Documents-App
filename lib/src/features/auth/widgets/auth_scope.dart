@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:my_documents/src/core/extensions/extensions.dart';
 import 'package:my_documents/src/features/auth/widgets/auth_screen.dart';
 import 'package:my_documents/src/features/settings/cubit/settings_cubit.dart';
-import 'package:my_documents/src/pages/onboarding_page.dart';
+import 'package:my_documents/src/presentation/onboarding_screen.dart';
 import '../auth_executor.dart';
 
 class AuthScope extends StatefulWidget {
@@ -46,7 +46,7 @@ class _AuthScopeState extends State<AuthScope> {
 
   List<Page> get _pages => [
     if (settingsCubit.state.isFurstLaunch)
-      const MaterialPage(child: OnboardingPage())
+      const MaterialPage(child: OnboardingScreen())
     else if (authExecutor.hasPassword && !authExecutor.authenticated)
       MaterialPage(
         child: VerifyPinScreen(

@@ -2,17 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:my_documents/src/core/extensions/extensions.dart';
 import 'package:my_documents/src/utils/page_transition/app_page_route.dart';
 import 'package:my_documents/src/utils/sevices/message_service.dart';
-import 'package:my_documents/src/widgets/build_section.dart';
+import 'package:my_documents/src/presentation/widgets/build_section.dart';
 
 import '../model/folder.dart';
 
-class AddFolderPage extends StatelessWidget {
+class AddFolderScreen extends StatelessWidget {
   static PageRoute route() => AppPageRoute.build(
-    page: AddFolderPage(),
+    page: AddFolderScreen(),
     transition: PageTransitionType.fade,
   );
 
-  AddFolderPage({super.key});
+  AddFolderScreen({super.key});
 
   final TextEditingController _nameController = TextEditingController();
 

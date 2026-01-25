@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_documents/src/core/extensions/extensions.dart';
 import 'package:my_documents/src/features/documents/cubit/documents_cubit.dart';
-import 'package:my_documents/src/features/documents/pages/document_view_page.dart';
-import 'package:my_documents/src/widgets/border_box.dart';
-import 'package:my_documents/src/features/documents/widgets/document_version_card.dart';
+import 'package:my_documents/src/features/documents/presentation/document_view_screen.dart';
+import 'package:my_documents/src/presentation/widgets/border_box.dart';
+import 'package:my_documents/src/features/documents/presentation/widgets/document_version_card.dart';
 import 'package:my_documents/src/utils/page_transition/app_page_route.dart';
 
 class DocumentVersionHistory extends StatelessWidget {
@@ -77,7 +77,7 @@ class DocumentVersionHistory extends StatelessWidget {
                           onOpen: () {
                             Navigator.push(
                               context,
-                              DocumentViewPage.route(
+                              DocumentViewScreen.route(
                                 documentId,
                                 versionId: version.id,
                               ),

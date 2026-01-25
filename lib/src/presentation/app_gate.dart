@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:my_documents/src/core/extensions/extensions.dart';
-import 'package:my_documents/src/features/settings/pages/settings_page.dart';
+import 'package:my_documents/src/features/settings/presentation/settings_screen.dart';
 
-import 'search_page.dart';
-import 'home_page.dart';
+import 'search_screen.dart';
+import 'home_screen.dart';
 
 class AppGate extends StatefulWidget {
   const AppGate({super.key});
@@ -15,7 +15,7 @@ class AppGate extends StatefulWidget {
 class _AppGateState extends State<AppGate> {
   int _selectedIndex = 0;
   final PageController _controller = PageController(initialPage: 0);
-  final List<Widget> pages = [MyHomePage(), SearchPage(), SettingsPage()];
+  final List<Widget> pages = [MyHomeScreen(), SearchScreen(), SettingsScreen()];
   List<BottomNavigationBarItem> navItems(BuildContext ctx) => [
     BottomNavigationBarItem(icon: Icon(Icons.home), label: ctx.l10n.home),
     BottomNavigationBarItem(icon: Icon(Icons.search), label: ctx.l10n.search),

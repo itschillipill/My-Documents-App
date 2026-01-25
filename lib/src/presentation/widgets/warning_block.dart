@@ -3,9 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_documents/src/core/extensions/extensions.dart';
 import 'package:my_documents/src/features/documents/cubit/documents_cubit.dart';
 import 'package:my_documents/src/features/folders/model/folder.dart';
-import 'package:my_documents/src/features/folders/pages/folder_view_page.dart';
+import 'package:my_documents/src/features/folders/presentation/folder_view_screen.dart';
 
-import '../features/documents/model/document.dart';
+import '../../features/documents/model/document.dart';
 
 class WarningBlock extends StatelessWidget {
   static const Folder _folder = Folder.warningFolder;
@@ -55,7 +55,7 @@ class WarningBlock extends StatelessWidget {
                   ),
                   onTap: () => Navigator.push(
                     context,
-                    FolderViewPage.route(folder: _folder),
+                    FolderViewScreen.route(folder: _folder),
                   ),
                 ),
               ),

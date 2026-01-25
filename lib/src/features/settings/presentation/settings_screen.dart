@@ -3,25 +3,25 @@ import 'package:flutter/material.dart';
 import 'package:my_documents/src/core/constants.dart';
 import 'package:my_documents/src/core/extensions/extensions.dart';
 import 'package:my_documents/src/features/auth/auth_executor.dart';
-import 'package:my_documents/src/features/documents/widgets/build_tile.dart';
+import 'package:my_documents/src/features/documents/presentation/widgets/build_tile.dart';
 import 'package:my_documents/src/utils/sevices/export_service.dart';
 import 'package:my_documents/src/utils/sevices/import_service.dart';
 import 'package:my_documents/src/utils/sevices/message_service.dart';
 import 'package:my_documents/src/utils/page_transition/app_page_route.dart';
-import 'package:my_documents/src/widgets/build_section.dart';
+import 'package:my_documents/src/presentation/widgets/build_section.dart';
 
-class SettingsPage extends StatefulWidget {
+class SettingsScreen extends StatefulWidget {
   static PageRoute route() => AppPageRoute.build(
-    page: SettingsPage(),
+    page: SettingsScreen(),
     transition: PageTransitionType.slideFromRight,
   );
-  const SettingsPage({super.key});
+  const SettingsScreen({super.key});
 
   @override
-  State<SettingsPage> createState() => _SettingsPageState();
+  State<SettingsScreen> createState() => _SettingsScreenState();
 }
 
-class _SettingsPageState extends State<SettingsPage> {
+class _SettingsScreenState extends State<SettingsScreen> {
   Future<bool?> _verifyOldPin(AuthenticationExecutor authExecutor) async {
     final oldPin = await _showPinSheet(context.l10n.enterCurrentPIN);
     if (oldPin == null) return null;

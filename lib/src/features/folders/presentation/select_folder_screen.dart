@@ -3,17 +3,17 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_documents/src/core/extensions/extensions.dart';
 import 'package:my_documents/src/features/folders/cubit/folders_cubit.dart';
 import 'package:my_documents/src/features/folders/model/folder.dart';
-import 'package:my_documents/src/widgets/border_box.dart';
+import 'package:my_documents/src/presentation/widgets/border_box.dart';
 import 'package:my_documents/src/utils/page_transition/app_page_route.dart';
-import 'add_folder_page.dart';
+import 'add_folder_screen.dart';
 
-class SelectFolderPage extends StatelessWidget {
+class SelectFolderScreen extends StatelessWidget {
   static final Folder _noFolder = Folder.noFolder;
   static Route<Folder> route() => AppPageRoute.build(
-    page: SelectFolderPage(),
+    page: SelectFolderScreen(),
     transition: PageTransitionType.slideFromLeft,
   );
-  const SelectFolderPage({super.key});
+  const SelectFolderScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -78,7 +78,7 @@ class SelectFolderPage extends StatelessWidget {
           ),
           floatingActionButton: FloatingActionButton(
             onPressed: () async =>
-                await Navigator.push(context, AddFolderPage.route()),
+                await Navigator.push(context, AddFolderScreen.route()),
             child: Icon(Icons.add),
           ),
         );

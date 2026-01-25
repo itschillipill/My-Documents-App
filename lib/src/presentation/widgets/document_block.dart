@@ -3,10 +3,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_documents/src/core/extensions/extensions.dart';
 import 'package:my_documents/src/features/documents/cubit/documents_cubit.dart';
 import 'package:my_documents/src/features/documents/model/document.dart';
-import 'package:my_documents/src/features/documents/pages/add_document_screen.dart';
+import 'package:my_documents/src/features/documents/presentation/add_document_screen.dart';
 import 'package:my_documents/src/features/folders/model/folder.dart';
-import 'package:my_documents/src/features/folders/pages/folder_view_page.dart';
-import '../features/documents/widgets/document_card.dart';
+import 'package:my_documents/src/features/folders/presentation/folder_view_screen.dart';
+import '../../features/documents/presentation/widgets/document_card.dart';
 
 Widget _buildEmptyState(BuildContext context, double screenWidth) {
   final isSmallScreen = screenWidth < 400;
@@ -106,7 +106,7 @@ class DocumentBlock extends StatelessWidget {
                       onPressed: () {
                         Navigator.push(
                           context,
-                          FolderViewPage.route(folder: _allFolder),
+                          FolderViewScreen.route(folder: _allFolder),
                         );
                       },
                       label: Text(

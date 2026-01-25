@@ -3,28 +3,28 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_documents/src/core/extensions/extensions.dart';
 import 'package:my_documents/src/features/documents/cubit/documents_cubit.dart';
 import 'package:my_documents/src/features/documents/document_actions.dart';
-import 'package:my_documents/src/features/documents/widgets/menu_actions.dart';
+import 'package:my_documents/src/features/documents/presentation/widgets/menu_actions.dart';
 import 'package:my_documents/src/features/folders/folder_actions.dart';
 import 'package:my_documents/src/features/folders/model/folder.dart';
-import 'package:my_documents/src/features/documents/widgets/document_card.dart';
+import 'package:my_documents/src/features/documents/presentation/widgets/document_card.dart';
 import 'package:my_documents/src/features/folders/model/sort_options.dart';
 import 'package:my_documents/src/utils/page_transition/app_page_route.dart';
 
 import '../../documents/model/document.dart' show Document, DocumentExtensions;
 
-class FolderViewPage extends StatefulWidget {
+class FolderViewScreen extends StatefulWidget {
   static PageRoute route({required Folder folder}) => AppPageRoute.build(
-    page: FolderViewPage._(folder: folder),
+    page: FolderViewScreen._(folder: folder),
     transition: PageTransitionType.slideFromLeft,
   );
   final Folder folder;
-  const FolderViewPage._({required this.folder});
+  const FolderViewScreen._({required this.folder});
 
   @override
-  State<FolderViewPage> createState() => _FolderViewPageState();
+  State<FolderViewScreen> createState() => _FolderViewScreenState();
 }
 
-class _FolderViewPageState extends State<FolderViewPage> {
+class _FolderViewScreenState extends State<FolderViewScreen> {
   bool isSelecting = false;
   Set<int> selectedDocumentsIds = {};
   SortOptions sortOptions = SortOptions.none;

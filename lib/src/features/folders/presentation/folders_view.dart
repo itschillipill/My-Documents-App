@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../core/extensions/extensions.dart';
 import '../cubit/folders_cubit.dart';
 import '../model/folder.dart';
-import '../widgets/folder_tile.dart';
+import 'widgets/folder_tile.dart';
 
 class FoldersView extends StatelessWidget {
   static Route route() =>

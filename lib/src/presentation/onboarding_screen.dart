@@ -2,16 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:my_documents/src/core/extensions/extensions.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
-class OnboardingPage extends StatefulWidget {
-  const OnboardingPage({super.key});
+class OnboardingScreen extends StatefulWidget {
+  const OnboardingScreen({super.key});
 
   @override
-  State<OnboardingPage> createState() => _OnboardingPageState();
+  State<OnboardingScreen> createState() => _OnboardingScreenState();
 }
 
-class _OnboardingPageState extends State<OnboardingPage> {
+class _OnboardingScreenState extends State<OnboardingScreen> {
   final PageController _controller = PageController();
-  int currentPage = 0;
+  int currentScreen = 0;
 
   List<OnboardingItem> _onboardingItems(BuildContext ctx) => [
     OnboardingItem(
@@ -68,7 +68,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
         borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
       ),
       builder: (context) => PrivacyPolicyModal(
-        color: _onboardingItems(context)[currentPage].color,
+        color: _onboardingItems(context)[currentScreen].color,
       ),
     );
   }
@@ -76,7 +76,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
   @override
   Widget build(BuildContext context) {
     List<OnboardingItem> onboardingItems = _onboardingItems(context);
-    final isLastPage = currentPage == onboardingItems.length - 1;
+    final isLastScreen = currentScreen == onboardingItems.length - 1;
     final theme = Theme.of(context);
     final settingsCubit = context.deps.settingsCubit;
     bool isDark =
@@ -91,7 +91,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
           PageView.builder(
             controller: _controller,
             itemCount: onboardingItems.length,
-            onPageChanged: (index) => setState(() => currentPage = index),
+            onPageChanged: (index) => setState(() => currentScreen = index),
             itemBuilder: (context, index) {
               final item = onboardingItems[index];
               return Padding(
@@ -173,7 +173,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
               },
               icon: Icon(
                 !isDark ? Icons.dark_mode : Icons.light_mode,
-                color: onboardingItems[currentPage].color,
+                color: onboardingItems[currentScreen].color,
               ),
             ),
           ),
@@ -218,7 +218,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                     controller: _controller,
                     count: onboardingItems.length,
                     effect: ExpandingDotsEffect(
-                      activeDotColor: onboardingItems[currentPage].color,
+                      activeDotColor: onboardingItems[currentScreen].color,
                       dotColor: Colors.grey.shade300,
                       dotHeight: 8,
                       dotWidth: 8,
@@ -248,7 +248,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                   const SizedBox(height: 16),
                   Row(
                     children: [
-                      if (!isLastPage)
+                      if (!isLastScreen)
                         Expanded(
                           child: OutlinedButton(
                             onPressed: () {
@@ -266,19 +266,19 @@ class _OnboardingPageState extends State<OnboardingPage> {
                             child: Text(
                               context.l10n.skip,
                               style: TextStyle(
-                                color: onboardingItems[currentPage].color,
+                                color: onboardingItems[currentScreen].color,
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
                           ),
                         ),
-                      if (!isLastPage) const SizedBox(width: 16),
+                      if (!isLastScreen) const SizedBox(width: 16),
                       // Кнопка Далее/Начать
                       Expanded(
-                        flex: isLastPage ? 2 : 1,
+                        flex: isLastScreen ? 2 : 1,
                         child: ElevatedButton(
                           onPressed: () {
-                            if (isLastPage) {
+                            if (isLastScreen) {
                               context.deps.settingsCubit.changeFirstLaunch();
                               debugPrint(
                                 context.deps.settingsCubit.state.isFurstLaunch
@@ -292,7 +292,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                             }
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: onboardingItems[currentPage].color,
+                            backgroundColor: onboardingItems[currentScreen].color,
                             foregroundColor: Colors.white,
                             padding: const EdgeInsets.symmetric(vertical: 18),
                             shape: RoundedRectangleBorder(
@@ -305,7 +305,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text(
-                                isLastPage
+                                isLastScreen
                                     ? context.l10n.start
                                     : context.l10n.next,
                                 style: const TextStyle(
@@ -313,7 +313,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
-                              if (!isLastPage) ...[
+                              if (!isLastScreen) ...[
                                 const SizedBox(width: 8),
                                 Icon(Icons.arrow_forward_rounded, size: 20),
                               ],

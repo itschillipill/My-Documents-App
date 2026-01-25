@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:my_documents/src/core/extensions/extensions.dart';
 import 'package:my_documents/src/features/documents/model/document.dart';
-import 'package:my_documents/src/features/documents/widgets/date_picker.dart'
+import 'package:my_documents/src/features/documents/presentation/widgets/date_picker.dart'
     as dp;
-import 'package:my_documents/src/features/documents/widgets/file_picker_block.dart';
+import 'package:my_documents/src/features/documents/presentation/widgets/file_picker_block.dart';
 import 'package:my_documents/src/utils/page_transition/app_page_route.dart';
 import 'package:my_documents/src/utils/sevices/file_service.dart';
 import 'package:my_documents/src/utils/sevices/message_service.dart';
 
-import '../../../widgets/build_section.dart';
+import '../../../presentation/widgets/build_section.dart';
 
 class AddNewDocumentVersion extends StatefulWidget {
   static PageRoute route(int documentId) => AppPageRoute.build(

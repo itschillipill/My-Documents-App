@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:my_documents/src/core/extensions/extensions.dart';
-import 'package:my_documents/src/features/documents/pages/add_document_screen.dart';
-import 'package:my_documents/src/widgets/document_block.dart';
-import 'package:my_documents/src/widgets/folders_block.dart';
-import 'package:my_documents/src/widgets/warning_block.dart';
+import 'package:my_documents/src/features/documents/presentation/add_document_screen.dart';
+import 'package:my_documents/src/presentation/widgets/document_block.dart';
+import 'package:my_documents/src/presentation/widgets/folders_block.dart';
+import 'package:my_documents/src/presentation/widgets/warning_block.dart';
 
-import '../features/folders/pages/add_folder_page.dart';
+import '../features/folders/presentation/add_folder_screen.dart';
 
-class MyHomePage extends StatelessWidget {
-  const MyHomePage({super.key});
+class MyHomeScreen extends StatelessWidget {
+  const MyHomeScreen({super.key});
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -72,7 +72,7 @@ void _showAddMenu(BuildContext context) async {
               icon: Icons.folder_rounded,
               label: context.l10n.addFolder,
               onTap: () {
-                Navigator.pushReplacement(context, AddFolderPage.route());
+                Navigator.pushReplacement(context, AddFolderScreen.route());
               },
             ),
             _buildMenuButton(
