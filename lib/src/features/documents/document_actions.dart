@@ -5,7 +5,7 @@ import 'package:my_documents/src/utils/sevices/message_service.dart';
 
 import '../../core/model/actions.dart';
 import 'model/document.dart';
-import 'widgets/change_document_details.dart';
+import 'presentation/widgets/change_document_details.dart';
 
 typedef DocumentAction = MyActions;
 

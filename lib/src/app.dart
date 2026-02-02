@@ -4,12 +4,12 @@ import 'package:my_documents/src/core/constants.dart';
 import 'package:my_documents/src/core/extensions/extensions.dart';
 import 'package:my_documents/src/features/auth/widgets/auth_scope.dart';
 import 'package:my_documents/src/features/settings/cubit/settings_cubit.dart';
-import 'package:my_documents/src/pages/app_gate.dart';
+import 'package:my_documents/src/presentation/app_gate.dart';
 import 'package:my_documents/src/utils/sevices/message_service.dart';
 import 'package:my_documents/src/utils/theme/theme.dart';
 import 'package:my_documents/l10n/app_localizations.dart';
 
-import 'widgets/windows_scope.dart';
+import 'presentation/widgets/windows_scope.dart';
 
 class App extends StatelessWidget {
   const App({super.key});
@@ -20,20 +20,18 @@ class App extends StatelessWidget {
       bloc: context.deps.settingsCubit,
       builder: (context, state) => MaterialApp(
         scaffoldMessengerKey: MessageService.messengerKey,
-        navigatorKey: MessageService.navigatorKey,
         title: Constants.appName,
         debugShowCheckedModeBanner: false,
         theme: AppTheme.lightTheme,
         darkTheme: AppTheme.darkTheme,
         themeMode: state.themeMode,
-        home: const AppGate(),
-        builder: (context, child) => MediaQuery(
+        builder: (context, _) => MediaQuery(
           data: MediaQuery.of(
             context,
           ).copyWith(textScaler: TextScaler.noScaling),
           child: WindowScope(
             title: context.l10n.appTitle,
-            child: AuthScope(child: child ?? const SizedBox.shrink()),
+            child: AuthScope(child: AppGate()),
           ),
         ),
         localizationsDelegates: AppLocalizations.localizationsDelegates,

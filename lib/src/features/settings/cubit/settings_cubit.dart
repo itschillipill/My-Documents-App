@@ -8,19 +8,19 @@ class SettingsState {
   final ThemeMode themeMode;
   final bool useBiometrics;
   final Locale locale;
-  final bool isFurstLaunch;
+  final bool isFirstLaunch;
 
   SettingsState({
     required this.themeMode,
     required this.useBiometrics,
-    required this.isFurstLaunch,
+    required this.isFirstLaunch,
     this.locale = Constants.defaultLocale,
   });
 
   factory SettingsState.initial() => SettingsState(
     themeMode: ThemeMode.system,
     useBiometrics: false,
-    isFurstLaunch: true,
+    isFirstLaunch: true,
     locale: Constants.defaultLocale,
   );
 
@@ -28,13 +28,13 @@ class SettingsState {
     ThemeMode? themeMode,
     bool? useBiometrics,
     Locale? locale,
-    bool? isFurstLaunch,
+    bool? isFirstLaunch,
   }) {
     return SettingsState(
       themeMode: themeMode ?? this.themeMode,
       useBiometrics: useBiometrics ?? this.useBiometrics,
       locale: locale ?? this.locale,
-      isFurstLaunch: isFurstLaunch ?? this.isFurstLaunch,
+      isFirstLaunch: isFirstLaunch ?? this.isFirstLaunch,
     );
   }
 }
@@ -62,13 +62,13 @@ class SettingsCubit extends Cubit<SettingsState> {
     final languageCode =
         prefs.getString(Constants.localeKey) ??
         Constants.defaultLocale.languageCode;
-    final isFurstLaunch = prefs.getBool(Constants.isFirstLaunchKey) ?? true;
+    final isFirstLaunch = prefs.getBool(Constants.isFirstLaunchKey) ?? true;
     emit(
       SettingsState(
         themeMode: ThemeMode.values[themeIndex],
         useBiometrics: biometrics,
         locale: Locale(languageCode),
-        isFurstLaunch: isFurstLaunch,
+        isFirstLaunch: isFirstLaunch,
       ),
     );
   }
@@ -90,11 +90,11 @@ class SettingsCubit extends Cubit<SettingsState> {
 
   Future<void> changeFirstLaunch() async {
     await prefs.setBool(Constants.isFirstLaunchKey, false);
-    emit(state.copyWith(isFurstLaunch: false));
+    emit(state.copyWith(isFirstLaunch: false));
   }
 
   Future<void> resetFirstLaunch() async {
     await prefs.setBool(Constants.isFirstLaunchKey, true);
-    emit(state.copyWith(isFurstLaunch: true));
+    emit(state.copyWith(isFirstLaunch: true));
   }
 }

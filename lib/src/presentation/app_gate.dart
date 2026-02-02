@@ -1,0 +1,70 @@
+import 'package:flutter/material.dart';
+import 'package:my_documents/src/core/extensions/extensions.dart';
+import 'package:my_documents/src/features/settings/presentation/settings_screen.dart';
+
+import 'search_screen.dart';
+import 'home_screen.dart';
+
+class AppGate extends StatefulWidget {
+  const AppGate({super.key});
+
+  @override
+  State<AppGate> createState() => _AppGateState();
+}
+
+class _AppGateState extends State<AppGate> {
+  int _selectedIndex = 0;
+  final PageController _controller = PageController(initialPage: 0);
+  final List<Widget> pages = [MyHomeScreen(), SearchScreen(), SettingsScreen()];
+  List<BottomNavigationBarItem> navItems(BuildContext ctx) => [
+    BottomNavigationBarItem(icon: Icon(Icons.home), label: ctx.l10n.home),
+    BottomNavigationBarItem(icon: Icon(Icons.search), label: ctx.l10n.search),
+    BottomNavigationBarItem(
+      icon: Icon(Icons.settings),
+      label: ctx.l10n.settings,
+    ),
+  ];
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return PopScope(
+      canPop: _selectedIndex != 1,
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop && _selectedIndex == 1) {
+          setState(() {
+            _selectedIndex = 0;
+            _controller.jumpToPage(0);
+          });
+        }
+      },
+      child: Scaffold(
+        body: PageView(
+          controller: _controller,
+          onPageChanged: (value) {
+            setState(() {
+              _selectedIndex = value;
+            });
+          },
+          children: pages,
+        ),
+        bottomNavigationBar: BottomNavigationBar(
+          currentIndex: _selectedIndex,
+          selectedItemColor: Theme.of(context).colorScheme.secondary,
+          onTap: (value) {
+            setState(() {
+              _selectedIndex = value;
+              _controller.jumpToPage(value);
+            });
+          },
+          items: navItems(context),
+        ),
+      ),
+    );
+  }
+}
