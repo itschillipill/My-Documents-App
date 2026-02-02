@@ -4,6 +4,7 @@ part 'app_palette.dart';
 class AppTheme {
   static final ThemeData lightTheme = ThemeData(
     useMaterial3: true,
+    brightness: Brightness.light,
     colorScheme: ColorScheme.light(
       primary: Color(0xFF1A1A1A),
       secondary: AppPalette.secondaryColor,
@@ -104,6 +105,7 @@ class AppTheme {
 
   static final ThemeData darkTheme = ThemeData(
     useMaterial3: true,
+    brightness: Brightness.dark,
     colorScheme: ColorScheme.dark(
       primary: Colors.white,
       secondary: AppPalette.secondaryDarkColor,

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:my_documents/src/core/extensions/extensions.dart';
 import 'package:my_documents/src/features/auth/widgets/auth_screen.dart';
-import 'package:my_documents/src/features/settings/cubit/settings_cubit.dart';
+import 'package:my_documents/src/features/navigation/app_navigator.dart';
 import 'package:my_documents/src/presentation/onboarding_screen.dart';
 import '../auth_executor.dart';
 
@@ -17,14 +17,11 @@ class AuthScope extends StatefulWidget {
 class _AuthScopeState extends State<AuthScope> {
   late final Listenable _listenable;
   late final AuthenticationExecutor authExecutor;
-  late final SettingsCubit settingsCubit;
 
   @override
   void initState() {
     super.initState();
-    final deps = context.deps;
-    authExecutor = deps.authExecutor;
-    settingsCubit = deps.settingsCubit;
+    authExecutor = context.deps.authExecutor;
     _listenable = Listenable.merge([
       authExecutor.hasPasswordNotifier,
       authExecutor.authenticatedNotifier,
@@ -40,29 +37,28 @@ class _AuthScopeState extends State<AuthScope> {
   }
 
   void _onAuthChanged() {
-    // пересобираем Navigator
     setState(() {});
   }
 
-  List<Page> get _pages => [
-    if (settingsCubit.state.isFurstLaunch)
-      const MaterialPage(child: OnboardingScreen())
-    else if (authExecutor.hasPassword && !authExecutor.authenticated)
+  List<Page> _pages(BuildContext ctx) => [
+    MaterialPage(child: widget.child),
+    if (ctx.deps.settingsCubit.state.isFirstLaunch)
+      MaterialPage(key: ValueKey('onboarding'), child: OnboardingScreen()),
+    if (authExecutor.hasPassword && !authExecutor.authenticated)
       MaterialPage(
+        key: const ValueKey('verify_pin'),
         child: VerifyPinScreen(
           useBiometrics:
-              settingsCubit.state.useBiometrics &&
-              settingsCubit.canUseBiometrics,
+              ctx.deps.settingsCubit.state.useBiometrics &&
+              ctx.deps.settingsCubit.canUseBiometrics,
           onAuthByPIN: authExecutor.authenticateByPIN,
           onAuthByBiometrics: authExecutor.authenticateByBiometrics,
         ),
-      )
-    else
-      MaterialPage(child: widget.child),
+      ),
   ];
 
   @override
   Widget build(BuildContext context) {
-    return Navigator(pages: _pages, onDidRemovePage: (_) {});
+    return AppNavigatorNew(pages: _pages(context));
   }
 }

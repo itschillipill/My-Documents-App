@@ -177,8 +177,10 @@ class _SearchScreenState extends State<SearchScreen> {
           ...filteredDocuments.map(
             (document) => DocumentCard(
               document: document,
-              onTap: () =>
-                  Navigator.push(context, DocumentViewScreen.route(document.id)),
+              onTap: () => Navigator.push(
+                context,
+                DocumentViewScreen.route(document.id),
+              ),
             ),
           ),
         ],

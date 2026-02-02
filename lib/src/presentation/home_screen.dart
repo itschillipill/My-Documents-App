@@ -31,9 +31,9 @@ class MyHomeScreen extends StatelessWidget {
                   Text(context.l10n.quickAccess),
                 ],
               ),
-              FloatingActionButton(
+              IconButton(
                 onPressed: () => _showAddMenu(context),
-                child: Icon(Icons.add_rounded),
+                icon: Icon(Icons.add_rounded),
               ),
             ],
           ),

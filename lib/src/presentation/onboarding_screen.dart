@@ -279,11 +279,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         child: ElevatedButton(
                           onPressed: () {
                             if (isLastScreen) {
-                              context.deps.settingsCubit.changeFirstLaunch();
-                              debugPrint(
-                                context.deps.settingsCubit.state.isFurstLaunch
-                                    .toString(),
-                              );
+                              settingsCubit.changeFirstLaunch();
                             } else {
                               _controller.nextPage(
                                 duration: const Duration(milliseconds: 400),
@@ -292,7 +288,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                             }
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: onboardingItems[currentScreen].color,
+                            backgroundColor:
+                                onboardingItems[currentScreen].color,
                             foregroundColor: Colors.white,
                             padding: const EdgeInsets.symmetric(vertical: 18),
                             shape: RoundedRectangleBorder(

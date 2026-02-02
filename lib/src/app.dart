@@ -20,20 +20,18 @@ class App extends StatelessWidget {
       bloc: context.deps.settingsCubit,
       builder: (context, state) => MaterialApp(
         scaffoldMessengerKey: MessageService.messengerKey,
-        navigatorKey: MessageService.navigatorKey,
         title: Constants.appName,
         debugShowCheckedModeBanner: false,
         theme: AppTheme.lightTheme,
         darkTheme: AppTheme.darkTheme,
         themeMode: state.themeMode,
-        home: const AppGate(),
-        builder: (context, child) => MediaQuery(
+        builder: (context, _) => MediaQuery(
           data: MediaQuery.of(
             context,
           ).copyWith(textScaler: TextScaler.noScaling),
           child: WindowScope(
             title: context.l10n.appTitle,
-            child: AuthScope(child: child ?? const SizedBox.shrink()),
+            child: AuthScope(child: AppGate()),
           ),
         ),
         localizationsDelegates: AppLocalizations.localizationsDelegates,

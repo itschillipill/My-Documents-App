@@ -39,11 +39,7 @@ class _AppGateState extends State<AppGate> {
         if (!didPop && _selectedIndex == 1) {
           setState(() {
             _selectedIndex = 0;
-            _controller.animateToPage(
-              0,
-              duration: const Duration(milliseconds: 200),
-              curve: Curves.ease,
-            );
+            _controller.jumpToPage(0);
           });
         }
       },
@@ -63,11 +59,7 @@ class _AppGateState extends State<AppGate> {
           onTap: (value) {
             setState(() {
               _selectedIndex = value;
-              _controller.animateToPage(
-                value,
-                duration: Duration(milliseconds: 200),
-                curve: Curves.ease,
-              );
+              _controller.jumpToPage(value);
             });
           },
           items: navItems(context),
