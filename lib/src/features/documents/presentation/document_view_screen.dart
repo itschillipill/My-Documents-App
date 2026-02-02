@@ -20,7 +20,10 @@ import 'document_version_history.dart';
 class DocumentViewScreen extends StatelessWidget {
   static PageRoute route(int documentId, {int? versionId}) =>
       AppPageRoute.build(
-        page: DocumentViewScreen._(documentId: documentId, versionId: versionId),
+        page: DocumentViewScreen._(
+          documentId: documentId,
+          versionId: versionId,
+        ),
         transition: PageTransitionType.slideFromBottom,
       );
   final int documentId;
