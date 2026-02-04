@@ -30,3 +30,40 @@ extension DocumentVersionExtensions on DocumentVersion {
     return DocumentStatus.functioning;
   }
 }
+
+extension DocumentExportExtension on Document {
+  Future<Map<String, dynamic>> exportMap(ExportBuildContext ctx) async {
+    final versions = <Map<String, dynamic>>[];
+    
+    for (final version in this.versions) {
+      versions.add(await version.exportMap(ctx));
+    }
+    
+    final currentIndex = this.versions.indexWhere(
+      (v) => v.id == currentVersionId,
+    );
+    
+    return {
+      'token': TokenGenerator.generateToken(),
+      'title': title,
+      'isFavorite': isFavorite,
+      'createdAt': createdAt.toIso8601String(),
+      'currentVersionIndex': currentIndex == -1 ? 0 : currentIndex,
+      'versions': versions,
+    };
+  }
+}
+
+extension DocumentVersionExportExtension on DocumentVersion {
+  Future<Map<String, dynamic>> exportMap(ExportBuildContext ctx) async {
+    final zipFileName = await ctx.registerFile(filePath);
+    
+    return {
+      'file': zipFileName,
+      'hash': p.basenameWithoutExtension(zipFileName),
+      'uploadedAt': uploadedAt.toIso8601String(),
+      'comment': comment,
+      'expirationDate': expirationDate?.toIso8601String(),
+    };
+  }
+}
