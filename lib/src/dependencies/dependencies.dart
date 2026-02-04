@@ -1,3 +1,4 @@
+import 'package:my_documents/src/core/environment.dart';
 import 'package:my_documents/src/features/auth/auth_executor.dart';
 import 'package:my_documents/src/features/documents/cubit/documents_cubit.dart';
 import 'package:my_documents/src/features/folders/cubit/folders_cubit.dart';
@@ -15,4 +16,6 @@ class Dependencies {
   late final SettingsCubit settingsCubit;
 
   late final AuthenticationExecutor authExecutor;
+
+  late final Environment environment;
 }

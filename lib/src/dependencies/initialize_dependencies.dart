@@ -9,6 +9,7 @@ import 'package:my_documents/src/features/settings/cubit/settings_cubit.dart';
 import 'package:shared_preferences/shared_preferences.dart'
     show SharedPreferences;
 
+import '../core/environment.dart';
 import '../utils/sevices/notification/notification_service_singleton.dart';
 import 'platform/initialization_vm.dart'
     // ignore: uri_does_not_exist
@@ -42,11 +43,14 @@ mixin InitializeDependencies {
 
   List<(String, _InitializationStep)> get _initializationSteps =>
       <(String, _InitializationStep)>[
-        // 1. Инициализация платформы
         ('Platform pre-initialization', (_) => $platformInitialization()),
-        // 2. Инициализация базы данных
+        ("Environment initialization", (deps){
+          deps.environment = Environment.from(
+             const String.fromEnvironment('ENV'),
+          );
+        }),
         (
-          "database initialization",
+          "Database initialization",
           (deps) async {
             try {
               final localDataSource = LocalDataSource();
