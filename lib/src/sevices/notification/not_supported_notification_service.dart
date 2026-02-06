@@ -1,4 +1,4 @@
-import 'package:my_documents/src/utils/sevices/observer.dart';
+import 'package:my_documents/src/sevices/observer.dart';
 
 import 'notification_service.dart';
 

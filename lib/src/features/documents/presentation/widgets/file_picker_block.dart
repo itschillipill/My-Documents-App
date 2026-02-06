@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:my_documents/src/core/extensions/extensions.dart';
-import 'package:my_documents/src/utils/sevices/file_service.dart';
-import 'package:my_documents/src/utils/sevices/message_service.dart';
+import 'package:my_documents/src/sevices/file_service.dart';
+import 'package:my_documents/src/sevices/message_service.dart';
 import 'package:path/path.dart' as p;
 
 class FilePickerBlock extends StatelessWidget {

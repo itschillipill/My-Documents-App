@@ -8,9 +8,9 @@ import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 
-import '../../core/model/errors.dart';
-import '../../core/result_or.dart';
-import '../../features/documents/model/document.dart';
+import '../core/model/errors.dart';
+import '../core/result_or.dart';
+import '../features/documents/model/document.dart';
 import 'file_service.dart';
 
 class ExportBuildContext {

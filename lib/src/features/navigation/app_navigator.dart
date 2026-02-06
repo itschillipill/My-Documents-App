@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:my_documents/src/utils/sevices/message_service.dart';
+import 'package:my_documents/src/sevices/message_service.dart';
 
 class AppNavigator extends StatefulWidget {
   AppNavigator({super.key, required this.initialPages})

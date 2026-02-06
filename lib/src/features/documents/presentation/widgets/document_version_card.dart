@@ -3,7 +3,7 @@ import 'package:my_documents/src/core/extensions/extensions.dart';
 import 'package:my_documents/src/features/documents/model/document.dart';
 import 'package:my_documents/src/presentation/widgets/border_box.dart';
 import 'package:my_documents/src/presentation/widgets/label.dart';
-import 'package:my_documents/src/utils/sevices/file_service.dart';
+import 'package:my_documents/src/sevices/file_service.dart';
 import 'package:path/path.dart' as p;
 
 class DocumentVersionCard extends StatelessWidget {

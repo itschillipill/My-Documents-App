@@ -10,7 +10,7 @@ import 'package:shared_preferences/shared_preferences.dart'
     show SharedPreferences;
 
 import '../core/environment.dart';
-import '../utils/sevices/notification/notification_service_singleton.dart';
+import '../sevices/notification/notification_service_singleton.dart';
 import 'platform/initialization_vm.dart'
     // ignore: uri_does_not_exist
     if (dart.library.html) 'platform/initialization_js.dart';

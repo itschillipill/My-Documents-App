@@ -4,9 +4,9 @@ import 'package:my_documents/src/core/constants.dart';
 import 'package:my_documents/src/core/extensions/extensions.dart';
 import 'package:my_documents/src/features/auth/auth_executor.dart';
 import 'package:my_documents/src/features/documents/presentation/widgets/build_tile.dart';
-import 'package:my_documents/src/utils/sevices/export_service.dart';
-import 'package:my_documents/src/utils/sevices/import_service.dart';
-import 'package:my_documents/src/utils/sevices/message_service.dart';
+import 'package:my_documents/src/sevices/export_service.dart';
+import 'package:my_documents/src/sevices/import_service.dart';
+import 'package:my_documents/src/sevices/message_service.dart';
 import 'package:my_documents/src/utils/page_transition/app_page_route.dart';
 import 'package:my_documents/src/presentation/widgets/build_section.dart';
 

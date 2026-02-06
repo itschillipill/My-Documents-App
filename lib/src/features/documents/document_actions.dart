@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:my_documents/src/core/extensions/extensions.dart';
-import 'package:my_documents/src/utils/sevices/file_service.dart';
-import 'package:my_documents/src/utils/sevices/message_service.dart';
+import 'package:my_documents/src/sevices/file_service.dart';
+import 'package:my_documents/src/sevices/message_service.dart';
 
 import '../../core/model/actions.dart';
 import 'model/document.dart';

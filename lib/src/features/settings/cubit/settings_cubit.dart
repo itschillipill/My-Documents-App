@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_documents/src/core/constants.dart';
-import 'package:my_documents/src/utils/sevices/observer.dart';
+import 'package:my_documents/src/sevices/observer.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingsState {

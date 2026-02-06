@@ -5,7 +5,7 @@ import 'package:my_documents/src/core/extensions/extensions.dart';
 import 'package:my_documents/src/features/auth/widgets/auth_scope.dart';
 import 'package:my_documents/src/features/settings/cubit/settings_cubit.dart';
 import 'package:my_documents/src/presentation/app_gate.dart';
-import 'package:my_documents/src/utils/sevices/message_service.dart';
+import 'package:my_documents/src/sevices/message_service.dart';
 import 'package:my_documents/src/utils/theme/theme.dart';
 import 'package:my_documents/l10n/app_localizations.dart';
 

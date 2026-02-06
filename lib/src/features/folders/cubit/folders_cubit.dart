@@ -6,7 +6,7 @@ import 'package:my_documents/src/database/database.dart';
 
 import 'package:my_documents/src/features/folders/model/folder.dart';
 
-import '../../../utils/sevices/observer.dart';
+import '../../../sevices/observer.dart';
 part 'folders_state.dart';
 
 class FoldersCubit extends Cubit<FoldersState> /*with Handler*/ {

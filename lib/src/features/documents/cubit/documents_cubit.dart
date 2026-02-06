@@ -5,9 +5,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:my_documents/src/core/result_or.dart';
 import 'package:my_documents/src/database/database.dart';
-import 'package:my_documents/src/utils/sevices/file_service.dart';
-import 'package:my_documents/src/utils/sevices/notification/notification_service_singleton.dart';
-import 'package:my_documents/src/utils/sevices/observer.dart';
+import 'package:my_documents/src/sevices/file_service.dart';
+import 'package:my_documents/src/sevices/notification/notification_service_singleton.dart';
+import 'package:my_documents/src/sevices/observer.dart';
 import '../../../core/handler.dart';
 import '../../../core/model/errors.dart';
 
