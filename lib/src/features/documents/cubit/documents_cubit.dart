@@ -14,7 +14,7 @@ import '../../../core/model/errors.dart';
 import 'package:my_documents/src/features/documents/model/document.dart';
 part 'documents_state.dart';
 
-class DocumentsCubit extends Cubit<DocumentsState> with Handler {
+class DocumentsCubit extends Cubit<DocumentsState> with SequentialHandler {
   final DataSource dataSource;
 
   DocumentsCubit({required this.dataSource}) : super(DocumentsState.initial()) {
@@ -44,7 +44,7 @@ class DocumentsCubit extends Cubit<DocumentsState> with Handler {
 
   @protected
   Future<void> _loadData() {
-    return mutex.synchronize(() async {
+    return handle(() async {
       emit(
         DocumentsState.processing(
           documents: state.documents,
@@ -75,7 +75,7 @@ class DocumentsCubit extends Cubit<DocumentsState> with Handler {
     });
   }
 
-  Future<void> restoreDocuments(List<Document> documents) => mutex.synchronize(
+  Future<void> restoreDocuments(List<Document> documents) => handle(
     () async {
       emit(
         DocumentsState.processing(
@@ -122,7 +122,7 @@ class DocumentsCubit extends Cubit<DocumentsState> with Handler {
   );
 
 Future<void> addAllDocuments(List<Document> documents, {bool replace = false}) {
-  return mutex.synchronize(() async {
+  return handle(() async {
     emit(
       DocumentsState.processing(
         documents: state.documents,
@@ -183,7 +183,7 @@ Future<void> addAllDocuments(List<Document> documents, {bool replace = false}) {
 }
 
   Future<void> addDocument(Document document) {
-    return mutex.synchronize(() async {
+    return handle(() async {
       emit(
         DocumentsState.processing(
           documents: state.documents,
@@ -225,7 +225,7 @@ Future<void> addAllDocuments(List<Document> documents, {bool replace = false}) {
   }
 
   Future<void> deleteDocuments(List<int> documentIds) {
-    return mutex.synchronize(() async {
+    return handle(() async {
       emit(
         DocumentsState.processing(
           documents: state.documents,
@@ -272,7 +272,7 @@ Future<void> addAllDocuments(List<Document> documents, {bool replace = false}) {
   }
 
   Future<void> updateDocument(Document updatedDocument) {
-    return mutex.synchronize(() async {
+    return handle(() async {
       emit(
         DocumentsState.processing(
           documents: state.documents,
@@ -309,7 +309,7 @@ Future<void> addAllDocuments(List<Document> documents, {bool replace = false}) {
   }
 
   Future<void> addNewVersion(int documentId, DocumentVersion version) {
-    return mutex.synchronize(() async {
+    return handle(() async {
       emit(
         DocumentsState.processing(
           documents: state.documents,
