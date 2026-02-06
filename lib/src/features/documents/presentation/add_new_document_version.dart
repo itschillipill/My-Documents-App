@@ -5,8 +5,8 @@ import 'package:my_documents/src/features/documents/presentation/widgets/date_pi
     as dp;
 import 'package:my_documents/src/features/documents/presentation/widgets/file_picker_block.dart';
 import 'package:my_documents/src/utils/page_transition/app_page_route.dart';
-import 'package:my_documents/src/utils/sevices/file_service.dart';
-import 'package:my_documents/src/utils/sevices/message_service.dart';
+import 'package:my_documents/src/sevices/file_service.dart';
+import 'package:my_documents/src/sevices/message_service.dart';
 
 import '../../../presentation/widgets/build_section.dart';
 

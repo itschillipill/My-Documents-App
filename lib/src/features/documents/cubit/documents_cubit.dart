@@ -5,16 +5,16 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:my_documents/src/core/result_or.dart';
 import 'package:my_documents/src/database/database.dart';
-import 'package:my_documents/src/utils/sevices/file_service.dart';
-import 'package:my_documents/src/utils/sevices/notification/notification_service_singleton.dart';
-import 'package:my_documents/src/utils/sevices/observer.dart';
+import 'package:my_documents/src/sevices/file_service.dart';
+import 'package:my_documents/src/sevices/notification/notification_service_singleton.dart';
+import 'package:my_documents/src/sevices/observer.dart';
 import '../../../core/handler.dart';
 import '../../../core/model/errors.dart';
 
 import 'package:my_documents/src/features/documents/model/document.dart';
 part 'documents_state.dart';
 
-class DocumentsCubit extends Cubit<DocumentsState> with Handler {
+class DocumentsCubit extends Cubit<DocumentsState> with SequentialHandler {
   final DataSource dataSource;
 
   DocumentsCubit({required this.dataSource}) : super(DocumentsState.initial()) {
@@ -44,7 +44,7 @@ class DocumentsCubit extends Cubit<DocumentsState> with Handler {
 
   @protected
   Future<void> _loadData() {
-    return mutex.synchronize(() async {
+    return handle(() async {
       emit(
         DocumentsState.processing(
           documents: state.documents,
@@ -75,7 +75,7 @@ class DocumentsCubit extends Cubit<DocumentsState> with Handler {
     });
   }
 
-  Future<void> restoreDocuments(List<Document> documents) => mutex.synchronize(
+  Future<void> restoreDocuments(List<Document> documents) => handle(
     () async {
       emit(
         DocumentsState.processing(
@@ -121,8 +121,69 @@ class DocumentsCubit extends Cubit<DocumentsState> with Handler {
     },
   );
 
+Future<void> addAllDocuments(List<Document> documents, {bool replace = false}) {
+  return handle(() async {
+    emit(
+      DocumentsState.processing(
+        documents: state.documents,
+        message: replace ? "Replacing documents" : "Adding documents",
+      ),
+    );
+
+    try {
+      List<Document> finalDocuments;
+      
+      if (replace) {
+        final allIds = state.documents?.map((e) => e.id).toList() ?? [];
+        if (allIds.isNotEmpty) {
+          await deleteDocuments(allIds);
+        }
+        finalDocuments = documents;
+      } else {
+        finalDocuments = [...?state.documents, ...documents];
+      }
+
+      final insertedDocs = await dataSource.insertAllDocuments(documents);
+      
+      for (final doc in insertedDocs) {
+        final currentVersion = doc.versions.firstWhere(
+          (v) => v.id == doc.currentVersionId,
+          orElse: () => doc.versions.first,
+        );
+
+        if (currentVersion.expirationDate != null) {
+          NotificationServiceSingleton.instance.service.scheduleNotification(
+            id: doc.id,
+            title: doc.title,
+            date: currentVersion.expirationDate!,
+          );
+        }
+      }
+
+      emit(
+        DocumentsState.processing(
+          documents: finalDocuments,
+          message: "Documents ${replace ? 'replaced' : 'added'} successfully",
+        ),
+      );
+    } catch (e, s) {
+      emit(
+        DocumentsState.failed(
+          documents: state.documents,
+          message: "Error ${replace ? 'replacing' : 'adding'} documents",
+          error: e,
+          stackTrace: s,
+        ),
+      );
+      MyClassObserver.instance.onError(name, e, s);
+    } finally {
+      emit(DocumentsState.idle(documents: state.documents));
+    }
+  });
+}
+
   Future<void> addDocument(Document document) {
-    return mutex.synchronize(() async {
+    return handle(() async {
       emit(
         DocumentsState.processing(
           documents: state.documents,
@@ -164,7 +225,7 @@ class DocumentsCubit extends Cubit<DocumentsState> with Handler {
   }
 
   Future<void> deleteDocuments(List<int> documentIds) {
-    return mutex.synchronize(() async {
+    return handle(() async {
       emit(
         DocumentsState.processing(
           documents: state.documents,
@@ -211,7 +272,7 @@ class DocumentsCubit extends Cubit<DocumentsState> with Handler {
   }
 
   Future<void> updateDocument(Document updatedDocument) {
-    return mutex.synchronize(() async {
+    return handle(() async {
       emit(
         DocumentsState.processing(
           documents: state.documents,
@@ -248,7 +309,7 @@ class DocumentsCubit extends Cubit<DocumentsState> with Handler {
   }
 
   Future<void> addNewVersion(int documentId, DocumentVersion version) {
-    return mutex.synchronize(() async {
+    return handle(() async {
       emit(
         DocumentsState.processing(
           documents: state.documents,

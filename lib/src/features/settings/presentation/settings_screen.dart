@@ -4,9 +4,9 @@ import 'package:my_documents/src/core/constants.dart';
 import 'package:my_documents/src/core/extensions/extensions.dart';
 import 'package:my_documents/src/features/auth/auth_executor.dart';
 import 'package:my_documents/src/features/documents/presentation/widgets/build_tile.dart';
-import 'package:my_documents/src/utils/sevices/export_service.dart';
-import 'package:my_documents/src/utils/sevices/import_service.dart';
-import 'package:my_documents/src/utils/sevices/message_service.dart';
+import 'package:my_documents/src/sevices/export_service.dart';
+import 'package:my_documents/src/sevices/import_service.dart';
+import 'package:my_documents/src/sevices/message_service.dart';
 import 'package:my_documents/src/utils/page_transition/app_page_route.dart';
 import 'package:my_documents/src/presentation/widgets/build_section.dart';
 
@@ -351,12 +351,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           title: context.l10n.importData,
                         );
                         if (!res || !context.mounted) return;
-                        final result = await ImportService.importAndReplace(
-                          context.deps.dataSource,
-                        );
+                        final result = await ImportService.import(onClearAllDocuments: (){}, onAddAllDocuments: context.deps.documentsCubit.addAllDocuments);
                         result(
-                          onSuccess: (docs) => context.deps.documentsCubit
-                              .restoreDocuments(docs),
+                          onSuccess: (_) => {/* success */},
                           onError: (error) => MessageService.showErrorSnack(
                             error.getMessage(context),
                           ),

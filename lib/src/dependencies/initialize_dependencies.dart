@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart' show debugPrint;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:my_documents/src/core/app_context.dart';
+import 'package:my_documents/src/core/app_metadata.dart';
 import 'package:my_documents/src/database/src/local_data_source.dart';
 import 'package:my_documents/src/features/auth/auth_executor.dart';
 import 'package:my_documents/src/features/documents/cubit/documents_cubit.dart';
@@ -9,7 +11,8 @@ import 'package:my_documents/src/features/settings/cubit/settings_cubit.dart';
 import 'package:shared_preferences/shared_preferences.dart'
     show SharedPreferences;
 
-import '../utils/sevices/notification/notification_service_singleton.dart';
+import '../core/environment.dart';
+import '../sevices/notification/notification_service_singleton.dart';
 import 'platform/initialization_vm.dart'
     // ignore: uri_does_not_exist
     if (dart.library.html) 'platform/initialization_js.dart';
@@ -42,11 +45,18 @@ mixin InitializeDependencies {
 
   List<(String, _InitializationStep)> get _initializationSteps =>
       <(String, _InitializationStep)>[
-        // 1. Инициализация платформы
         ('Platform pre-initialization', (_) => $platformInitialization()),
-        // 2. Инициализация базы данных
+        ("AppContext initialization", (_){
+          AppContext.instance.init(
+            environment: Environment.from(
+              String.fromEnvironment("ENV")
+            ), 
+            metadata: AppMetadata.fromPlatform(
+              version: "1.0.0", 
+              buildNumber: DateTime.now().millisecondsSinceEpoch.toString(),));
+        }),
         (
-          "database initialization",
+          "Database initialization",
           (deps) async {
             try {
               final localDataSource = LocalDataSource();

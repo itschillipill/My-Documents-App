@@ -5,7 +5,7 @@ import 'package:my_documents/src/features/documents/presentation/widgets/folder_
 import 'package:my_documents/src/features/folders/model/folder.dart';
 
 import 'package:my_documents/src/utils/page_transition/app_page_route.dart';
-import 'package:my_documents/src/utils/sevices/message_service.dart';
+import 'package:my_documents/src/sevices/message_service.dart';
 
 import '../../../../presentation/widgets/build_section.dart';
 

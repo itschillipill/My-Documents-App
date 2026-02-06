@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:my_documents/src/core/extensions/extensions.dart';
 import 'package:my_documents/src/utils/page_transition/app_page_route.dart';
-import 'package:my_documents/src/utils/sevices/message_service.dart';
+import 'package:my_documents/src/sevices/message_service.dart';
 import 'package:my_documents/src/presentation/widgets/build_section.dart';
 
 import '../model/folder.dart';

@@ -7,14 +7,30 @@ import 'package:flutter/foundation.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:uuid/uuid.dart';
 
-import '../../core/model/errors.dart';
-import '../../core/result_or.dart';
-import '../../features/documents/model/document.dart';
-import '../../features/export/export_build_context.dart';
-import '../../features/export/export_document.dart';
-import '../../features/export/export_document_version.dart';
+import '../core/model/errors.dart';
+import '../core/result_or.dart';
+import '../features/documents/model/document.dart';
+import 'file_service.dart';
+
+class ExportBuildContext {
+  final Map<String, String> hashToFileName = {};
+  final Directory filesDir;
+
+  ExportBuildContext(this.filesDir);
+
+  Future<String> registerFile(String filePath) async {
+    final file = File(filePath);
+    final hash = await FileService.calculateFileHash(file);
+
+    return hashToFileName.putIfAbsent(hash, () {
+      final ext = p.extension(filePath);
+      final name = '$hash$ext';
+      file.copySync(p.join(filesDir.path, name));
+      return name;
+    });
+  }
+}
 
 class ExportService {
   static Future<ResultOr<void>> exportData({
@@ -24,8 +40,8 @@ class ExportService {
 
     try {
       if (!kDebugMode) return ResultOr.error(ErrorKeys.notImplemented);
+      
       final tempDir = await _getSaveDirectory();
-
       exportDir = Directory(
         p.join(tempDir, 'export_${DateTime.now().millisecondsSinceEpoch}'),
       );
@@ -35,10 +51,10 @@ class ExportService {
       await filesDir.create();
 
       final ctx = ExportBuildContext(filesDir);
-      final exportedDocs = <ExportDocument>[];
-
+      
+      final exportedDocs = <Map<String, dynamic>>[];
       for (final doc in documents) {
-        exportedDocs.add(await buildExportDocument(doc, ctx));
+        exportedDocs.add(await doc.exportMap(ctx));
       }
 
       await writeDocumentsJson(exportDir, exportedDocs);
@@ -56,29 +72,27 @@ class ExportService {
       );
 
       await zipFile.writeAsBytes(zipBytes);
-
       await SharePlus.instance.share(ShareParams(files: [XFile(zipFile.path)]));
 
       return ResultOr.success(null);
     } catch (e, st) {
-      debugPrint('$e');
-      debugPrintStack(stackTrace: st);
+      debugPrint('$e\n$st');
       return ResultOr.error(ErrorKeys.failedToShare);
     } finally {
-      if (exportDir != null) {
-        try {
-          if (await exportDir.exists()) {
-            await exportDir.delete(recursive: true);
-            debugPrint('Export temp directory deleted: ${exportDir.path}');
-          }
-        } catch (e) {
-          debugPrint('Failed to delete export temp directory: $e');
-        }
-      }
+      await exportDir?.deleteIfExists();
     }
   }
 
-  static Future<String> _getSaveDirectory() async {
+  static Future<void> writeDocumentsJson(
+    Directory exportDir,
+    List<Map<String, dynamic>> documents,
+  ) async {
+    final file = File(p.join(exportDir.path, 'documents.json'));
+    final json = {'documents': documents};
+    await file.writeAsString(const JsonEncoder.withIndent('  ').convert(json));
+  }
+
+   static Future<String> _getSaveDirectory() async {
     if (Platform.isAndroid) {
       final dir = Directory('/storage/emulated/0/Download');
 
@@ -98,45 +112,7 @@ class ExportService {
     return dir.path;
   }
 
-  static Future<ExportDocument> buildExportDocument(
-    Document document,
-    ExportBuildContext ctx,
-  ) async {
-    final versions = <ExportDocumentVersion>[];
-
-    for (final v in document.versions) {
-      final zipFileName = await ctx.registerFile(v.filePath);
-
-      versions.add(
-        ExportDocumentVersion(
-          file: zipFileName,
-          hash: p.basenameWithoutExtension(zipFileName),
-          uploadedAt: v.uploadedAt,
-          comment: v.comment,
-          expirationDate: v.expirationDate,
-        ),
-      );
-    }
-
-    final currentIndex = document.versions.indexWhere(
-      (v) => v.id == document.currentVersionId,
-    );
-
-    if (currentIndex == -1) {
-      throw StateError('Current version not found for document ${document.id}');
-    }
-
-    return ExportDocument(
-      uuid: const Uuid().v4(),
-      title: document.title,
-      isFavorite: document.isFavorite,
-      createdAt: document.createdAt,
-      currentVersionIndex: currentIndex,
-      versions: versions,
-    );
-  }
-
-  static Uint8List buildZipInIsolate(String exportDirPath) {
+   static Uint8List buildZipInIsolate(String exportDirPath) {
     final archive = Archive();
     final dir = Directory(exportDirPath);
 
@@ -158,17 +134,6 @@ class ExportService {
     return Uint8List.fromList(zipData);
   }
 
-  static Future<void> writeDocumentsJson(
-    Directory exportDir,
-    List<ExportDocument> documents,
-  ) async {
-    final file = File(p.join(exportDir.path, 'documents.json'));
-
-    final json = {'documents': documents.map((d) => d.toJson()).toList()};
-
-    await file.writeAsString(const JsonEncoder.withIndent('  ').convert(json));
-  }
-
   static Future<void> writeManifest(Directory exportDir) async {
     final file = File(p.join(exportDir.path, 'manifest.json'));
     await file.writeAsString(jsonEncode(buildManifest()));
@@ -179,4 +144,14 @@ class ExportService {
     'version': 1,
     'createdAt': DateTime.now().toIso8601String(),
   };
+}
+
+extension DirectoryExtension on Directory {
+  Future<void> deleteIfExists() async {
+    try {
+      if (await exists()) await delete(recursive: true);
+    } catch (e) {
+      debugPrint('Failed to delete directory: $e');
+    }
+  }
 }

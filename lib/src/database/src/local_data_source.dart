@@ -184,7 +184,10 @@ class LocalDataSource implements DataSource {
       _documentService.updateDocument(document);
 
   @override
-  Future<bool> deleteDocument(int id) => _documentService.deleteDocument(id);
+  Future<bool> deleteDocument(int id) => _documentService.deleteDocument(id); 
+  @override
+  Future<List<Document>> insertAllDocuments(List<Document> documents) =>
+      _documentService.insertAllDocuments(documents);
   @override
   Future<bool> deleteDocumentsByIds(List<int> ids) =>
       _documentService.deleteDocumentsByIds(ids);
