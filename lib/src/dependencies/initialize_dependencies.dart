@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart' show debugPrint;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:my_documents/src/core/app_context.dart';
+import 'package:my_documents/src/core/app_metadata.dart';
 import 'package:my_documents/src/database/src/local_data_source.dart';
 import 'package:my_documents/src/features/auth/auth_executor.dart';
 import 'package:my_documents/src/features/documents/cubit/documents_cubit.dart';
@@ -44,10 +46,14 @@ mixin InitializeDependencies {
   List<(String, _InitializationStep)> get _initializationSteps =>
       <(String, _InitializationStep)>[
         ('Platform pre-initialization', (_) => $platformInitialization()),
-        ("Environment initialization", (deps){
-          deps.environment = Environment.from(
-             const String.fromEnvironment('ENV'),
-          );
+        ("AppContext initialization", (_){
+          AppContext.instance.init(
+            environment: Environment.from(
+              String.fromEnvironment("ENV")
+            ), 
+            metadata: AppMetadata.fromPlatform(
+              version: "1.0.0", 
+              buildNumber: DateTime.now().millisecondsSinceEpoch.toString(),));
         }),
         (
           "Database initialization",
