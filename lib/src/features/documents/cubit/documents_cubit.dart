@@ -121,6 +121,67 @@ class DocumentsCubit extends Cubit<DocumentsState> with Handler {
     },
   );
 
+Future<void> addAllDocuments(List<Document> documents, {bool replace = false}) {
+  return mutex.synchronize(() async {
+    emit(
+      DocumentsState.processing(
+        documents: state.documents,
+        message: replace ? "Replacing documents" : "Adding documents",
+      ),
+    );
+
+    try {
+      List<Document> finalDocuments;
+      
+      if (replace) {
+        final allIds = state.documents?.map((e) => e.id).toList() ?? [];
+        if (allIds.isNotEmpty) {
+          await deleteDocuments(allIds);
+        }
+        finalDocuments = documents;
+      } else {
+        finalDocuments = [...?state.documents, ...documents];
+      }
+
+      final insertedDocs = await dataSource.insertAllDocuments(documents);
+      
+      for (final doc in insertedDocs) {
+        final currentVersion = doc.versions.firstWhere(
+          (v) => v.id == doc.currentVersionId,
+          orElse: () => doc.versions.first,
+        );
+
+        if (currentVersion.expirationDate != null) {
+          NotificationServiceSingleton.instance.service.scheduleNotification(
+            id: doc.id,
+            title: doc.title,
+            date: currentVersion.expirationDate!,
+          );
+        }
+      }
+
+      emit(
+        DocumentsState.processing(
+          documents: finalDocuments,
+          message: "Documents ${replace ? 'replaced' : 'added'} successfully",
+        ),
+      );
+    } catch (e, s) {
+      emit(
+        DocumentsState.failed(
+          documents: state.documents,
+          message: "Error ${replace ? 'replacing' : 'adding'} documents",
+          error: e,
+          stackTrace: s,
+        ),
+      );
+      MyClassObserver.instance.onError(name, e, s);
+    } finally {
+      emit(DocumentsState.idle(documents: state.documents));
+    }
+  });
+}
+
   Future<void> addDocument(Document document) {
     return mutex.synchronize(() async {
       emit(

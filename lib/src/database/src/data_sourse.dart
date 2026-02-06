@@ -12,6 +12,7 @@ abstract class DataSource {
   Future<bool> updateDocument(Document document);
   Future<bool> deleteDocument(int id);
   Future<bool> deleteDocumentsByIds(List<int> ids);
+  Future<List<Document>> insertAllDocuments(List<Document> documents);
   Future<DocumentVersion> addNewVersion(
     int documentId,
     DocumentVersion version,

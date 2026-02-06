@@ -351,12 +351,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           title: context.l10n.importData,
                         );
                         if (!res || !context.mounted) return;
-                        final result = await ImportService.importAndReplace(
-                          context.deps.dataSource,
-                        );
+                        final result = await ImportService.import(onClearAllDocuments: (){}, onAddAllDocuments: context.deps.documentsCubit.addAllDocuments);
                         result(
-                          onSuccess: (docs) => context.deps.documentsCubit
-                              .restoreDocuments(docs),
+                          onSuccess: (_) => {/* success */},
                           onError: (error) => MessageService.showErrorSnack(
                             error.getMessage(context),
                           ),

@@ -107,6 +107,86 @@ class DocumentService {
     return count > 0;
   }
 
+ Future<List<Document>> insertAllDocuments(List<Document> documents) async {
+  if (documents.isEmpty) return [];
+
+  // Проверяем, что все документы имеют хотя бы одну версию
+  for (final doc in documents) {
+    if (doc.versions.isEmpty) {
+      throw ArgumentError('Document "${doc.title}" must have at least one version');
+    }
+  }
+
+  final List<Document> insertedDocuments = [];
+
+  await _db.transaction((txn) async {
+    // Map для связи временного индекса с реальным ID версии
+    final Map<String, int> versionIdMap = {};
+    
+    for (int docIndex = 0; docIndex < documents.length; docIndex++) {
+      final doc = documents[docIndex];
+      
+      // Вставляем документ
+      final documentId = await txn.insert(
+        'documents',
+        doc.toMap(includeId: false),
+      );
+
+      final List<DocumentVersion> insertedVersions = [];
+      int? currentVersionId;
+
+      // Вставляем версии документа
+      for (int verIndex = 0; verIndex < doc.versions.length; verIndex++) {
+        final version = doc.versions[verIndex];
+        final versionId = await txn.insert(
+          'document_versions',
+          version.copyWith(documentId: documentId).toMap(includeId: false),
+        );
+
+        // Сохраняем соответствие временного ID реальному
+        final tempKey = '${docIndex}_${version.id}';
+        versionIdMap[tempKey] = versionId;
+
+        final insertedVersion = version.copyWith(
+          id: versionId,
+          documentId: documentId,
+        );
+        insertedVersions.add(insertedVersion);
+
+        // Определяем текущую версию
+        if (doc.currentVersionId == version.id) {
+          currentVersionId = versionId;
+        }
+      }
+
+      // Если текущая версия не указана, берем первую
+      currentVersionId ??= insertedVersions.isNotEmpty 
+          ? insertedVersions.first.id 
+          : null;
+
+      // Обновляем currentVersionId
+      if (currentVersionId != null) {
+        await txn.update(
+          'documents',
+          {'currentVersionId': currentVersionId},
+          where: 'id = ?',
+          whereArgs: [documentId],
+        );
+      }
+
+      insertedDocuments.add(
+        doc.copyWith(
+          id: documentId,
+          currentVersionId: currentVersionId,
+          versions: insertedVersions,
+        ),
+      );
+    }
+  });
+
+  return insertedDocuments;
+}
+
   Future<bool> deleteDocument(int id) async {
     try {
       final deletedCount = await _db.delete(
