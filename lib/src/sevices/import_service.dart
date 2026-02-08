@@ -8,6 +8,7 @@ import 'package:my_documents/src/core/model/errors.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 
+import '../core/app_context.dart';
 import '../core/result_or.dart';
 import '../features/documents/model/document.dart';
 import 'file_service.dart';
@@ -19,7 +20,7 @@ class ImportService {
   }) async {
     Directory? tempDir;
 
-    if (!kDebugMode) return ResultOr.error(ErrorKeys.notImplemented);
+    if (AppContext.instance.config.isProd) return ResultOr.error(ErrorKeys.notImplemented);
 
     try {
       // ================= 📦 ВЫБОР ZIP =================

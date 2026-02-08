@@ -8,6 +8,7 @@ import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 
+import '../core/app_context.dart';
 import '../core/model/errors.dart';
 import '../core/result_or.dart';
 import '../features/documents/model/document.dart';
@@ -39,7 +40,7 @@ class ExportService {
     Directory? exportDir;
 
     try {
-      if (!kDebugMode) return ResultOr.error(ErrorKeys.notImplemented);
+      if (AppContext.instance.config.isProd) return ResultOr.error(ErrorKeys.notImplemented);
       
       final tempDir = await _getSaveDirectory();
       exportDir = Directory(
