@@ -8,7 +8,6 @@ class AppContext {
   static final AppContext _instance = AppContext._internal();
   static AppContext get instance => _instance;
 
-  late final Environment environment;
   late final AppConfig config;
   late final AppMetadata metadata;
 
@@ -20,7 +19,6 @@ class AppContext {
   }) {
     if (_initialized) return;
 
-    this.environment = environment;
     config = AppConfig.forEnvironment(environment);
     this.metadata = metadata;
 
