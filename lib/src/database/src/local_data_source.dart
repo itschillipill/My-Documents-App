@@ -1,6 +1,6 @@
 import 'dart:io' show Platform;
 
-import 'package:flutter/foundation.dart' show kDebugMode;
+import 'package:my_documents/src/core/app_context.dart';
 import 'package:my_documents/src/core/constants.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
@@ -28,7 +28,7 @@ class LocalDataSource implements DataSource {
       String? $path = path;
       $path ??= join(
         (await getApplicationDocumentsDirectory()).path,
-        kDebugMode ? 'my_documents_debug.db' : 'my_documents.db',
+        !AppContext.instance.config.isProd ? 'my_documents_debug.db' : 'my_documents.db',
       );
 
       _db = await openDatabase(

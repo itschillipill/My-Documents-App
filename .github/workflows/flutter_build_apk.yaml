@@ -70,7 +70,6 @@ jobs:
           flutter build apk \
             --release \
             --split-per-abi \
-            --dart-define=ENV=STAGING
 
       # 8️⃣ Генерация уникального тега
       - name: Generate tag
