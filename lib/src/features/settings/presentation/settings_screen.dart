@@ -1,5 +1,5 @@
-import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/material.dart';
+import 'package:my_documents/src/core/app_context.dart';
 import 'package:my_documents/src/core/constants.dart';
 import 'package:my_documents/src/core/extensions/extensions.dart';
 import 'package:my_documents/src/features/auth/auth_executor.dart';
@@ -429,7 +429,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     ),
                   ],
                 ),
-                if (kDebugMode)
+                if (!AppContext.instance.config.isProd)
                   Column(
                     children: [
                       SizedBox(
