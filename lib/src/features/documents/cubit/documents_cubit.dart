@@ -18,7 +18,7 @@ class DocumentsCubit extends Cubit<DocumentsState> with SequentialHandler {
   final DataSource dataSource;
 
   DocumentsCubit({required this.dataSource}) : super(DocumentsState.initial()) {
-    MyClassObserver.instance.onCreate(name);
+    SessionLogger.instance.onCreate(name);
     _loadData();
   }
 
@@ -26,19 +26,19 @@ class DocumentsCubit extends Cubit<DocumentsState> with SequentialHandler {
 
   @override
   void emit(DocumentsState state) {
-    MyClassObserver.instance.onTransition(name, this.state, state);
+    SessionLogger.instance.onTransition(name, this.state, state);
     super.emit(state);
   }
 
   @override
   void onError(Object error, StackTrace stackTrace) {
     super.onError(error, stackTrace);
-    MyClassObserver.instance.onError(name, error, stackTrace);
+    SessionLogger.instance.onError(name, error, stackTrace);
   }
 
   @override
   Future<void> close() {
-    MyClassObserver.instance.onClose(name);
+    SessionLogger.instance.onClose(name);
     return super.close();
   }
 
@@ -68,7 +68,7 @@ class DocumentsCubit extends Cubit<DocumentsState> with SequentialHandler {
             stackTrace: s,
           ),
         );
-        MyClassObserver.instance.onError(name, e, s);
+        SessionLogger.instance.onError(name, e, s);
       } finally {
         emit(DocumentsState.idle(documents: state.documents));
       }
@@ -175,7 +175,7 @@ Future<void> addAllDocuments(List<Document> documents, {bool replace = false}) {
           stackTrace: s,
         ),
       );
-      MyClassObserver.instance.onError(name, e, s);
+      SessionLogger.instance.onError(name, e, s);
     } finally {
       emit(DocumentsState.idle(documents: state.documents));
     }
@@ -217,7 +217,7 @@ Future<void> addAllDocuments(List<Document> documents, {bool replace = false}) {
             stackTrace: s,
           ),
         );
-        MyClassObserver.instance.onError(name, e, s);
+        SessionLogger.instance.onError(name, e, s);
       } finally {
         emit(DocumentsState.idle(documents: state.documents));
       }
@@ -264,7 +264,7 @@ Future<void> addAllDocuments(List<Document> documents, {bool replace = false}) {
             stackTrace: s,
           ),
         );
-        MyClassObserver.instance.onError(name, e, s);
+        SessionLogger.instance.onError(name, e, s);
       } finally {
         emit(DocumentsState.idle(documents: state.documents));
       }
@@ -301,7 +301,7 @@ Future<void> addAllDocuments(List<Document> documents, {bool replace = false}) {
             stackTrace: s,
           ),
         );
-        MyClassObserver.instance.onError(name, e, s);
+        SessionLogger.instance.onError(name, e, s);
       } finally {
         emit(DocumentsState.idle(documents: state.documents));
       }
@@ -355,7 +355,7 @@ Future<void> addAllDocuments(List<Document> documents, {bool replace = false}) {
             stackTrace: s,
           ),
         );
-        MyClassObserver.instance.onError(name, e, s);
+        SessionLogger.instance.onError(name, e, s);
       } finally {
         emit(DocumentsState.idle(documents: state.documents));
       }
@@ -407,7 +407,7 @@ Future<void> addAllDocuments(List<Document> documents, {bool replace = false}) {
 
       return ResultOr.success(safePath);
     } catch (error, stackTrace) {
-      MyClassObserver.instance.onError(
+      SessionLogger.instance.onError(
         name,
         error,
         stackTrace,
@@ -433,7 +433,7 @@ Future<void> addAllDocuments(List<Document> documents, {bool replace = false}) {
       );
       return sizes.fold<int>(0, (sum, size) => sum + size);
     } catch (e, s) {
-      MyClassObserver.instance.onError(
+      SessionLogger.instance.onError(
         name,
         e,
         s,

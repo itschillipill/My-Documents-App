@@ -31,7 +31,7 @@ void main() {
       );
     },
     (error, stack) {
-      MyClassObserver.instance.onError("Main", error, stack);
+      SessionLogger.instance.onError("Main", error, stack);
     },
   );
 }

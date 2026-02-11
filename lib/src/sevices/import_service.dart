@@ -5,6 +5,7 @@ import 'package:archive/archive.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:my_documents/src/core/model/errors.dart';
+import 'package:my_documents/src/sevices/observer.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 
@@ -26,6 +27,7 @@ class ImportService {
       // ================= 📦 ВЫБОР ZIP =================
       final result = await FilePicker.platform.pickFiles(
         allowedExtensions: ['zip'],
+        type: FileType.custom
       );
 
       if (result == null || result.files.single.path == null) {
@@ -166,8 +168,7 @@ class ImportService {
 
       return ResultOr.success(null);
     } catch (e, st) {
-      debugPrint('Import error: $e');
-      debugPrintStack(stackTrace: st);
+      SessionLogger.instance.error("ImportService.import", "$e", stackTrace: st);
       return ResultOr.error(ErrorKeys.failedToImport);
     } finally {
       if (tempDir != null && await tempDir.exists()) {

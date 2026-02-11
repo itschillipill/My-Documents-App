@@ -59,6 +59,6 @@ class _AuthScopeState extends State<AuthScope> {
 
   @override
   Widget build(BuildContext context) {
-    return AppNavigatorNew(pages: _pages(context));
+    return AppNavigator(pages: _pages(context));
   }
 }

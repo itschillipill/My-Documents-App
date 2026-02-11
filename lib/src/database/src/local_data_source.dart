@@ -1,6 +1,5 @@
 import 'dart:io' show Platform;
 
-import 'package:my_documents/src/core/app_context.dart';
 import 'package:my_documents/src/core/constants.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
@@ -28,7 +27,7 @@ class LocalDataSource implements DataSource {
       String? $path = path;
       $path ??= join(
         (await getApplicationDocumentsDirectory()).path,
-        !AppContext.instance.config.isProd ? 'my_documents_debug.db' : 'my_documents.db',
+       'my_documents.db',
       );
 
       _db = await openDatabase(

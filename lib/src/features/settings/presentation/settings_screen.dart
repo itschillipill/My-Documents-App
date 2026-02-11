@@ -4,6 +4,7 @@ import 'package:my_documents/src/core/constants.dart';
 import 'package:my_documents/src/core/extensions/extensions.dart';
 import 'package:my_documents/src/features/auth/auth_executor.dart';
 import 'package:my_documents/src/features/documents/presentation/widgets/build_tile.dart';
+import 'package:my_documents/src/features/settings/presentation/log_screen.dart';
 import 'package:my_documents/src/sevices/export_service.dart';
 import 'package:my_documents/src/sevices/import_service.dart';
 import 'package:my_documents/src/sevices/message_service.dart';
@@ -431,6 +432,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
                 if (!AppContext.instance.config.isProd)
                   Column(
+                    spacing: 12,
                     children: [
                       SizedBox(
                         width: double.infinity,
@@ -457,7 +459,26 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           ),
                         ),
                       ),
-                      const SizedBox(height: 12),
+                      SizedBox(
+                        width: double.infinity,
+                        child: OutlinedButton(
+                          onPressed: ()=>Navigator.push(context, LogScreen.route()),
+                          style: OutlinedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            side: BorderSide(color: colorScheme.secondary),
+                          ),
+                          child: Text(
+                            "Show logs",
+                            style: TextStyle(
+                              color: colorScheme.error,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                      ),
                       SizedBox(
                         width: double.infinity,
                         child: OutlinedButton(
