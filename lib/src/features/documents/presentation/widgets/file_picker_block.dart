@@ -1,3 +1,5 @@
+import 'dart:io' show Platform;
+
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:my_documents/src/core/extensions/extensions.dart';
@@ -146,7 +148,7 @@ class FilePickerBlock extends StatelessWidget {
       height: 48,
       child: OutlinedButton.icon(
         onPressed: () async {
-          if (path != null) {
+          if (path != null && Platform.isAndroid || Platform.isIOS) {
             await FileService.deleteFile(path!);
           }
           onSelected(null);

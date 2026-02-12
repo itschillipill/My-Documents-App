@@ -107,7 +107,7 @@ class DocumentService {
     return count > 0;
   }
 
- Future<List<Document>> insertAllDocuments(List<Document> documents) async {
+Future<List<Document>> insertAllDocuments(List<Document> documents, {bool replace = false}) async {
   if (documents.isEmpty) return [];
 
   // Проверяем, что все документы имеют хотя бы одну версию
@@ -120,7 +120,18 @@ class DocumentService {
   final List<Document> insertedDocuments = [];
 
   await _db.transaction((txn) async {
-    // Map для связи временного индекса с реальным ID версии
+    // ================= 🗑️ ПОЛНАЯ ОЧИСТКА ПРИ replace = true =================
+    if (replace) {
+      debugPrint('🧹 REPLACE MODE: Полная очистка базы данных');
+      
+      // Важно! Сначала удаляем версии (внешний ключ), потом документы
+      await txn.delete('document_versions');
+      await txn.delete('documents');
+      
+      debugPrint('✅ База данных очищена');
+    }
+    
+    // Map для связи временного ID с реальным ID версии
     final Map<String, int> versionIdMap = {};
     
     for (int docIndex = 0; docIndex < documents.length; docIndex++) {
@@ -184,9 +195,9 @@ class DocumentService {
     }
   });
 
+  debugPrint('📥 Импортировано документов: ${insertedDocuments.length} (replace: $replace)');
   return insertedDocuments;
 }
-
   Future<bool> deleteDocument(int id) async {
     try {
       final deletedCount = await _db.delete(

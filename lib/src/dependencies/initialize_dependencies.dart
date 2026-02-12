@@ -48,7 +48,10 @@ mixin InitializeDependencies {
         ('Platform pre-initialization', (_) => $platformInitialization()),
         ("AppContext initialization", (_){
           AppContext.instance.init(
-            environment: Environment.from("STAGING"), 
+            environment: Environment.from(
+            //"STAGING" 
+              String.fromEnvironment("ENV")
+              ), 
             metadata: AppMetadata.fromPlatform(
               version: "1.0.0", 
               buildNumber: DateTime.now().millisecondsSinceEpoch.toString(),));

@@ -4,6 +4,7 @@ import 'dart:isolate';
 
 import 'package:archive/archive.dart';
 import 'package:flutter/foundation.dart';
+import 'package:my_documents/src/sevices/observer.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
@@ -77,7 +78,7 @@ class ExportService {
 
       return ResultOr.success(null);
     } catch (e, st) {
-      debugPrint('$e\n$st');
+      SessionLogger.instance.error("ExportService.exportData", "$e", stackTrace: st);
       return ResultOr.error(ErrorKeys.failedToShare);
     } finally {
       await exportDir?.deleteIfExists();
@@ -151,8 +152,8 @@ extension DirectoryExtension on Directory {
   Future<void> deleteIfExists() async {
     try {
       if (await exists()) await delete(recursive: true);
-    } catch (e) {
-      debugPrint('Failed to delete directory: $e');
+    } catch (e, st) {
+      SessionLogger.instance.error("DirectoryExtension.deleteIfExists", "$e", stackTrace: st);
     }
   }
 }

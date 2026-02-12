@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_documents/src/core/app_context.dart';
 import 'package:my_documents/src/core/extensions/extensions.dart';
 import 'package:my_documents/src/features/documents/model/document.dart';
 import 'package:my_documents/src/presentation/widgets/border_box.dart';
@@ -111,7 +112,10 @@ class DocumentVersionCard extends StatelessWidget {
                       ),
                       Padding(
                         padding: const EdgeInsets.only(top: 4),
-                        child: Text(
+                        child: !AppContext.instance.config.isProd?SelectableText(
+                          "${context.l10n.fileName}: ${(documentVersion.filePath)}",
+                          style: theme.textTheme.bodySmall,
+                        ): Text(
                           "${context.l10n.fileName}: ${p.basename(documentVersion.filePath)}",
                           style: theme.textTheme.bodySmall,
                         ),

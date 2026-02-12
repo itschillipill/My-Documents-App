@@ -11,7 +11,7 @@ class NotSupportedNotificationService implements NotificationService {
 
   @override
   Future<void> init() async {
-    MyClassObserver.instance.log(
+    SessionLogger.instance.log(
       name,
       "Platform not supported for notifications",
     );

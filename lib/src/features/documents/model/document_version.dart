@@ -68,4 +68,8 @@ class DocumentVersion {
       filePath.endsWith(".jpg") ||
       filePath.endsWith(".jpeg") ||
       filePath.endsWith(".png");
+
+
+  @override
+  String toString() => "DocumentVersion(id: $id, documentId: $documentId, filePath: $filePath, uploadedAt: $uploadedAt, comment: $comment, expirationDate: $expirationDate)";
 }

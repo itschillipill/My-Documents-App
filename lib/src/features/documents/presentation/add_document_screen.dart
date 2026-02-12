@@ -1,3 +1,5 @@
+import 'dart:io' show Platform;
+
 import 'package:flutter/material.dart';
 import 'package:my_documents/src/core/extensions/extensions.dart';
 import 'package:my_documents/src/features/folders/model/folder.dart';
@@ -90,6 +92,13 @@ class _AddDocumentScreenState extends State<AddDocumentScreen> {
                                 originalPath: _originalPath,
                                 comment: _commentController.text.trim(),
                                 expirationDate: _expirationDate,
+                                replace: (){
+      if(Platform.isAndroid || Platform.isIOS){
+        return true;
+      }else{
+        return false;
+      }
+    }(),
                               );
 
                           result(

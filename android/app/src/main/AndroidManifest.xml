@@ -9,6 +9,10 @@
         android:name="${applicationName}"
         android:requestLegacyExternalStorage="true"
         android:icon="@mipmap/ic_launcher">
+
+        <meta-data
+        android:name="flutter.EnableAndroidPredictiveBack"
+        android:value="false" />
         <activity
             android:name=".MainActivity"
             android:exported="true"

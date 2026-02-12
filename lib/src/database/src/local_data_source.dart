@@ -1,6 +1,5 @@
 import 'dart:io' show Platform;
 
-import 'package:my_documents/src/core/app_context.dart';
 import 'package:my_documents/src/core/constants.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
@@ -28,7 +27,7 @@ class LocalDataSource implements DataSource {
       String? $path = path;
       $path ??= join(
         (await getApplicationDocumentsDirectory()).path,
-        !AppContext.instance.config.isProd ? 'my_documents_debug.db' : 'my_documents.db',
+       'my_documents.db',
       );
 
       _db = await openDatabase(
@@ -186,8 +185,8 @@ class LocalDataSource implements DataSource {
   @override
   Future<bool> deleteDocument(int id) => _documentService.deleteDocument(id); 
   @override
-  Future<List<Document>> insertAllDocuments(List<Document> documents) =>
-      _documentService.insertAllDocuments(documents);
+  Future<List<Document>> insertAllDocuments(List<Document> documents, {bool replace = false}) =>
+      _documentService.insertAllDocuments(documents, replace: replace);
   @override
   Future<bool> deleteDocumentsByIds(List<int> ids) =>
       _documentService.deleteDocumentsByIds(ids);

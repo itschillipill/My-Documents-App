@@ -30,9 +30,9 @@ class DesktopNotificationService implements NotificationService {
       // На десктопе обычно разрешения не нужны, но вызов можно оставить
       await AwesomeNotifications().requestPermissionToSendNotifications();
 
-      MyClassObserver.instance.onCreate(name);
+      SessionLogger.instance.onCreate(name);
     } catch (e, s) {
-      MyClassObserver.instance.onError(name, e, s, message: "Init failed");
+      SessionLogger.instance.onError(name, e, s, message: "Init failed");
     }
   }
 
@@ -41,7 +41,7 @@ class DesktopNotificationService implements NotificationService {
     required String title,
     required String body,
   }) async {
-    MyClassObserver.instance.log(
+    SessionLogger.instance.log(
       name,
       "Show notification | title=$title, body=$body",
     );
@@ -70,12 +70,12 @@ class DesktopNotificationService implements NotificationService {
         ),
       );
 
-      MyClassObserver.instance.log(
+      SessionLogger.instance.log(
         name,
         "Scheduled notification | id=$id, title=$title, date=$date",
       );
     } catch (e, s) {
-      MyClassObserver.instance.onError(
+      SessionLogger.instance.onError(
         name,
         e,
         s,
@@ -95,12 +95,12 @@ class DesktopNotificationService implements NotificationService {
       await cancelNotification([id]);
       await scheduleNotification(id: id, title: title, body: body, date: date);
 
-      MyClassObserver.instance.log(
+      SessionLogger.instance.log(
         name,
         "Updated notification | id=$id, title=$title, date=$date",
       );
     } catch (e, s) {
-      MyClassObserver.instance.onError(
+      SessionLogger.instance.onError(
         name,
         e,
         s,
@@ -116,9 +116,9 @@ class DesktopNotificationService implements NotificationService {
         await AwesomeNotifications().cancel(id);
       }
 
-      MyClassObserver.instance.log(name, "Canceled notifications $ids");
+      SessionLogger.instance.log(name, "Canceled notifications $ids");
     } catch (e, s) {
-      MyClassObserver.instance.onError(
+      SessionLogger.instance.onError(
         name,
         e,
         s,
@@ -131,9 +131,9 @@ class DesktopNotificationService implements NotificationService {
   Future<void> cancelAll() async {
     try {
       await AwesomeNotifications().cancelAll();
-      MyClassObserver.instance.log(name, "Canceled all notifications");
+      SessionLogger.instance.log(name, "Canceled all notifications");
     } catch (e, s) {
-      MyClassObserver.instance.onError(
+      SessionLogger.instance.onError(
         name,
         e,
         s,
