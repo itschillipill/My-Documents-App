@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:my_documents/src/core/extensions/extensions.dart';
 import 'package:my_documents/src/features/auth/widgets/auth_screen.dart';
-import 'package:my_documents/src/features/navigation/app_navigator.dart';
 import 'package:my_documents/src/presentation/onboarding_screen.dart';
 import '../auth_executor.dart';
 
@@ -28,6 +27,8 @@ class _AuthScopeState extends State<AuthScope> {
     ]);
 
     _listenable.addListener(_onAuthChanged);
+    
+    context.deps.settingsCubit.stream.listen((_)=>_onAuthChanged());
   }
 
   @override
@@ -37,28 +38,30 @@ class _AuthScopeState extends State<AuthScope> {
   }
 
   void _onAuthChanged() {
-    setState(() {});
+    if (mounted) setState(() {});
   }
 
-  List<Page> _pages(BuildContext ctx) => [
-    MaterialPage(child: widget.child),
-    if (ctx.deps.settingsCubit.state.isFirstLaunch)
-      MaterialPage(key: ValueKey('onboarding'), child: OnboardingScreen()),
-    if (authExecutor.hasPassword && !authExecutor.authenticated)
-      MaterialPage(
-        key: const ValueKey('verify_pin'),
-        child: VerifyPinScreen(
-          useBiometrics:
-              ctx.deps.settingsCubit.state.useBiometrics &&
-              ctx.deps.settingsCubit.canUseBiometrics,
-          onAuthByPIN: authExecutor.authenticateByPIN,
-          onAuthByBiometrics: authExecutor.authenticateByBiometrics,
-        ),
-      ),
-  ];
+  List<Widget> _pages(BuildContext ctx) {
+    final settings = ctx.deps.settingsCubit.state;
+    
+    return [
+      widget.child,// AppNavigator(initialPages:[MaterialPage(child: widget.child)]),
+      
+      if (settings.isFirstLaunch)
+         OnboardingScreen(),
+      
+      if (authExecutor.hasPassword && !authExecutor.authenticated)
+        VerifyPinScreen(
+            useBiometrics: settings.useBiometrics && 
+                          ctx.deps.settingsCubit.canUseBiometrics,
+            onAuthByPIN: authExecutor.authenticateByPIN,
+            onAuthByBiometrics: authExecutor.authenticateByBiometrics,
+          ),
+    ];
+  }
 
   @override
-  Widget build(BuildContext context) {
-    return AppNavigator(pages: _pages(context));
-  }
+  Widget build(BuildContext ctx) => Stack(
+    children: _pages(ctx),
+  );
 }

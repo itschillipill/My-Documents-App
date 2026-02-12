@@ -34,9 +34,9 @@ class _AppGateState extends State<AppGate> {
   @override
   Widget build(BuildContext context) {
     return PopScope(
-      canPop: _selectedIndex != 1,
+      canPop: _selectedIndex ==0,
       onPopInvokedWithResult: (didPop, _) {
-        if (!didPop && _selectedIndex == 1) {
+        if (!didPop && _selectedIndex > 0) {
           setState(() {
             _selectedIndex = 0;
             _controller.jumpToPage(0);

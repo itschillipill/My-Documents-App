@@ -121,7 +121,7 @@ class DocumentsCubit extends Cubit<DocumentsState> with SequentialHandler {
     },
   );
 
-Future<void> addAllDocuments(List<Document> documents, {bool replace = false}) {
+Future<void> addAllDocuments(List<Document> documents, {bool replace = true}) {
   return handle(() async {
     emit(
       DocumentsState.processing(
@@ -131,19 +131,7 @@ Future<void> addAllDocuments(List<Document> documents, {bool replace = false}) {
     );
 
     try {
-      List<Document> finalDocuments;
-      
-      if (replace) {
-        final allIds = state.documents?.map((e) => e.id).toList() ?? [];
-        if (allIds.isNotEmpty) {
-          await deleteDocuments(allIds);
-        }
-        finalDocuments = documents;
-      } else {
-        finalDocuments = [...?state.documents, ...documents];
-      }
-
-      final insertedDocs = await dataSource.insertAllDocuments(documents);
+      final insertedDocs = await dataSource.insertAllDocuments(documents, replace: replace);
       
       for (final doc in insertedDocs) {
         final currentVersion = doc.versions.firstWhere(
@@ -162,7 +150,7 @@ Future<void> addAllDocuments(List<Document> documents, {bool replace = false}) {
 
       emit(
         DocumentsState.processing(
-          documents: finalDocuments,
+          documents: insertedDocs,
           message: "Documents ${replace ? 'replaced' : 'added'} successfully",
         ),
       );
@@ -366,6 +354,7 @@ Future<void> addAllDocuments(List<Document> documents, {bool replace = false}) {
     required String title,
     required String? originalPath,
     bool isFavorite = false,
+    bool replace = true,
     int? folderId,
     String? comment,
     DateTime? expirationDate,
@@ -383,7 +372,7 @@ Future<void> addAllDocuments(List<Document> documents, {bool replace = false}) {
 
     try {
       final safePath = await FileService.saveFileToAppDir(originalPath);
-      await FileService.deleteFile(originalPath);
+      if(replace) await FileService.deleteFile(originalPath);
       final doc = Document(
         id: 0,
         title: title,

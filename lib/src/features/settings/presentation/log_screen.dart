@@ -346,7 +346,7 @@ class _LogScreenState extends State<LogScreen> {
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
-                                        Text(
+                                        SelectableText(
                                           log.message,
                                           style: const TextStyle(fontSize: 16),
                                         ),
@@ -364,7 +364,7 @@ class _LogScreenState extends State<LogScreen> {
                                             'Дополнительные данные:',
                                             style: TextStyle(fontWeight: FontWeight.bold),
                                           ),
-                                          Text(log.extra.toString()),
+                                          SelectableText(log.extra.toString()),
                                         ],
                                         if (log.error != null) ...[
                                           const SizedBox(height: 12),
@@ -375,7 +375,7 @@ class _LogScreenState extends State<LogScreen> {
                                               color: Colors.red,
                                             ),
                                           ),
-                                          Text(log.error.toString()),
+                                          SelectableText(log.error.toString()),
                                         ],
                                         if (log.stackTrace != null) ...[
                                           const SizedBox(height: 12),
@@ -383,7 +383,7 @@ class _LogScreenState extends State<LogScreen> {
                                             'Stack trace:',
                                             style: TextStyle(fontWeight: FontWeight.bold),
                                           ),
-                                          Text(
+                                          SelectableText(
                                             log.stackTrace.toString(),
                                             style: const TextStyle(fontSize: 10),
                                           ),
