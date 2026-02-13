@@ -49,8 +49,8 @@ mixin InitializeDependencies {
         ("AppContext initialization", (_){
           AppContext.instance.init(
             environment: Environment.from(
-            "STAGING" 
-             // String.fromEnvironment("ENV")
+            //"STAGING" 
+              String.fromEnvironment("ENV")
               ), 
             metadata: AppMetadata.fromPlatform(
               version: "1.0.0", 
