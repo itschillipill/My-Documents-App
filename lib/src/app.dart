@@ -26,14 +26,14 @@ class App extends StatelessWidget {
         theme: AppTheme.lightTheme,
         darkTheme: AppTheme.darkTheme,
         themeMode: state.themeMode,
-        home: AppGate(),
+        home: AuthScope(child: AppGate()),
         builder: (context, child) => MediaQuery(
           data: MediaQuery.of(
             context,
           ).copyWith(textScaler: TextScaler.noScaling),
           child: WindowScope(
             title: context.l10n.appTitle,
-            child: AuthScope(child: child??SizedBox.shrink()),
+            child:child??SizedBox.shrink(),
           ),
         ),
         localizationsDelegates: AppLocalizations.localizationsDelegates,
