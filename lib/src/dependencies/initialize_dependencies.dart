@@ -34,31 +34,31 @@ mixin InitializeDependencies {
     for (var currentStep = 0; currentStep < totalSteps; currentStep++) {
       final step = steps[currentStep];
       final percent = (currentStep * 100 ~/ totalSteps).clamp(0, 100);
-      onProgress?.call(percent, step.$1);
+      onProgress?.call(percent, step.title);
       debugPrint(
-        'Initialization | $currentStep/$totalSteps ($percent%) | "${step.$1}"',
+        'Initialization | $currentStep/$totalSteps ($percent%) | "${step.title}"',
       );
-      await step.$2(dependencies);
+      await step.call(dependencies);
     }
     return dependencies;
   }
 
-  List<(String, _InitializationStep)> get _initializationSteps =>
-      <(String, _InitializationStep)>[
-        ('Platform pre-initialization', (_) => $platformInitialization()),
-        ("AppContext initialization", (_){
+  List<({String title, _InitializationStep call})> get _initializationSteps =>
+      <({String title, _InitializationStep call})>[
+        (title:'Platform pre-initialization', call: (_) => $platformInitialization()),
+        (title:"AppContext initialization", call: (_){
           AppContext.instance.init(
             environment: Environment.from(
-            //"STAGING" 
-              String.fromEnvironment("ENV")
+            "STAGING" 
+             // String.fromEnvironment("ENV")
               ), 
             metadata: AppMetadata.fromPlatform(
               version: "1.0.0", 
               buildNumber: DateTime.now().millisecondsSinceEpoch.toString(),));
         }),
         (
-          "Database initialization",
-          (deps) async {
+          title: "Database initialization",
+          call: (deps) async {
             try {
               final localDataSource = LocalDataSource();
               await localDataSource.init();
@@ -70,15 +70,15 @@ mixin InitializeDependencies {
           },
         ),
         (
-          "Password storage initialization",
-          (deps) async {
+          title: "Password storage initialization",
+          call: (deps) async {
             final passwordStorage = FlutterSecureStorage();
             deps.authExecutor = AuthenticationExecutor(passwordStorage);
           },
         ),
         (
-          "Local Storage initialization",
-          (deps) async {
+          title: "Local Storage initialization",
+          call: (deps) async {
             final prefs = await SharedPreferences.getInstance();
             deps.settingsCubit = SettingsCubit(
               prefs: prefs,
@@ -87,26 +87,26 @@ mixin InitializeDependencies {
           },
         ),
         (
-          "Notification initialization",
-          (_) async {
+          title: "Notification initialization",
+          call: (_) async {
             await NotificationServiceSingleton.instance.init();
           },
         ),
         (
-          "Documents initialization",
-          (deps) async {
+          title: "Documents initialization",
+          call: (deps) async {
             deps.documentsCubit = DocumentsCubit(dataSource: deps.dataSource);
           },
         ),
         (
-          "Folders initialization",
-          (deps) async {
+          title: "Folders initialization",
+          call: (deps) async {
             deps.foldersCubit = FoldersCubit(dataSource: deps.dataSource);
           },
         ),
         (
-          "Ready to use",
-          (deps) async {
+          title: "Ready to use",
+          call: (deps) async {
             await Future.delayed(const Duration(milliseconds: 500));
           },
         ),
